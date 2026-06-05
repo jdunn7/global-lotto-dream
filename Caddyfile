@@ -1,10 +1,14 @@
 # Lotto Global — Caddy Configuration
-# Served behind Cloudflare (auto HTTPS via Let's Encrypt)
+# Landing page at root, inner app at /app/
 
 lottery.proposals.digital {
 	root * /var/www/lottoglobal
 	file_server
 	try_files {path} {path}.html
+
+	# Landing page at root
+	@root path /
+	redir @root /Viral%20Launch.html
 
 	# Gzip + Brotli compression
 	encode gzip zstd
@@ -24,8 +28,4 @@ lottery.proposals.digital {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
-
-	# Redirect / to Lotto Global.html
-	@root path /
-	redir @root /Lotto%20Global.html
 }
