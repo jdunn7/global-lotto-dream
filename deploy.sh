@@ -9,9 +9,6 @@ REMOTE_DIR="/var/www/lottoglobal"
 
 echo "🚀 Deploying Lotto Global to ${VPS}..."
 
-# Build first
-npm run build
-
 # Ensure remote directory exists and sync files
 echo "📡 Syncing files..."
 ssh "${VPS}" "mkdir -p ${REMOTE_DIR}"

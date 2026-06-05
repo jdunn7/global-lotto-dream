@@ -33,13 +33,21 @@ async function clean() {
 async function transpileJsx() {
   const files = await fs.readdir(SRC);
   const jsxFiles = files.filter((f) => f.endsWith(".jsx"));
+  const HOOKS = ["useState", "useEffect", "useRef", "useMemo", "useCallback"];
   for (const file of jsxFiles) {
     const inPath = join(SRC, file);
     const outPath = join(OUT, file.replace(/\.jsx$/, ".js"));
+
+    let code = await fs.readFile(inPath, "utf8");
+    const usesHooks = HOOKS.some((h) => code.includes(h));
+    const hasReactImport = /=[\s]*React[;\s]/.test(code) || /from\s+['"]react['"]/.test(code);
+    if (usesHooks && !hasReactImport) {
+      code = `const {useState,useEffect,useRef,useMemo,useCallback}=React;\n${code}`;
+    }
+
     await esbuild.build({
-      entryPoints: [inPath],
+      stdin: { contents: code, loader: "jsx", resolveDir: SRC },
       outfile: outPath,
-      loader: { ".jsx": "jsx" },
       format: "iife",
       jsxFactory: "React.createElement",
       jsxFragment: "React.Fragment",
@@ -60,6 +68,7 @@ async function copyStatic() {
     if (ent.name === "build.mjs") continue;
     if (ent.name === "package.json") continue;
     if (ent.name === "node_modules") continue;
+    if (ent.name === ".git") continue;
 
     if (ent.isDirectory()) {
       await fs.cp(srcPath, dstPath, { recursive: true });
@@ -85,10 +94,12 @@ async function processHtml() {
   for (const file of htmlFiles) {
     let html = await fs.readFile(join(SRC, file), "utf8");
 
-    // Replace React development URLs with production
+    // Replace React development URLs with production (and remove stale integrity)
     REACT_DEV_PATTERNS.forEach((pat, i) => {
       html = html.replace(pat, REACT_PROD[i]);
     });
+    html = html.replace(/integrity="[^"]*"\s+(crossorigin="anonymous")/g, '$1');
+    html = html.replace(/\s+integrity="[^"]*"/g, '');
 
     // Remove Babel standalone script tag
     html = html.replace(
