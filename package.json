@@ -1,0 +1,13 @@
+{
+  "name": "global-lotto-dream",
+  "version": "1.0.0",
+  "description": "Lotto Global — Play the world's biggest lotteries",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "npm run build && ./deploy.sh"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3"
+  }
+}
