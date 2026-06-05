@@ -359,4 +359,5 @@ function ShareBar({ link, toast }) {
   return <div className="share-bar"><p>Share &amp; skip the line →</p><button className="vbtn vbtn-gold vbtn-sm" onClick={share}><Icon name="share" size={14} /> Share link</button></div>;
 }
 
+Object.assign(window, { ShareStudio, SpinToWin, LinkInBio, EmbedWidget, FinalCTA, Footer, ShareBar });
 ReactDOM.createRoot(document.getElementById("root")).render(<ViralApp />);

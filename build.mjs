@@ -58,6 +58,42 @@ async function transpileJsx() {
   }
 }
 
+async function buildLandingBundle() {
+  // Viral Launch page needs all scripts in one scope
+  // Concatenate source files, then transpile as one unit
+  const order = ["data.js", "image-slot.js", "components.jsx", "viral.jsx", "viral-b.jsx"];
+  let bundleSrc = "";
+  for (const file of order) {
+    const path = join(SRC, file);
+    try {
+      const content = await fs.readFile(path, "utf8");
+      bundleSrc += content + "\n";
+    } catch (e) {
+      console.log(`  ⚠️  ${file} not found for bundle`);
+    }
+  }
+
+  // Deduplicate React hook declarations — strip existing ones, add one at top
+  bundleSrc = bundleSrc.replace(/const\s*\{\s*useState[^}]+\}\s*=\s*React;\s*\n?/g, "");
+  const HOOKS = ["useState", "useEffect", "useRef", "useMemo", "useCallback"];
+  const usesHooks = HOOKS.some((h) => bundleSrc.includes(h));
+  if (usesHooks) {
+    bundleSrc = `const {useState,useEffect,useRef,useMemo,useCallback}=React;\n${bundleSrc}`;
+  }
+
+  const outPath = join(OUT, "viral-bundle.js");
+  await esbuild.build({
+    stdin: { contents: bundleSrc, loader: "jsx", resolveDir: SRC },
+    outfile: outPath,
+    format: "iife",
+    jsxFactory: "React.createElement",
+    jsxFragment: "React.Fragment",
+    minify: true,
+    target: "es2020",
+  });
+  console.log(`  ✓ viral-bundle.js (landing page bundle)`);
+}
+
 async function copyStatic() {
   const files = await fs.readdir(SRC, { withFileTypes: true });
   for (const ent of files) {
@@ -113,6 +149,14 @@ async function processHtml() {
       '<script src="$1.js"></script>'
     );
 
+    // Landing page: replace individual scripts with bundle
+    if (file === "Viral Launch.html") {
+      html = html.replace(
+        /<script[^>]*src="data\.js"[^>]*><\/script>\s*<script[^>]*src="image-slot\.js"[^>]*><\/script>\s*<script[^>]*src="components\.js"[^>]*><\/script>\s*<script[^>]*src="viral\.js"[^>]*><\/script>\s*<script[^>]*src="viral-b\.js"[^>]*><\/script>/,
+        '<script src="viral-bundle.js"></script>'
+      );
+    }
+
     await fs.writeFile(join(OUT, file), html);
     console.log(`  ✓ ${file} → dist/${file}`);
   }
@@ -123,6 +167,7 @@ async function build() {
   await clean();
   await transpileJsx();
   await copyStatic();
+  await buildLandingBundle();
   await processHtml();
   console.log("\n✅ Build complete: ./dist/\n");
 }
