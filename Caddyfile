@@ -1,8 +1,7 @@
 # Lotto Global — Caddy Configuration
-# Replace :80 with your domain when DNS is ready, e.g.:
-# lottoglobal.com, www.lottoglobal.com {
+# Served behind Cloudflare (auto HTTPS via Let's Encrypt)
 
-:80 {
+lottery.proposals.digital {
 	root * /var/www/lottoglobal
 	file_server
 	try_files {path} {path}.html
@@ -30,26 +29,3 @@
 	@root path /
 	redir @root /Lotto%20Global.html
 }
-
-# When you have a domain, uncomment and use this block instead:
-# lottoglobal.com, www.lottoglobal.com {
-# 	root * /var/www/lottoglobal
-# 	file_server
-# 	try_files {path} {path}.html
-# 	encode gzip zstd
-# 	header /c/* Cache-Control "public, max-age=31536000, immutable"
-# 	header /p/* Cache-Control "public, max-age=31536000, immutable"
-# 	header /v/* Cache-Control "public, max-age=31536000, immutable"
-# 	header /uploads/* Cache-Control "public, max-age=31536000, immutable"
-# 	header *.css Cache-Control "public, max-age=86400"
-# 	header *.js Cache-Control "public, max-age=86400"
-# 	header *.png Cache-Control "public, max-age=604800"
-# 	header {
-# 		X-Frame-Options "SAMEORIGIN"
-# 		X-Content-Type-Options "nosniff"
-# 		Referrer-Policy "strict-origin-when-cross-origin"
-# 	}
-# 	@root path /
-# 	redir @root /Lotto%20Global.html
-# 	tls admin@lottoglobal.com
-# }
