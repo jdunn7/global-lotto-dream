@@ -13,6 +13,10 @@ function saveState(s) {try {localStorage.setItem(LS, JSON.stringify(s));} catch 
 const AFF_LS = "plg_affiliate";
 function isAffiliate() {try {return !!localStorage.getItem(AFF_LS);} catch (e) {return false;}}
 function markAffiliate(email) {try {localStorage.setItem(AFF_LS, JSON.stringify({ email: email, at: Date.now() }));} catch (e) {}}
+// Persisted dismissal so closing the popup once stops it reappearing on reload.
+const AFF_DISMISS_LS = "plg_affiliate_dismissed";
+function isAffDismissed() {try {return !!localStorage.getItem(AFF_DISMISS_LS);} catch (e) {return false;}}
+function markAffDismissed() {try {localStorage.setItem(AFF_DISMISS_LS, String(Date.now()));} catch (e) {}}
 function makeCode(email) {const base = (email || "player").split("@")[0].replace(/[^a-z0-9]/gi, "").toUpperCase().slice(0, 6) || "LUCKY";return base + Math.floor(100 + Math.random() * 900);}
 const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
 
@@ -27,7 +31,21 @@ function useToast() {
 function ViralApp() {
   const [state, setState] = useState(() => loadState());
   const [toast, toastNode] = useToast();
-  const [showAff, setShowAff] = useState(() => !isAffiliate());   // popup only for non-affiliates
+  const [showAff, setShowAff] = useState(() => !isAffiliate() && !isAffDismissed());   // popup only for non-affiliates who haven't dismissed it
+  // If the visitor is already a logged-in affiliate on the real platform (the
+  // session cookie is scoped to .proposals.digital, so this subdomain can read
+  // it via a credentialed request), don't nag them with the signup popup.
+  useEffect(() => {
+    let alive = true;
+    fetch("https://plg.proposals.digital/api/auth/get-session", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const u = d ? (d.user || (d.email ? d : null)) : null;
+        if (alive && u) { markAffiliate(u.email || "member"); setShowAff(false); }
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
   function join(email) {
     const code = makeCode(email);
     const position = 2000 + Math.floor(Math.random() * 6000);
@@ -58,16 +76,16 @@ function ViralApp() {
       </div>
       <Footer />
       <ShareBar link={link} toast={toast} />
-      <AffiliateModal open={showAff} onClose={() => setShowAff(false)} />
+      <AffiliateModal open={showAff} onClose={() => { markAffDismissed(); setShowAff(false); }} />
       {toastNode}
     </div>);
 
 }
 
 /* ============================ AFFILIATE MODAL ============================ */
-// Official affiliate offer. Entering an email routes to the real signup page
-// (the SSR app's /auth on plg.proposals.digital), with the email carried over.
-const AFFILIATE_SIGNUP = "https://plg.proposals.digital/auth";
+// Official affiliate offer. Entering an email signs the visitor up and drops
+// them into their member hub (command center) for the rest of the experience.
+const AFFILIATE_HUB = "PLG Member Hub.html";
 function AffiliateModal({ open, onClose }) {
   const [email, setEmail] = useState("");
   useEffect(() => {
@@ -83,8 +101,7 @@ function AffiliateModal({ open, onClose }) {
     const v = (email || "").trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { return; }
     markAffiliate(v);   // they're joining — don't show the popup again
-    window.location.href =
-      AFFILIATE_SIGNUP + "?intent=affiliate&email=" + encodeURIComponent(v);
+    window.location.href = AFFILIATE_HUB;
   }
 
   const tiers = [
@@ -145,8 +162,7 @@ function Nav({ state }) {
           <a href="#how">How it works</a>
           <a href="#share">Share studio</a>
           <a href="#bio">Link-in-bio</a>
-          <a href="Affiliate Dashboard.html">Affiliates</a>
-          <a className="vbtn vbtn-gold vbtn-sm" href="Lotto Global.html" style={{ borderRadius: "10px" }}>Open the app</a>
+          <a className="vbtn vbtn-gold vbtn-sm" href="PLG Affiliate Portal.html" style={{ borderRadius: "10px" }}>Backoffice</a>
         </div>
       </div>
     </nav>);
