@@ -10,7 +10,7 @@
   const pick = (a) => a[Math.floor(rnd() * a.length)];
   const between = (a, b) => a + rnd() * (b - a);
 
-  const RATES = { 1: 0.08, 2: 0.04, 3: 0.02 };
+  const RATES = { 1: 0.10, 2: 0.05, 3: 0.025 };
   const COUNTS = { 1: 14, 2: 39, 3: 86 };
 
   function makeMembers() {
@@ -65,10 +65,10 @@
   const pending = 318.4;
 
   const tiers = [
-    { name: "Bronze", min: 0, rate: "5 / 2 / 1%", perks: "Standard links" },
-    { name: "Silver", min: 1000, rate: "6 / 3 / 1%", perks: "Custom code" },
-    { name: "Gold", min: 5000, rate: "8 / 4 / 2%", perks: "Priority payouts, banners" },
-    { name: "Platinum", min: 20000, rate: "10 / 5 / 3%", perks: "Account manager, events" },
+    { name: "Bronze", min: 0, rate: "10 / 5 / 2.5%", perks: "Standard links" },
+    { name: "Silver", min: 1000, rate: "10 / 5 / 2.5%", perks: "Custom code" },
+    { name: "Gold", min: 5000, rate: "10 / 5 / 2.5%", perks: "Priority payouts, banners" },
+    { name: "Platinum", min: 20000, rate: "10 / 5 / 2.5%", perks: "Account manager, events" },
   ];
   const tierVolume = 12640; // lifetime referred volume toward tier
 
