@@ -145,6 +145,7 @@ function Nav({ state }) {
           <a href="#how">How it works</a>
           <a href="#share">Share studio</a>
           <a href="#bio">Link-in-bio</a>
+          <a href="Affiliate Dashboard.html">Affiliates</a>
           <a className="vbtn vbtn-gold vbtn-sm" href="Lotto Global.html" style={{ borderRadius: "10px" }}>Open the app</a>
         </div>
       </div>
