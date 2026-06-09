@@ -162,7 +162,7 @@ function Nav({ state }) {
           <a href="#how">How it works</a>
           <a href="#share">Share studio</a>
           <a href="#bio">Link-in-bio</a>
-          <a className="vbtn vbtn-gold vbtn-sm" href="PLG Affiliate Portal.html" style={{ borderRadius: "10px" }}>Backoffice</a>
+          <a className="vbtn vbtn-gold vbtn-sm" href="PLG Affiliate Portal.html" style={{ borderRadius: "10px" }}>BackOffice</a>
         </div>
       </div>
     </nav>);

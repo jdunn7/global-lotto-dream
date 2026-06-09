@@ -4,11 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>PlayLottoGlobal — Member Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet" />
 <style>
   :root{
     --navy:#141d52; --navy-2:#1b2a7a; --royal:#3b5bdb; --royal-soft:#5b76e8; --teal:#2bb6c4;
     --gold:#f1b73a; --gold-soft:#f7cf6b; --gold-deep:#d99412; --green:#2bbf7a; --purple:#8b6df0; --pink:#e8557f;
+    --red:#e6324f; --red-deep:#c01d3c;
     --ink:#16203c; --muted:#5b6480; --dim:#9aa2bd; --line:#e7ebf5; --line-soft:#eef2fa;
     --bg:#f3f6fd; --surface:#fff; --surface-2:#f7f9fe;
     --ease:cubic-bezier(.16,1,.3,1); --fd:'Outfit',system-ui,sans-serif; --fs:'Inter',system-ui,sans-serif;
@@ -22,48 +23,82 @@
   .tnum{font-variant-numeric:tabular-nums}
   .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 24px}
 
-  /* top bar */
-  .top{position:sticky;top:0;z-index:20;background:rgba(243,246,253,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-  .top-in{display:flex;align-items:center;gap:16px;height:70px;max-width:1180px;margin:0 auto;padding:0 24px}
-  .top-logo{height:40px}
-  .top-r{margin-left:auto;display:flex;align-items:center;gap:12px}
-  .chip{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:.86rem;box-shadow:var(--shadow-sm)}
-  .chip.gold{color:var(--gold-deep)}
-  .ava{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--royal),var(--navy));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;border:2px solid var(--royal-soft)}
-  .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;border-radius:999px;font-family:var(--fd);font-weight:700;font-size:.86rem;padding:10px 18px;transition:transform .18s var(--ease),filter .18s}
-  .btn-royal{background:linear-gradient(100deg,var(--royal),var(--royal-soft));color:#fff;box-shadow:0 10px 24px -10px rgba(59,91,219,.6)}
-  .btn-royal:hover{transform:translateY(-2px);filter:brightness(1.05)}
+  /* ===== live wins ticker ===== */
+  .ticker{position:relative;z-index:21;background:linear-gradient(90deg,#0f1647,#161f5e);color:#fff;overflow:hidden;border-bottom:2px solid rgba(241,183,58,.5)}
+  .ticker-in{display:flex;align-items:center;height:40px;max-width:100%}
+  .ticker-tag{display:flex;align-items:center;gap:8px;flex:none;padding:0 18px;height:100%;background:rgba(0,0,0,.18);font-family:var(--fd);font-weight:800;font-size:.74rem;letter-spacing:.08em;z-index:2}
+  .ticker-tag .pulse{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(241,183,58,.7);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(241,183,58,.6)}70%{box-shadow:0 0 0 7px rgba(241,183,58,0)}100%{box-shadow:0 0 0 0 rgba(241,183,58,0)}}
+  .ticker-mask{flex:1;overflow:hidden;position:relative}
+  .ticker-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;animation:marq 38s linear infinite}
+  .ticker-mask:hover .ticker-track{animation-play-state:paused}
+  .tk{display:inline-flex;align-items:center;gap:9px;padding:0 30px;font-size:.82rem;color:#c7d0f5;border-right:1px solid rgba(255,255,255,.08)}
+  .tk b{color:#fff;font-family:var(--fd);font-weight:800}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
 
-  /* hero */
-  .hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;padding:34px 0 8px;align-items:stretch}
-  .hero-card{position:relative;border-radius:26px;padding:32px;color:#fff;overflow:hidden;background:linear-gradient(140deg,var(--navy-2),var(--navy));box-shadow:var(--shadow)}
-  .hero-card::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 90% 0%,rgba(241,183,58,.28),transparent 60%),radial-gradient(50% 80% at 0% 100%,rgba(43,182,196,.25),transparent 60%)}
-  .hero-eyebrow{position:relative;font-family:var(--fd);font-weight:600;letter-spacing:.14em;font-size:.74rem;text-transform:uppercase;color:#cdd6ff}
-  .hero-h{position:relative;font-size:clamp(1.9rem,3.6vw,2.8rem);font-weight:800;margin:10px 0 8px}
-  .hero-h span{background:linear-gradient(180deg,#fde5b0,#f1b73a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .hero-sub{position:relative;color:#aeb8e6;font-size:1.02rem;max-width:34em;margin-bottom:20px}
-  .hero-cta{position:relative;display:flex;gap:10px;flex-wrap:wrap}
-  .hero-cta .btn-gold{background:linear-gradient(100deg,var(--gold-deep),var(--gold));color:#5a3d08;box-shadow:0 12px 26px -10px rgba(217,148,18,.6)}
-  .hero-cta .btn-glass{background:rgba(255,255,255,.14);color:#fff}
-  .hero-cta .btn-glass:hover{background:rgba(255,255,255,.24)}
+  /* ===== floating nav ===== */
+  .navbar{position:sticky;top:14px;z-index:20;padding:14px 0 0}
+  .navpill{position:relative;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:100px;padding:12px 14px 12px 26px;box-shadow:0 16px 40px -24px rgba(27,42,107,.5)}
+  .nav-logo{height:42px;flex:none}
+  .nav-links{display:flex;align-items:center;gap:26px;margin:0 auto}
+  .nav-links a{font-family:var(--fd);font-weight:600;font-size:.95rem;color:var(--ink);transition:color .18s}
+  .nav-links a:hover{color:var(--royal)}
+  .winbig{position:absolute;left:50%;top:-12px;transform:translateX(38px) rotate(-7deg);font-family:'Caveat',cursive;font-weight:700;font-size:1.7rem;color:var(--gold-deep);pointer-events:none;text-shadow:0 2px 0 rgba(255,255,255,.6)}
+  .nav-r{display:flex;align-items:center;gap:14px;flex:none}
+  .nav-global{display:flex;align-items:center;gap:5px;font-weight:600;font-size:.9rem;color:var(--muted);cursor:pointer}
+  .wallet-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:rgba(241,183,58,.12);border:1px solid rgba(241,183,58,.5);color:var(--gold-deep);font-family:var(--fd);font-weight:800;font-size:.9rem}
+  .nav-tickets{font-family:var(--fd);font-weight:700;font-size:.95rem;color:var(--ink);cursor:pointer}
+  .btn-dash{display:inline-flex;align-items:center;border:none;cursor:pointer;border-radius:999px;font-family:var(--fd);font-weight:700;font-size:.92rem;padding:11px 24px;color:#fff;background:linear-gradient(100deg,var(--red),var(--red-deep));box-shadow:0 12px 26px -12px rgba(214,36,74,.7);transition:transform .18s var(--ease),filter .18s}
+  .btn-dash:hover{transform:translateY(-2px);filter:brightness(1.06)}
 
-  .stats{display:grid;grid-template-rows:repeat(2,1fr);gap:16px}
-  .stat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px}
-  .stat-ic{width:48px;height:48px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
-  .stat-ic.w{background:linear-gradient(135deg,var(--purple),#6b4bff)}
-  .stat-ic.c{background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep))}
-  .stat-ic.n{background:linear-gradient(135deg,var(--teal),var(--royal))}
-  .stat-l{font-size:.8rem;color:var(--muted);font-weight:600}
-  .stat-v{font-family:var(--fd);font-weight:800;font-size:1.5rem;line-height:1}
-  .stat-d{font-size:.72rem;color:var(--green);font-weight:600}
+  /* ===== affiliate dashboard hero ===== */
+  .aff{padding:36px 0 6px}
+  .aff-head{display:flex;align-items:flex-start;gap:20px;margin-bottom:26px}
+  .aff-h{font-size:clamp(2rem,4vw,2.9rem);font-weight:800}
+  .aff-h span{background:linear-gradient(180deg,var(--gold-soft),var(--gold-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .aff-sub{color:var(--muted);font-size:1.05rem;margin-top:8px;max-width:42em}
+  .signout{margin-left:auto;flex:none;background:var(--surface);border:1px solid var(--line);border-radius:999px;font-family:var(--fd);font-weight:700;font-size:.9rem;padding:11px 22px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .18s,transform .18s}
+  .signout:hover{border-color:var(--dim);transform:translateY(-1px)}
 
-  /* sections */
-  .sec{padding:30px 0 6px}
+  .aff-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:stretch}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:var(--shadow-sm)}
+  .flabel{font-family:var(--fd);font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .select{position:relative;margin-bottom:22px}
+  .select select{width:100%;appearance:none;font-family:var(--fs);font-weight:600;font-size:1rem;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:15px 44px 15px 18px;cursor:pointer}
+  .select::after{content:"";position:absolute;right:18px;top:50%;width:10px;height:10px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+  .reflink{display:flex;gap:12px;align-items:stretch}
+  .reflink-in{flex:1;display:flex;align-items:center;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:0 18px;font-size:1rem;font-weight:500;color:var(--ink);overflow:hidden}
+  .reflink-in span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .btn-copy{flex:none;border:none;cursor:pointer;border-radius:14px;font-family:var(--fd);font-weight:700;font-size:.95rem;padding:0 26px;color:#fff;background:var(--navy);transition:filter .18s,transform .18s}
+  .btn-copy:hover{filter:brightness(1.15)}
+  .btn-copy.ok{background:var(--green)}
+  .helper{font-size:.86rem;color:var(--muted);line-height:1.5;margin:13px 2px 22px}
+  .statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .statbox{background:var(--surface-2);border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center}
+  .statbox .v{font-family:var(--fd);font-weight:800;font-size:1.7rem;line-height:1;letter-spacing:-.02em}
+  .statbox .v.code{font-size:1.18rem;color:var(--royal);letter-spacing:.02em}
+  .statbox .l{font-size:.78rem;color:var(--muted);font-weight:600;margin-top:8px}
+  .balance{display:flex;align-items:center;gap:18px;margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+  .balance .bl{font-family:var(--fd);font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .balance .bv{font-family:var(--fd);font-weight:800;font-size:2rem;color:var(--gold-deep);line-height:1}
+  .btn-payout{margin-left:auto;border:1px solid var(--line);background:var(--surface);cursor:pointer;border-radius:999px;font-family:var(--fd);font-weight:700;font-size:.92rem;padding:13px 26px;color:var(--ink);box-shadow:var(--shadow-sm);transition:border-color .18s,transform .18s}
+  .btn-payout:hover{border-color:var(--gold-deep);color:var(--gold-deep);transform:translateY(-1px)}
+
+  .qr-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .qr-title{font-family:var(--fd);font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+  .qr-box{padding:14px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-sm)}
+  .qr-box canvas{display:block;border-radius:6px}
+  .btn-png{margin-top:22px;border:1px solid var(--line);background:var(--surface);cursor:pointer;border-radius:999px;font-family:var(--fd);font-weight:700;font-size:.9rem;padding:11px 24px;color:var(--ink);box-shadow:var(--shadow-sm);transition:border-color .18s,transform .18s}
+  .btn-png:hover{border-color:var(--royal);color:var(--royal);transform:translateY(-1px)}
+
+  /* ===== tile launchpad ===== */
+  .sec{padding:28px 0 6px}
   .sec-h{display:flex;align-items:center;gap:11px;margin-bottom:16px}
   .sec-h .dot{width:9px;height:9px;border-radius:50%}
   .sec-h h2{font-size:1.3rem}
   .sec-h .count{margin-left:auto;font-size:.8rem;color:var(--dim);font-weight:600}
-
   .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
   .tool{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm);
     transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s;overflow:hidden;display:flex;flex-direction:column;min-height:188px;cursor:pointer}
@@ -83,49 +118,156 @@
   .foot{text-align:center;color:var(--dim);font-size:.8rem;padding:40px 0 50px}
   .foot a{color:var(--royal);font-weight:600}
 
-  @media(max-width:1020px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.stats{grid-template-rows:none;grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid,.stats{grid-template-columns:1fr}.top-logo{height:34px}}
-  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .rise{animation:rise .6s var(--ease) forwards}
-  @media(prefers-reduced-motion:reduce){.rise{animation:none;opacity:1}}
+  @media(max-width:1020px){.grid{grid-template-columns:repeat(2,1fr)}.aff-grid{grid-template-columns:1fr}.nav-links{display:none}.winbig{display:none}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.statrow{grid-template-columns:repeat(2,1fr)}.nav-logo{height:34px}.nav-global,.nav-tickets{display:none}.balance{flex-wrap:wrap}}
+  @keyframes rise{from{transform:translateY(16px)}to{transform:none}}
+  .rise{animation:rise .55s var(--ease) both}
+  @media(prefers-reduced-motion:reduce){.rise{animation:none}}
 </style>
-  <link rel="stylesheet" href="editor.css" />
-  <script src="editor.js" data-site="lotto" defer></script>
-  <link rel="icon" type="image/png" href="plg-logo.png" />
 </head>
 <body>
-  <header class="top"><div class="top-in">
-    <img src="plg-logo-full.png" class="top-logo" alt="PLG Lotto" />
-    <div class="top-r">
-      <span class="chip gold" id="walletChip">$248.50</span>
-      <a class="btn btn-royal" href="PLG Affiliate Portal.html">Backoffice</a>
-      <span class="ava">JD</span>
+
+  <!-- live wins ticker -->
+  <div class="ticker"><div class="ticker-in">
+    <div class="ticker-tag"><span class="pulse"></span>LIVE WINS</div>
+    <div class="ticker-mask"><div class="ticker-track" id="tkTrack"></div></div>
+  </div></div>
+
+  <!-- floating nav -->
+  <div class="navbar"><div class="wrap"><nav class="navpill">
+    <img src="plg-logo-full.png" class="nav-logo" alt="PlayLottoGlobal" />
+    <div class="nav-links">
+      <a href="Lotto Global.html">Lotteries</a>
+      <a href="09 Results.html">Results</a>
+      <a href="Lotto Global.html">Nigeria</a>
+      <a href="PLG Gateway.html">How it works</a>
+      <a href="15 Live News.html">Blog</a>
     </div>
-  </div></header>
+    <span class="winbig">WinBig</span>
+    <div class="nav-r">
+      <span class="nav-global">Global ▾</span>
+      <span class="wallet-chip">▦ $0.00</span>
+      <span class="nav-tickets">Tickets</span>
+      <a class="btn-dash" href="PLG Affiliate Portal.html">BackOffice</a>
+    </div>
+  </nav></div></div>
 
   <div class="wrap">
-    <section class="hero">
-      <div class="hero-card rise">
-        <div class="hero-eyebrow">Your command center</div>
-        <h1 class="hero-h">Welcome back, Joshua — <span>everything you need to win.</span></h1>
-        <p class="hero-sub">Play the world's biggest lotteries, grow your affiliate network, and run your marketing — all from one place.</p>
-        <div class="hero-cta">
-          <a class="btn btn-gold" href="Lotto Global.html">🎟 Play tonight's draw</a>
-          <a class="btn btn-glass" href="Viral Launch.html">Invite &amp; earn →</a>
+
+    <!-- affiliate dashboard -->
+    <section class="aff">
+      <div class="aff-head">
+        <div class="rise">
+          <h1 class="aff-h">Affiliate <span>dashboard</span></h1>
+          <p class="aff-sub">Share your link or QR. Earn 20% every time someone plays — from anywhere in the world.</p>
         </div>
+        <button class="signout">Sign out</button>
       </div>
-      <div class="stats">
-        <div class="stat rise" style="animation-delay:.06s"><span class="stat-ic w">$</span><div><div class="stat-l">Wallet balance</div><div class="stat-v tnum" id="sWallet">$248.50</div><div class="stat-d">Playable + winnings</div></div></div>
-        <div class="stat rise" style="animation-delay:.12s"><span class="stat-ic c">%</span><div><div class="stat-l">Commission earned</div><div class="stat-v tnum" id="sComm">$412.60</div><div class="stat-d" id="sCommD">+$0 today</div></div></div>
-        <div class="stat rise" style="animation-delay:.18s"><span class="stat-ic n">◎</span><div><div class="stat-l">Network size</div><div class="stat-v tnum" id="sNet">139</div><div class="stat-d">across 3 levels</div></div></div>
+
+      <div class="aff-grid">
+        <div class="panel rise" style="animation-delay:.06s">
+          <div class="flabel">Destination page</div>
+          <div class="select">
+            <select id="dest">
+              <option>Homepage (worldwide)</option>
+              <option>Tonight's mega draw</option>
+              <option>Results hub</option>
+              <option>Nigeria homepage</option>
+              <option>How it works</option>
+            </select>
+          </div>
+
+          <div class="flabel">Your referral link</div>
+          <div class="reflink">
+            <div class="reflink-in"><span id="refUrl">https://plg.proposals.digital/?ref=YUCQOEWR</span></div>
+            <button class="btn-copy" id="copyBtn">Copy</button>
+          </div>
+          <p class="helper">Anyone who scans your QR or opens this link is tracked to your account — regardless of which page or country they land on.</p>
+
+          <div class="statrow">
+            <div class="statbox"><div class="v code">YUCQOEWR</div><div class="l">Code</div></div>
+            <div class="statbox"><div class="v tnum">0</div><div class="l">Clicks</div></div>
+            <div class="statbox"><div class="v tnum">0</div><div class="l">Sign-ups</div></div>
+            <div class="statbox"><div class="v tnum">0</div><div class="l">Sales</div></div>
+          </div>
+
+          <div class="balance">
+            <div>
+              <div class="bl">Balance</div>
+              <div class="bv tnum">$0.00</div>
+            </div>
+            <button class="btn-payout">Request payout</button>
+          </div>
+        </div>
+
+        <div class="panel qr-card rise" style="animation-delay:.12s">
+          <div class="qr-title">Share QR</div>
+          <div class="qr-box"><canvas id="qr" width="220" height="220"></canvas></div>
+          <button class="btn-png" id="pngBtn">Download PNG</button>
+        </div>
       </div>
     </section>
 
-    <section class="sec" id="secs"></section>
+    <!-- tile launchpad -->
+    <section class="sec" id="secs" style="padding-top:34px"></section>
+
     <p class="foot">PlayLottoGlobal Member Hub · 18+ · Play responsibly · <a href="PLG Gateway.html">Back to gateway</a></p>
   </div>
 
 <script>
+  /* ---- live wins ticker data ---- */
+  var wins = [
+    ["$28,500","James K.","Texas, US","Powerball"],
+    ["$12,000","Priya R.","Mumbai, IN","Mega Millions"],
+    ["€9,800","Sofia M.","Madrid, ES","EuroJackpot"],
+    ["₦1,650,000","Tunde A.","Abuja, NG","Lotto Nigeria"],
+    ["£7,400","Megan T.","Leeds, UK","EuroMillions"],
+    ["$3,200","Diego F.","Lima, PE","Powerball"],
+    ["R$ 18,000","Ana C.","São Paulo, BR","Mega-Sena"],
+    ["$54,000","Kwame B.","Accra, GH","Mega Millions"]
+  ];
+  (function(){
+    var row='';
+    wins.forEach(function(w){ row+='<span class="tk"><b>'+w[0]+'</b> — '+w[1]+' · '+w[2]+' · '+w[3]+'</span>'; });
+    document.getElementById('tkTrack').innerHTML=row+row; // duplicated for seamless loop
+  })();
+
+  /* ---- referral copy ---- */
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var t=document.getElementById('refUrl').textContent, b=this;
+    try{ navigator.clipboard.writeText(t); }catch(e){}
+    b.textContent='Copied'; b.classList.add('ok');
+    setTimeout(function(){ b.textContent='Copy'; b.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---- faux QR (deterministic, dark-green, for the mock) ---- */
+  (function(){
+    var c=document.getElementById('qr'), ctx=c.getContext('2d'), N=25, q=2, total=N+q*2, px=220/total;
+    var fg='#0f4a2f';
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,220,220);
+    // seeded RNG from the code so it's stable
+    var seed=0, code='YUCQOEWR'; for(var i=0;i<code.length;i++) seed=(seed*31+code.charCodeAt(i))>>>0;
+    function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    function cell(x,y){ ctx.fillStyle=fg; ctx.fillRect((x+q)*px,(y+q)*px,px+.6,px+.6); }
+    function finder(ox,oy){
+      for(var y=0;y<7;y++)for(var x=0;x<7;x++){
+        var edge=(x===0||x===6||y===0||y===6), core=(x>=2&&x<=4&&y>=2&&y<=4);
+        if(edge||core) cell(ox+x,oy+y);
+      }
+    }
+    for(var y=0;y<N;y++)for(var x=0;x<N;x++){
+      var inF=( (x<8&&y<8) || (x>N-9&&y<8) || (x<8&&y>N-9) );
+      if(inF) continue;
+      if(rnd()>0.52) cell(x,y);
+    }
+    finder(0,0); finder(N-7,0); finder(0,N-7);
+    cell(N-9+4,N-9+4); // small alignment hint
+  })();
+  document.getElementById('pngBtn').addEventListener('click', function(){
+    try{ var a=document.createElement('a'); a.download='plg-referral-YUCQOEWR.png'; a.href=document.getElementById('qr').toDataURL('image/png'); a.click(); }catch(e){}
+  });
+
+  /* ---- tile launchpad ---- */
   var ico = {
     play:'<path d="M7 4v16l13-8z"/>',
     ticket:'<path d="M3 9a2 2 0 0 0 2-2 2 2 0 0 1 4 0h6a2 2 0 0 1 4 0 2 2 0 0 0 2 2v6a2 2 0 0 0-2 2 2 2 0 0 1-4 0H9a2 2 0 0 1-4 0 2 2 0 0 0-2-2z"/>',
@@ -166,7 +308,7 @@
       { ic:"wallet", c:"var(--purple)", t:"E-Wallet &amp; Payouts", d:"Balances, withdraw to bank, PayPal or USDC.", href:"12 Wallet.html" },
       { ic:"card", c:"var(--royal)", t:"Billing &amp; Payments", d:"Add cards, connect MetaMask / Coinbase, invoices.", href:"14 Billing.html" },
       { ic:"profile", c:"var(--teal)", t:"Profile", d:"Personal, contact &amp; bank details.", href:"11 Profile.html" },
-      { ic:"network", c:"var(--gold-deep)", t:"Backoffice", d:"Full back-office: dashboard, payout, support &amp; mail.", href:"PLG Affiliate Portal.html" }
+      { ic:"network", c:"var(--gold-deep)", t:"BackOffice", d:"Full back-office: dashboard, payout, support &amp; mail.", href:"PLG Affiliate Portal.html" }
     ]}
   ];
   function svg(p){ return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'; }
@@ -184,18 +326,6 @@
     html += '</div>';
   });
   host.innerHTML = html;
-
-  // live-ish wallet + commission tick
-  var w=248.50, c=412.60, today=0, net=139;
-  setInterval(function(){
-    if(Math.random()<0.6){ var add=+(Math.random()*4).toFixed(2); c+=add; today+=add; w+=add; }
-    if(Math.random()<0.12) net+=1;
-    document.getElementById('sWallet').textContent='$'+w.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    document.getElementById('walletChip').textContent='$'+w.toFixed(2);
-    document.getElementById('sComm').textContent='$'+c.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    document.getElementById('sCommD').textContent='+$'+today.toFixed(2)+' today';
-    document.getElementById('sNet').textContent=net;
-  }, 2600);
 </script>
 </body>
 </html>
