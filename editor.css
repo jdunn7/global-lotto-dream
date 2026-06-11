@@ -1,0 +1,294 @@
+/* SOLARA in-page visual editor v2 — portable styles (theme vars inlined; self-contained). */
+
+/* ════════════════════════════════════════════════════════════════════
+   TOOLBAR SHELL — refined floating, grouped, draggable, collapsible.
+   ════════════════════════════════════════════════════════════════════ */
+#solara-editbar {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 99999;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 5px; justify-content: center;
+  max-width: 96vw; padding: 7px 9px;
+  background: linear-gradient(180deg, rgba(28,30,38,.97), rgba(18,19,25,.97));
+  color: #fff; border: 1px solid rgba(255,255,255,.10); border-radius: 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  font: 13px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transition: box-shadow .2s;
+}
+#solara-editbar #solara-drag { cursor: grab; color: #6b7080; font-size: 15px; padding: 0 3px; user-select: none; }
+#solara-editbar #solara-drag:active { cursor: grabbing; }
+#solara-editbar b { background: linear-gradient(95deg,#ff8a4c,#ff5a1f); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800; letter-spacing: .04em; padding: 0 2px; }
+#solara-editbar .sep { width: 1px; align-self: stretch; margin: 2px 3px; background: rgba(255,255,255,.10); }
+
+#solara-editbar button {
+  background: rgba(255,255,255,.06); color: #eef0f5; border: 1px solid rgba(255,255,255,.10);
+  border-radius: 9px; padding: 6px 9px; min-height: 30px; cursor: pointer; font-size: 12.5px; line-height: 1;
+  display: inline-flex; align-items: center; gap: 5px; transition: background .14s, border-color .14s, transform .08s;
+}
+#solara-editbar button:hover { background: rgba(255,90,31,.16); border-color: #ff5a1f; }
+#solara-editbar button:active { transform: translateY(1px); }
+#solara-editbar button.grp { background: rgba(255,255,255,.04); color: #cdd2dd; }
+#solara-editbar button.on,
+#solara-editbar button.pop-on { background: #ff5a1f; border-color: #ff7a3c; color: #fff; box-shadow: 0 4px 14px -4px rgba(255,90,31,.7); }
+#solara-editbar .solara-c { display: inline-flex; align-items: center; }
+#solara-editbar input[type=color] { width: 28px; height: 28px; padding: 0; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; background: none; cursor: pointer; }
+#solara-editbar .solara-del:hover { background: #b3251a; border-color: #ff5a4a; }
+#solara-editbar .solara-book-btn { background: linear-gradient(95deg,#7c3aed,#5b21b6); border-color: #7c3aed; font-weight: 700; }
+#solara-editbar .solara-book-btn:hover { background: #6d28d9; border-color: #a78bfa; }
+#solara-editbar .solara-gen-btn { background: linear-gradient(95deg,#0ea5a4,#0e7490); border-color: #0ea5a4; font-weight: 700; }
+#solara-editbar .solara-gen-btn:hover { background: #0d9488; border-color: #5eead4; }
+#solara-editbar .solara-note-btn { background: #ff5a1f; border-color: #ff7a3c; font-weight: 700; }
+#solara-editbar .solara-save { font-weight: 700; }
+#solara-edit-msg { color: #8af0b0; font-size: 11px; min-width: 50px; max-width: 220px; }
+
+/* save status dot */
+#solara-status { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: #4a4f5a; }
+#solara-status.st-saved { background: #36d27a; box-shadow: 0 0 8px rgba(54,210,122,.7); }
+#solara-status.st-dirty { background: #ffb020; box-shadow: 0 0 8px rgba(255,176,32,.7); }
+#solara-status.st-saving { background: #ffb020; animation: solara-blink .8s linear infinite; }
+#solara-status.st-error { background: #ff4d4d; box-shadow: 0 0 8px rgba(255,77,77,.7); }
+@keyframes solara-blink { 50% { opacity: .35; } }
+
+/* breadcrumb */
+#solara-editbar .crumb { display: inline-flex; align-items: center; gap: 3px; max-width: 260px; overflow-x: auto; padding: 0 2px; }
+#solara-editbar .crumb::-webkit-scrollbar { height: 0; }
+#solara-editbar .crumb .cr { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); color: #aeb4c0; border-radius: 6px; padding: 3px 7px; font-size: 11px; min-height: 0; }
+#solara-editbar .crumb .cr.cur { color: #ffb37a; border-color: rgba(255,122,60,.5); }
+#solara-editbar .crumb .cr-sep { color: #555b66; font-size: 11px; }
+#solara-editbar .crumb .cr-empty { color: #6b7080; font-size: 11px; font-style: italic; padding: 0 4px; }
+
+/* collapsed → chip */
+#solara-editbar.collapsed { gap: 6px; }
+#solara-editbar.collapsed > :not(#solara-drag):not(b):not(#solara-collapse):not(#solara-edit-msg) { display: none; }
+
+/* ── POPOVERS ── */
+#solara-pop { position: fixed; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 100000; }
+.solara-popm {
+  width: min(360px, 92vw);
+  background: linear-gradient(180deg, rgba(26,28,36,.99), rgba(18,19,25,.99));
+  border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 12px 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6); color: #eef0f5; font: 13px -apple-system, sans-serif;
+  animation: solara-pop-in .16s cubic-bezier(.2,.7,.2,1);
+}
+@keyframes solara-pop-in { from { opacity: 0; transform: translateY(8px); } }
+.solara-popm .pop-h { font-weight: 800; color: #ff8a4c; margin-bottom: 9px; font-size: 13px; }
+.solara-popm .pop-note { color: #9aa0ad; font-size: 11.5px; margin: -4px 0 10px; line-height: 1.4; }
+.solara-popm .pop-empty { color: #9aa0ad; font-size: 12.5px; padding: 6px 2px; }
+.solara-popm .pr { display: flex; align-items: center; gap: 9px; margin: 8px 0; }
+.solara-popm .prl { width: 64px; flex: 0 0 64px; color: #aeb4c0; font-size: 12px; }
+.solara-popm .prc { flex: 1; display: flex; align-items: center; gap: 7px; }
+.solara-popm .prc input[type=range] { flex: 1; accent-color: #ff5a1f; }
+.solara-popm .prc b { min-width: 34px; text-align: right; color: #ffb37a; font-variant-numeric: tabular-nums; font-weight: 600; }
+.solara-popm .prc input[type=text] { flex: 1; min-width: 0; background: #0e0f14; border: 1px solid rgba(255,255,255,.14); color: #fff; border-radius: 8px; padding: 7px 9px; font-size: 12px; }
+.solara-popm .prc select { flex: 1; background: #0e0f14; border: 1px solid rgba(255,255,255,.14); color: #fff; border-radius: 8px; padding: 7px; font-size: 12px; }
+.solara-popm input[type=color] { width: 30px; height: 26px; padding: 0; border: 1px solid rgba(255,255,255,.16); border-radius: 7px; background: none; cursor: pointer; }
+.solara-popm textarea { width: 100%; min-height: 74px; resize: vertical; background: #0e0f14; border: 1px solid rgba(255,255,255,.14); color: #fff; border-radius: 9px; padding: 9px; font: 12.5px -apple-system, sans-serif; }
+.solara-popm .seg { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #dfe3ea; border-radius: 8px; padding: 6px 11px; cursor: pointer; font-size: 13px; }
+.solara-popm .seg.on { background: #ff5a1f; border-color: #ff7a3c; color: #fff; }
+.solara-popm .mini { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #fff; border-radius: 7px; width: 28px; height: 28px; cursor: pointer; font-size: 15px; }
+.solara-popm .pop-foot { display: flex; gap: 8px; align-items: center; margin-top: 11px; flex-wrap: wrap; }
+.solara-popm .mini2 { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: #eef0f5; border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: 12px; }
+.solara-popm .mini2:hover { border-color: #ff5a1f; }
+.solara-popm .mini2[disabled] { opacity: .4; cursor: not-allowed; }
+.solara-popm .mini2.hot { background: #ff5a1f; border-color: #ff7a3c; color: #fff; font-weight: 700; }
+.solara-popm .gn-stat { font-size: 11.5px; color: #9aa0ad; }
+.solara-popm .gn-stat.busy { color: #ffb020; }
+.solara-popm .gn-stat.ok { color: #36d27a; }
+.solara-popm .gn-stat.err { color: #ff6b6b; }
+
+/* hover/selection outlines on the page */
+.solara-hl { outline: 1px dashed rgba(255,90,31,.55) !important; outline-offset: 2px; cursor: pointer; }
+.solara-sel { outline: 2px solid #ff5a1f !important; outline-offset: 2px; }
+
+/* SE resize handle */
+#solara-resize { position: fixed; width: 14px; height: 14px; background: #ff5a1f; border: 2px solid #fff; border-radius: 3px; z-index: 100001; cursor: nwse-resize; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
+
+/* "Tell Claude" note panel */
+#solara-notepanel { position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%); z-index: 100000;
+  width: min(560px, 92vw); background: #15171c; border: 1px solid #2a2d33; border-radius: 14px; padding: 14px;
+  box-shadow: 0 16px 50px rgba(0,0,0,.55); font: 13px -apple-system, sans-serif; color: #fff; }
+#solara-notepanel .np-head { font-weight: 700; margin-bottom: 8px; color: #ff8a4c; }
+#solara-notepanel #np-target { color: #8aa; font-weight: 400; }
+#solara-notepanel textarea { width: 100%; min-height: 90px; resize: vertical; background: #0e1014; color: #fff; border: 1px solid #333; border-radius: 10px; padding: 10px; font: 13px -apple-system, sans-serif; }
+#solara-notepanel .np-row { display: flex; gap: 8px; margin-top: 10px; }
+#solara-notepanel #np-send { background: #ff5a1f; color: #fff; border: 0; border-radius: 9px; padding: 8px 16px; font-weight: 700; cursor: pointer; }
+#solara-notepanel #np-close { background: #23262c; color: #fff; border: 1px solid #3a3e46; border-radius: 9px; padding: 8px 14px; cursor: pointer; }
+
+/* "The Book" panel */
+#solara-book { position: fixed; right: 16px; bottom: 86px; z-index: 100001; width: min(440px, 94vw); max-height: 72vh;
+  background: #14131c; color: #fff; border: 1px solid #2c2940; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  display: flex; flex-direction: column; font: 13px -apple-system, sans-serif; }
+#solara-book .bk-head { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #2c2940; }
+#solara-book .bk-head b { color: #c4a6ff; flex: 1; }
+#solara-book #bk-search { background: #0e0d16; border: 1px solid #333; color: #fff; border-radius: 9px; padding: 6px 10px; font-size: 12px; width: 130px; }
+#solara-book #bk-close { background: #23222e; border: 1px solid #3a3a48; color: #fff; border-radius: 8px; width: 28px; height: 28px; cursor: pointer; }
+#solara-book .bk-hint { padding: 8px 14px; color: #9a93b5; font-size: 11.5px; border-bottom: 1px solid #2c2940; }
+#solara-book .bk-sel { padding: 7px 14px; font-size: 11.5px; font-weight: 600; color: #ffb37a; background: #1a1726; border-bottom: 1px solid #2c2940; }
+#solara-book #bk-body { overflow-y: auto; padding: 6px 12px 14px; }
+#solara-book .bk-cat h4 { margin: 14px 0 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #8a84a8; }
+#solara-book .bk-items { display: flex; flex-wrap: wrap; gap: 6px; }
+#solara-book .bk-item { background: #221f30; border: 1px solid #3a3550; color: #e7e3f5; border-radius: 9px; padding: 6px 10px; font-size: 12px; cursor: pointer; }
+#solara-book .bk-item:hover { border-color: #7c3aed; background: #2c2640; }
+#solara-book .bk-item.idea { background: #1d2233; border-color: #33415f; color: #bcd3ff; }
+#solara-book .bk-item.on { background: #ff5a1f; border-color: #ff5a1f; color: #fff; box-shadow: 0 0 0 2px rgba(255,90,31,.35); }
+#solara-book .bk-item.on::before { content: "✓ "; }
+
+/* ── From "Tell Claude" notes ── */
+/* note: features on one line */
+.feature-grid { grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.feature-grid .feature { padding: 20px 16px; }
+.feature-grid .feature h3 { font-size: 15px; }
+.feature-grid .feature p { font-size: 12.5px; }
+@media (max-width: 1000px){ .feature-grid { grid-template-columns: repeat(3,1fr); } }
+@media (max-width: 600px){ .feature-grid { grid-template-columns: repeat(2,1fr); } }
+
+/* note: travelling beam / starburst around the primary CTA rim */
+@property --solara-ba { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+.btn-primary { position: relative; isolation: isolate; }
+.btn-primary::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; z-index: -1;
+  background: conic-gradient(from var(--solara-ba), transparent 58%, rgba(255,255,255,.95) 76%, #ffd7a8 84%, #ff7a3c 88%, transparent 94%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: solara-beam 2.6s linear infinite;
+}
+@keyframes solara-beam { to { --solara-ba: 360deg; } }
+@media (prefers-reduced-motion: reduce){ .btn-primary::after { animation: none; } }
+
+/* fix (from notes): How-it-works = 3 clean centered steps, warm numbered circles */
+#how .feature-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 18px; }
+#how .feature { padding: 26px 22px; text-align: center; }
+#how .feature::before { display: none; }
+#how .feature .icon {
+  width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 16px;
+  background: linear-gradient(135deg, #6e8cff, #b46dff); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 19px;
+  box-shadow: 0 8px 20px -6px rgba(255,90,31,.55);
+}
+#how .feature h3 { font-size: 17px; -webkit-text-fill-color: #f4f6ff; color: #f4f6ff; background: none; }
+#how .feature p { font-size: 14px; }
+@media (max-width: 700px){ #how .feature-grid { grid-template-columns: 1fr !important; } }
+
+/* ════════════════════════════════════════════════════════════════════
+   "THE BOOK" — applyable front-end effect library (fx-* classes).
+   Persisted as class:* edits; must stay verbatim.
+   ════════════════════════════════════════════════════════════════════ */
+/* 3D & hover */
+.fx-tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.fx-tilt:hover{transform:perspective(700px) rotateX(7deg) rotateY(-7deg) scale(1.03)}
+.fx-lift{transition:transform .25s,box-shadow .25s}
+.fx-lift:hover{transform:translateY(-5px);box-shadow:0 22px 50px -16px rgba(0,0,0,.4)}
+.fx-press{transition:transform .08s}.fx-press:active{transform:translateY(2px) scale(.98)}
+.fx-scale:hover{transform:scale(1.06);transition:transform .22s}
+.fx-rotate:hover{transform:rotate(3deg);transition:transform .25s}
+.fx-magnetic{transition:transform .18s cubic-bezier(.2,.7,.2,1)}
+.fx-grow-rotate{transition:transform .3s}.fx-grow-rotate:hover{transform:scale(1.06) rotate(-2deg)}
+.fx-skew-hover{transition:transform .25s}.fx-skew-hover:hover{transform:skewX(-6deg)}
+.fx-fill-up{position:relative;overflow:hidden;z-index:0}.fx-fill-up::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(#6e8cff,#b46dff);transform:translateY(100%);transition:transform .3s}.fx-fill-up:hover::before{transform:translateY(0)}
+.fx-grayscale{filter:grayscale(1);transition:filter .3s}.fx-grayscale:hover{filter:grayscale(0)}
+.fx-invert:hover{filter:invert(1)}
+.fx-blur-hover{transition:filter .3s}.fx-blur-hover:hover{filter:blur(3px)}
+.fx-saturate:hover{filter:saturate(1.6)}
+.fx-border-draw{position:relative}.fx-border-draw::after{content:"";position:absolute;inset:0;border:2px solid #6e8cff;transform:scale(.85);opacity:0;transition:transform .3s,opacity .3s;border-radius:inherit}.fx-border-draw:hover::after{transform:scale(1);opacity:1}
+.fx-card-3d{transition:transform .3s;transform-style:preserve-3d}.fx-card-3d:hover{transform:perspective(900px) rotateX(4deg) rotateY(-4deg) translateY(-4px)}
+/* Motion loops */
+.fx-float{animation:fx-float 4s ease-in-out infinite}@keyframes fx-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.fx-pulse{animation:fx-pulse 2.4s ease-in-out infinite}@keyframes fx-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.fx-breathe{animation:fx-breathe 3.6s ease-in-out infinite}@keyframes fx-breathe{0%,100%{opacity:1}50%{opacity:.55}}
+.fx-spin{animation:fx-spin 14s linear infinite}@keyframes fx-spin{to{transform:rotate(360deg)}}
+.fx-wobble{animation:fx-wobble 3s ease-in-out infinite}@keyframes fx-wobble{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.fx-bounce{animation:fx-bounce 1.8s ease-in-out infinite}@keyframes fx-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.fx-swing{transform-origin:top center;animation:fx-swing 3s ease-in-out infinite}@keyframes fx-swing{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.fx-jelly{animation:fx-jelly 2.2s infinite}@keyframes fx-jelly{0%,100%{transform:scale(1,1)}30%{transform:scale(1.1,.9)}50%{transform:scale(.92,1.08)}70%{transform:scale(1.03,.97)}}
+.fx-heartbeat{animation:fx-heartbeat 1.5s ease-in-out infinite}@keyframes fx-heartbeat{0%,100%,40%{transform:scale(1)}20%,30%{transform:scale(1.12)}}
+.fx-flicker{animation:fx-flicker 3s linear infinite}@keyframes fx-flicker{0%,19%,21%,100%{opacity:1}20%{opacity:.45}}
+.fx-shake:hover{animation:fx-shake .4s}@keyframes fx-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fx-orbit{animation:fx-spin 8s linear infinite}
+/* Entrances (one-shot) */
+.fx-slide-up{animation:fx-slideup .7s cubic-bezier(.2,.7,.2,1) both}@keyframes fx-slideup{from{transform:translateY(34px);opacity:0}to{transform:none;opacity:1}}
+.fx-blur-in{animation:fx-blurin .8s ease both}@keyframes fx-blurin{from{filter:blur(14px);opacity:0}to{filter:blur(0);opacity:1}}
+.fx-zoom-in{animation:fx-zoomin .6s cubic-bezier(.2,.7,.2,1) both}@keyframes fx-zoomin{from{transform:scale(.8);opacity:0}to{transform:none;opacity:1}}
+.fx-fade-in{animation:fx-fade 1s ease both}@keyframes fx-fade{from{opacity:0}to{opacity:1}}
+.fx-slide-left{animation:fx-sl .7s cubic-bezier(.2,.7,.2,1) both}@keyframes fx-sl{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
+.fx-slide-right{animation:fx-sr .7s cubic-bezier(.2,.7,.2,1) both}@keyframes fx-sr{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+.fx-flip-in{animation:fx-flipin .8s ease both;backface-visibility:hidden}@keyframes fx-flipin{from{transform:perspective(600px) rotateY(80deg);opacity:0}to{transform:none;opacity:1}}
+.fx-drop-in{animation:fx-drop .8s cubic-bezier(.3,1.5,.5,1) both}@keyframes fx-drop{from{transform:translateY(-60px);opacity:0}to{transform:none;opacity:1}}
+.fx-clip-reveal{animation:fx-clip 1s cubic-bezier(.7,0,.3,1) both}@keyframes fx-clip{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+/* Light / glow / surfaces */
+.fx-glow{box-shadow:0 0 28px rgba(255,90,31,.55)}
+.fx-glow-pulse{animation:fx-glowpulse 2.4s ease-in-out infinite}@keyframes fx-glowpulse{0%,100%{box-shadow:0 0 12px rgba(255,90,31,.4)}50%{box-shadow:0 0 38px rgba(255,90,31,.85)}}
+.fx-neon{color:#ff7a3c;text-shadow:0 0 6px #ff5a1f,0 0 16px #ff5a1f,0 0 34px #e7261a}
+.fx-glow-text{text-shadow:0 0 18px rgba(255,90,31,.8)}
+.fx-glass{background:rgba(255,255,255,.14)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.28)}
+.fx-frost{backdrop-filter:blur(8px) saturate(1.4);background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3)}
+.fx-neumorph{background:#f3e8d6;border-radius:18px;box-shadow:8px 8px 18px #d9cdb8,-8px -8px 18px #fffdf6}
+.fx-inner-glow{box-shadow:inset 0 0 30px rgba(255,90,31,.4)}
+.fx-gradient-border{position:relative;border:0;background:#05060d;background-clip:padding-box}.fx-gradient-border::before{content:"";position:absolute;inset:-2px;z-index:-1;border-radius:inherit;background:linear-gradient(120deg,#6e8cff,#b46dff,#ffb347,#6e8cff);background-size:300% 300%;animation:fx-gradmove 4s linear infinite}@keyframes fx-gradmove{to{background-position:300% 0}}
+.fx-shimmer{position:relative;overflow:hidden}.fx-shimmer::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);transform:translateX(-120%);animation:fx-shimmer 2.6s infinite}@keyframes fx-shimmer{to{transform:translateX(120%)}}
+.fx-shine{position:relative;overflow:hidden}.fx-shine::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .6s}.fx-shine:hover::after{left:130%}
+.fx-btn-glow{box-shadow:0 6px 24px -6px #6e8cff;transition:box-shadow .25s,transform .2s}.fx-btn-glow:hover{box-shadow:0 10px 36px -6px #b46dff;transform:translateY(-2px)}
+/* Typography */
+.fx-gradient-text{background:linear-gradient(95deg,#ff5a1f,#e7261a,#ffb347,#ff5a1f);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% auto;animation:fx-gradtext 5s linear infinite}@keyframes fx-gradtext{to{background-position:220% center}}
+.fx-holographic{background:linear-gradient(120deg,#ff5a1f,#ffb347,#e7261a,#ff8a4c,#ff5a1f);background-size:300% 300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fx-gradmove 6s linear infinite}
+.fx-fire-text{background:linear-gradient(0deg,#e7261a,#ff5a1f 50%,#ffb347);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fx-rainbow{background:linear-gradient(90deg,#ff5a1f,#ffb347,#1f9d57,#5566ef,#9b46ff,#ff5a1f);background-size:300% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fx-gradmove 5s linear infinite}
+.fx-stroke{-webkit-text-stroke:1.5px currentColor;color:transparent}
+.fx-3dtext{text-shadow:1px 1px 0 #c2410c,2px 2px 0 #a8370b,3px 3px 0 #8a2d08,4px 4px 10px rgba(0,0,0,.35)}
+.fx-shadow-long{text-shadow:4px 4px 0 rgba(120,70,30,.18),8px 8px 0 rgba(120,70,30,.1)}
+.fx-retro{color:#ffb347;text-shadow:2px 2px 0 #e7261a,4px 4px 0 #8a2d08}
+.fx-tracking{letter-spacing:.22em;text-transform:uppercase}
+.fx-uppercase{text-transform:uppercase;letter-spacing:.05em}
+.fx-underline-grow{position:relative;display:inline-block}.fx-underline-grow::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:currentColor;transition:width .3s}.fx-underline-grow:hover::after{width:100%}
+.fx-balance{text-wrap:balance}
+.fx-glitch{animation:fx-glitch 1.6s steps(2) infinite}
+@keyframes fx-glitch{0%,100%{text-shadow:0 0 transparent}20%{text-shadow:-2px 0 #e7261a,2px 0 #5566ef}21%{text-shadow:0 0 transparent}50%{text-shadow:2px 0 #e7261a,-2px 0 #1f9d57}51%{text-shadow:0 0 transparent}70%{text-shadow:-1px 0 #5566ef,1px 0 #e7261a}}
+.fx-dropcap::first-letter{float:left;font-size:3.4em;line-height:.78;font-weight:800;margin:4px 10px 0 0;color:#6e8cff}
+/* Backgrounds / illusions */
+.fx-aurora{position:relative;overflow:hidden;isolation:isolate}.fx-aurora::before{content:"";position:absolute;inset:-45%;z-index:-1;background:conic-gradient(from 0deg,#ff5a1f,#e7261a,#ffb347,#ff5a1f);filter:blur(70px);opacity:.35;animation:fx-spin 20s linear infinite}
+.fx-mesh{background:radial-gradient(at 20% 20%,rgba(255,90,31,.18),transparent 50%),radial-gradient(at 80% 30%,rgba(231,38,26,.14),transparent 50%),radial-gradient(at 50% 90%,rgba(255,179,71,.16),transparent 50%)}
+.fx-animated-gradient{background:linear-gradient(120deg,#faf3e8,#ffe8d0,#ffd9b8,#faf3e8);background-size:300% 300%;animation:fx-gradmove 8s ease infinite}
+.fx-radial-pulse{position:relative;overflow:hidden}.fx-radial-pulse::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(255,90,31,.25),transparent 60%);animation:fx-breathe 4s ease-in-out infinite}
+.fx-grid{background-image:linear-gradient(rgba(120,85,55,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(120,85,55,.12) 1px,transparent 1px);background-size:32px 32px}
+.fx-dots{background-image:radial-gradient(rgba(120,85,55,.2) 1px,transparent 1px);background-size:20px 20px}
+.fx-stripes{background:repeating-linear-gradient(45deg,rgba(120,70,30,.05) 0 12px,transparent 12px 24px)}
+.fx-noise{position:relative}.fx-noise::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.fx-scanlines{position:relative}.fx-scanlines::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(rgba(0,0,0,.04) 0 1px,transparent 1px 3px)}
+.fx-vignette{position:relative}.fx-vignette::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(40,20,8,.35)}
+.fx-starfield{background:#1a0e08 radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 60%,#ffb347,transparent),radial-gradient(1px 1px at 40% 80%,#fff,transparent);background-size:cover}
+.fx-conic{background:conic-gradient(from 0deg,#faf3e8,#f3e8d6,#ece0c9,#faf3e8)}
+.fx-blob{border-radius:42% 58% 63% 37%/41% 44% 56% 59%;animation:fx-blob 9s ease-in-out infinite}
+@keyframes fx-blob{0%,100%{border-radius:42% 58% 63% 37%/41% 44% 56% 59%}50%{border-radius:62% 38% 41% 59%/57% 63% 37% 43%}}
+/* Buttons / cards / shapes / filters */
+.fx-pill{border-radius:999px}
+.fx-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;box-shadow:0 18px 40px -22px rgba(120,70,30,.3)}
+.fx-clip-slant{clip-path:polygon(0 0,100% 0,100% 88%,0 100%)}
+.fx-outline-offset{outline:2px solid #6e8cff;outline-offset:6px}
+.fx-duotone{filter:grayscale(1) sepia(.6) hue-rotate(-20deg) saturate(3)}
+.fx-marquee{white-space:nowrap;overflow:hidden;animation:fx-scrollx 16s linear infinite}
+@keyframes fx-scrollx{from{transform:translateX(30px)}to{transform:translateX(-100%)}}
+.fx-sticky{position:sticky;top:14px;z-index:40}
+.fx-skeleton{background:linear-gradient(100deg,rgba(120,85,55,.08) 30%,rgba(120,85,55,.2) 50%,rgba(120,85,55,.08) 70%);background-size:200% 100%;animation:fx-skel 1.4s infinite;color:transparent!important;border-radius:8px}
+@keyframes fx-skel{to{background-position:-200% 0}}
+
+/* ── editor click-preview: .fx-prev mirrors the :hover/:active state of
+   interaction effects for ~1.6s so you can see them without hovering. Only the
+   editor adds .fx-prev; it is never persisted, so real visitors keep the hover. ── */
+.fx-tilt.fx-prev{transform:perspective(700px) rotateX(7deg) rotateY(-7deg) scale(1.03)}
+.fx-lift.fx-prev{transform:translateY(-5px);box-shadow:0 22px 50px -16px rgba(0,0,0,.4)}
+.fx-press.fx-prev{transform:translateY(2px) scale(.98)}
+.fx-scale.fx-prev{transform:scale(1.06)}
+.fx-rotate.fx-prev{transform:rotate(3deg)}
+.fx-grow-rotate.fx-prev{transform:scale(1.06) rotate(-2deg)}
+.fx-skew-hover.fx-prev{transform:skewX(-6deg)}
+.fx-fill-up.fx-prev::before{transform:translateY(0)}
+.fx-grayscale.fx-prev{filter:grayscale(0)}
+.fx-invert.fx-prev{filter:invert(1)}
+.fx-blur-hover.fx-prev{filter:blur(3px)}
+.fx-saturate.fx-prev{filter:saturate(1.6)}
+.fx-border-draw.fx-prev::after{transform:scale(1);opacity:1}
+.fx-card-3d.fx-prev{transform:perspective(900px) rotateX(4deg) rotateY(-4deg) translateY(-4px)}
+.fx-shake.fx-prev{animation:fx-shake .4s}
+.fx-shine.fx-prev::after{left:130%}
+.fx-btn-glow.fx-prev{box-shadow:0 10px 36px -6px #b46dff;transform:translateY(-2px)}
+.fx-underline-grow.fx-prev::after{width:100%}
+
+@media (prefers-reduced-motion: reduce){ [class*="fx-"]{animation:none!important} }

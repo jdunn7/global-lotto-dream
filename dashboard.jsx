@@ -1,6 +1,8 @@
 // dashboard.jsx — Affiliate / MLM commission dashboard (standalone)
 // (Icon, Emblem, Ball + React hooks come from components.jsx loaded before this)
 const A = window.AFFIL;
+// Apply the saved theme before first paint (Appearance toggle in the account menu).
+try { if (localStorage.getItem("lg-theme") === "light") document.documentElement.classList.add("light"); } catch (e) {}
 const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
 const money2 = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -68,6 +70,29 @@ function Dash() {
   );
   const wdRef = useRef(null);
   const menuRef = useRef(null);
+  // Sidebar: drag-resizable (180–360px) and collapsible to an icon rail; both persisted.
+  const [sideW, setSideW] = useState(() => {
+    try { return Math.min(360, Math.max(180, parseInt(localStorage.getItem("lg-side-w"), 10) || 250)); } catch (e) { return 250; }
+  });
+  const [sideC, setSideC] = useState(() => {
+    try { return localStorage.getItem("lg-side-c") === "1"; } catch (e) { return false; }
+  });
+  function startResize(e) {
+    e.preventDefault();
+    const startX = e.clientX, startW = sideW;
+    const clamp = (w) => Math.min(360, Math.max(180, w));
+    const move = (ev) => setSideW(clamp(startW + ev.clientX - startX));
+    const up = (ev) => {
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerup", up);
+      try { localStorage.setItem("lg-side-w", String(clamp(startW + ev.clientX - startX))); } catch (er) {}
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", up);
+  }
+  function toggleSide() {
+    setSideC((c) => { try { localStorage.setItem("lg-side-c", c ? "0" : "1"); } catch (e) {} return !c; });
+  }
 
   useEffect(() => {
     if (!window.PLG_API) return;
@@ -122,16 +147,20 @@ function Dash() {
   ];
 
   return (
-    <div className="dash">
-      <aside className="dash-side">
+    <div className="dash" style={{ gridTemplateColumns: (sideC ? 68 : sideW) + "px 1fr" }}>
+      <aside className={`dash-side ${sideC ? "collapsed" : ""}`}>
+        <button className="side-toggle" onClick={toggleSide} aria-label="Toggle sidebar" title={sideC ? "Expand sidebar" : "Collapse sidebar"}>
+          <Icon name="chevronL" size={13} />
+        </button>
+        {!sideC && <div className="side-resize" onPointerDown={startResize} title="Drag to resize" />}
         <a className="dash-brand" href="Lotto Global.html">
           <img src="plg-logo.png" alt="PLG Lotto" className="brand-logo" />
         </a>
         <span className="dash-side-tag">Affiliate Portal</span>
         <nav className="dash-nav">
           {NAV.map((n) => (
-            <button key={n.id} className={`dash-nav-i ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
-              <Icon name={n.icon} size={18} /> {n.label}
+            <button key={n.id} className={`dash-nav-i ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)} title={n.label}>
+              <Icon name={n.icon} size={18} /> <span className="dn-l">{n.label}</span>
             </button>
           ))}
         </nav>
@@ -141,7 +170,7 @@ function Dash() {
           <div className="dt-tier-bar"><span style={{ width: "63%" }} /></div>
           <span className="dt-tier-sub">{money(A.tierVolume)} / {money(20000)} to Platinum</span>
         </div>
-        <a className="dash-back" href="Lotto Global.html"><Icon name="chevronL" size={15} /> Back to app</a>
+        <a className="dash-back" href="Lotto Global.html" title="Back to app"><Icon name="chevronL" size={15} /> <span className="dn-l">Back to app</span></a>
       </aside>
 
       <main className="dash-main">
