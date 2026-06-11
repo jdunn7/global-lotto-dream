@@ -557,7 +557,7 @@ function Marketing() {
               </div>
             ))}
           </div>
-          <div className="mk-qr-row"><QRBox data={A.affiliate.code} /><div className="mk-qr-txt"><strong>Your QR code</strong><span>Print it, post it, share it. Scans open your sign-up link.</span><button className="dc-link">Download PNG →</button></div></div>
+          <BrandedQRRow />
         </div>
         <div className="dash-card"><div className="dc-head"><h3>Leaderboard</h3><span className="dc-sub">This month</span></div>
           <div className="lead-list">
@@ -588,5 +588,71 @@ function Marketing() {
 }
 
 function QRBox({ data }) { return <QR data={data} size={104} />; }
+
+/* Branded affiliate QR — REAL and scannable (qr-lib.js), unlike the decorative
+   QR above. Random dark module color per generation + gold-ringed PLG logo
+   medallion; EC level H tolerates ~30% damage so the ~18%-width medallion is
+   safe. Encodes the affiliate's tracked referral link: the live one from
+   PLG_API when signed in on plg, else the showcase code. */
+const QR_COLORS = ["#1e1b4b", "#312e81", "#0f3d3e", "#3b0764", "#7c2d12", "#0c4a6e", "#111827", "#581c87"];
+function BrandedQRRow() {
+  const [src, setSrc] = useState("");
+  const [color, setColor] = useState(null);
+  const [link, setLink] = useState("https://plg.proposals.digital/?ref=" + A.affiliate.code);
+
+  useEffect(() => {
+    if (!window.PLG_API) return;
+    PLG_API.affiliate.getReferralLink()
+      .then((r) => { if (r && r.url) setLink(r.url.indexOf("http") === 0 ? r.url : "https://" + r.url); })
+      .catch(() => {});
+  }, []);
+
+  function gen(prev) {
+    if (!window.QRCode) { setTimeout(() => gen(prev), 200); return; }
+    const pool = QR_COLORS.filter((c) => c !== prev);
+    const col = pool[Math.floor(Math.random() * pool.length)];
+    const S = 640;
+    const canvas = document.createElement("canvas");
+    window.QRCode.toCanvas(canvas, link, { width: S, margin: 2, errorCorrectionLevel: "H", color: { dark: col, light: "#ffffff" } }, (err) => {
+      if (err) return;
+      const ctx = canvas.getContext("2d");
+      const done = () => { setSrc(canvas.toDataURL("image/png")); setColor(col); };
+      const img = new Image();
+      img.onload = () => {
+        const cx = S / 2, medal = S * 0.18;
+        ctx.beginPath(); ctx.arc(cx, cx, medal / 2 + 12, 0, Math.PI * 2); ctx.fillStyle = "#ffffff"; ctx.fill();
+        const ring = ctx.createLinearGradient(cx - medal, cx - medal, cx + medal, cx + medal);
+        ring.addColorStop(0, "#f0d57c"); ring.addColorStop(1, "#d4af37");
+        ctx.lineWidth = 7; ctx.strokeStyle = ring;
+        ctx.beginPath(); ctx.arc(cx, cx, medal / 2 + 8, 0, Math.PI * 2); ctx.stroke();
+        const ratio = img.width / img.height;
+        let w = medal, h = medal;
+        if (ratio > 1) h = medal / ratio; else w = medal * ratio;
+        ctx.drawImage(img, cx - w / 2, cx - h / 2, w, h);
+        done();
+      };
+      img.onerror = done; // logo missing → still ship a valid QR
+      img.src = "plg-logo.png";
+    });
+  }
+
+  useEffect(() => { gen(); }, [link]);
+
+  return (
+    <div className="mk-qr-row">
+      {src
+        ? <img src={src} width={104} height={104} alt="Referral QR" style={{ borderRadius: 10, background: "#fff", boxShadow: "0 0 0 2px hsl(var(--hsl-gold)/0.45)" }} />
+        : <div style={{ width: 104, height: 104 }} />}
+      <div className="mk-qr-txt">
+        <strong>Your QR code</strong>
+        <span>Print it, post it, share it. Scans open your tracked sign-up link.</span>
+        <div style={{ display: "flex", gap: 16 }}>
+          <button className="dc-link" onClick={() => gen(color)}>New colors →</button>
+          <a className="dc-link" href={src} download={"plg-ref-" + A.affiliate.code + ".png"}>Download PNG →</a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(<Dash />);
