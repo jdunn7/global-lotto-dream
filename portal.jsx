@@ -98,7 +98,7 @@ function Portal() {
           <header className="topbar">
             <button className="icon-btn menu-toggle" onClick={()=>setSideOpen(o=>!o)}><PIcon name="chart" size={18} /></button>
             <div className="crumb">
-              <span className="home"><PIcon name="home2" size={16} /></span>
+              <a className="home" href="Affiliate Dashboard.html" title="Back to Affiliate Dashboard"><PIcon name="home2" size={16} /></a>
               <span className="sep"><PIcon name="chev" size={14} /></span>
               {subLabel ? <><span>{cur.label}</span><span className="sep"><PIcon name="chev" size={14} /></span><span className="cur">{subLabel}</span></> : <span className="cur">{cur.label}</span>}
             </div>
