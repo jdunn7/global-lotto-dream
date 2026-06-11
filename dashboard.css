@@ -230,3 +230,14 @@
   .dash-top { padding: 14px 16px; }
   .dash-body { padding: 16px 16px 90px; }
 }
+
+/* ---------------- wired header controls (range / withdraw / account) ---------------- */
+.wd-wrap, .dash-user { position: relative; }
+.wd-menu { right: 0; }
+.wd-confirm { flex: 1; justify-content: center; }
+.wd-err { margin: 8px 6px 0; font-size: var(--text-xs); font-weight: 600; color: #ff8585; }
+.dash-btn-gold:disabled { opacity: 0.55; cursor: default; transform: none; }
+.dash-ava { border: none; cursor: pointer; }
+.dash-ava.open { box-shadow: 0 0 0 3px hsl(var(--hsl-primary)/0.4); }
+.dash-btn-ghost { display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: 999px; border: 1px solid hsl(0 0% 100% / 0.14); background: hsl(0 0% 100% / 0.05); color: var(--fg); font-family: var(--font-sans); font-weight: 700; font-size: var(--text-sm); cursor: pointer; text-decoration: none; white-space: nowrap; transition: background var(--dur-fast); }
+.dash-btn-ghost:hover { background: hsl(0 0% 100% / 0.1); }

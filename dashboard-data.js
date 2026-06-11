@@ -53,6 +53,14 @@
     });
   }
 
+  // 180 days of daily earnings — powers the 7D / 30D / 90D / All range selector.
+  const daily = [];
+  let db = 4;
+  for (let i = 0; i < 180; i++) {
+    db = Math.max(1.2, db * between(0.86, 1.18));
+    daily.push({ i, commission: Math.round(db * 100) / 100, signups: rnd() > 0.62 ? Math.round(between(1, 3)) : 0 });
+  }
+
   const byLevel = [1, 2, 3].map((lvl) => {
     const mem = members.filter((m) => m.level === lvl);
     const volume = Math.round(mem.reduce((a, m) => a + m.volume, 0) * (lvl === 3 ? 4 : lvl === 2 ? 2.2 : 1));
@@ -97,6 +105,6 @@
   window.AFFIL = {
     affiliate: { name: "Amara Okafor", id: "AF-77214", code: "AMARA777", tier: "Gold", joined: "Jan 2024", avatar: "AO" },
     kpi: { lifetime, thisMonth, pending, network: 139, directRate: 0.68, conv: 0.41 },
-    weeks, byLevel, members, tiers, tierVolume, payouts, leaderboard, activity, rates: RATES, counts: COUNTS,
+    weeks, daily, byLevel, members, tiers, tierVolume, payouts, leaderboard, activity, rates: RATES, counts: COUNTS,
   };
 })();

@@ -25,8 +25,102 @@ const NAV = [
   { id: "marketing", label: "Marketing", icon: "sparkle" },
 ];
 
+/* ---- time ranges: chart + stat slices derived from the daily series ---- */
+const RANGES = ["7D", "30D", "90D", "All"];
+const DAY = 864e5;
+const dayDate = (d) => new Date(Date.now() - (A.daily.length - 1 - d.i) * DAY);
+const dShort = (d) => dayDate(d).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const dDow = (d) => dayDate(d).toLocaleDateString("en-GB", { weekday: "short" });
+function bucket(days, size, labelFn) {
+  const out = [];
+  for (let i = 0; i < days.length; i += size) {
+    const chunk = days.slice(i, i + size);
+    out.push({
+      label: labelFn(chunk[chunk.length - 1]),
+      commission: Math.round(chunk.reduce((a, d) => a + d.commission, 0) * 100) / 100,
+      signups: chunk.reduce((a, d) => a + d.signups, 0),
+    });
+  }
+  return out;
+}
+function seriesFor(range) {
+  const all = A.daily;
+  if (range === "7D") return { data: bucket(all.slice(-7), 1, dDow), sub: "Last 7 days" };
+  if (range === "30D") return { data: bucket(all.slice(-30), 3, dShort), sub: "Last 30 days" };
+  if (range === "90D") return { data: bucket(all.slice(-90), 7, dShort), sub: "Last 90 days" };
+  return { data: bucket(all, 14, dShort), sub: "All time · 6 months" };
+}
+
 function Dash() {
   const [tab, setTab] = useState("overview");
+  const [range, setRange] = useState("30D");
+  // Balance + payout history start from the demo dataset; when the visitor is
+  // signed in on plg, PLG_API overlays the REAL affiliate balance and history.
+  const [pending, setPending] = useState(A.kpi.pending);
+  const [payouts, setPayouts] = useState(A.payouts);
+  const [live, setLive] = useState(false);
+  const [wd, setWd] = useState(false);
+  const [wdBusy, setWdBusy] = useState(false);
+  const [wdMsg, setWdMsg] = useState("");
+  const [menu, setMenu] = useState(false);
+  const [mode, setMode] = useState(
+    document.documentElement.classList.contains("light") ? "light" : "dark",
+  );
+  const wdRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!window.PLG_API) return;
+    PLG_API.affiliate.getDashboard()
+      .then((k) => { if (k && k.live) { setPending(k.pending); setLive(true); } })
+      .catch(() => {});
+    PLG_API.payouts.list()
+      .then((rows) => { if (rows && rows.length) setPayouts(rows); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const close = (e) => {
+      if (wdRef.current && !wdRef.current.contains(e.target)) setWd(false);
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenu(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+
+  function setTheme(m) {
+    setMode(m);
+    document.documentElement.classList.toggle("light", m === "light");
+    try { localStorage.setItem("lg-theme", m); } catch (e) {}
+  }
+
+  async function confirmWithdraw() {
+    if (wdBusy || pending <= 0) return;
+    setWdBusy(true); setWdMsg("");
+    try {
+      // Live session → real payout request on plg; showcase mode → local simulation.
+      const row = live
+        ? await PLG_API.payouts.request()
+        : { ref: "PO-" + Math.floor(2000 + Math.random() * 900), method: "Bank transfer", amount: pending, status: "pending", date: "Today" };
+      setPayouts((p) => [Object.assign({}, row, { amount: row.amount || pending }), ...p]);
+      setPending(0);
+      setWdMsg("ok");
+      setTimeout(() => { setWd(false); setWdMsg(""); }, 1500);
+    } catch (e) { setWdMsg(e.message || "Could not request payout."); }
+    setWdBusy(false);
+  }
+
+  // Same account menu as the player app header (front office parity).
+  const MENU_ITEMS = [
+    { href: "11 Profile.html", icon: "user", label: "Profile" },
+    { href: "07 My Tickets.html", icon: "ticket", label: "My tickets" },
+    { href: "09 Results.html", icon: "check", label: "Results" },
+    { href: "10 Rewards.html", icon: "gift", label: "Rewards & offers" },
+    { href: "12 Wallet.html", icon: "wallet", label: "Wallet & payouts" },
+    { href: "13 Refer and Earn.html", icon: "users", label: "Refer a friend" },
+    { href: "14 Billing.html", icon: "ticket", label: "Billing" },
+  ];
+
   return (
     <div className="dash">
       <aside className="dash-side">
@@ -57,17 +151,85 @@ function Dash() {
             <span className="dash-crumb">Affiliate {A.affiliate.id} · Member since {A.affiliate.joined}</span>
           </div>
           <div className="dash-top-r">
-            <div className="dash-range">{["7D", "30D", "90D", "All"].map((r, i) => <button key={r} className={i === 1 ? "on" : ""}>{r}</button>)}</div>
-            <button className="dash-btn-gold"><Icon name="wallet" size={16} /> Withdraw {money(A.kpi.pending)}</button>
-            <div className="dash-user"><span className="dash-ava">{A.affiliate.avatar}</span></div>
+            <div className="dash-range">
+              {RANGES.map((r) => <button key={r} className={range === r ? "on" : ""} onClick={() => setRange(r)}>{r}</button>)}
+            </div>
+            <a className="dash-btn-ghost" href="https://plg.proposals.digital/affiliate" title="Back to the front office">
+              <Icon name="grid" size={15} /> Dashboard
+            </a>
+            <div className="wd-wrap" ref={wdRef}>
+              <button className="dash-btn-gold" disabled={pending <= 0} onClick={() => { setWd((v) => !v); setMenu(false); }}>
+                <Icon name="wallet" size={16} /> Withdraw {money(pending)}
+              </button>
+              {wd && (
+                <div className="profile-menu wallet-menu wd-menu">
+                  <div className="wm-head">
+                    <div>
+                      <span className="wm-l">Available to withdraw</span>
+                      <span className="wm-total tnum">{money2(pending)}</span>
+                    </div>
+                  </div>
+                  <div className="wm-bals">
+                    <div className="wm-bal"><span className="wm-dot comm" /><span className="wm-bal-l">Method</span><span className="wm-bal-v">Bank transfer ··6402</span></div>
+                    <div className="wm-bal"><span className="wm-dot play" /><span className="wm-bal-l">Arrives</span><span className="wm-bal-v">1–2 business days</span></div>
+                    <div className="wm-bal"><span className="wm-dot win" /><span className="wm-bal-l">Minimum</span><span className="wm-bal-v">$20 · full balance</span></div>
+                  </div>
+                  {wdMsg && wdMsg !== "ok" && <div className="wd-err">{wdMsg}</div>}
+                  <div className="wm-actions">
+                    <button className="dash-btn-gold sm wd-confirm" disabled={wdBusy} onClick={confirmWithdraw}>
+                      {wdMsg === "ok" ? "✓ Requested" : wdBusy ? "Requesting…" : "Confirm withdrawal"}
+                    </button>
+                  </div>
+                  <button className="wm-full" onClick={() => { setWd(false); setTab("payouts"); }}>
+                    View payout history <Icon name="arrowR" size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="avatar-wrap dash-user" ref={menuRef}>
+              <button className={`dash-ava avatar ${menu ? "open" : ""}`} onClick={() => { setMenu((m) => !m); setWd(false); }} title="Account">
+                {A.affiliate.avatar}
+              </button>
+              {menu && (
+                <div className="profile-menu">
+                  <div className="pm-head">
+                    <span className="pm-ava">{A.affiliate.avatar}</span>
+                    <div className="pm-id">
+                      <span className="pm-name">{A.affiliate.name}</span>
+                      <span className="pm-email">{A.affiliate.id} · {A.affiliate.tier} tier</span>
+                    </div>
+                  </div>
+                  <div className="pm-list">
+                    {MENU_ITEMS.map((it) => (
+                      <a key={it.label} className="pm-item" href={it.href}><Icon name={it.icon} size={16} /> {it.label}</a>
+                    ))}
+                    <a className="pm-item" href="https://plg.proposals.digital/affiliate"><Icon name="grid" size={16} /> Member Hub <span className="pm-ext">↗</span></a>
+                    <a className="pm-item" href="Marketing Hub.html"><Icon name="megaphone" size={16} /> Marketing hub <span className="pm-ext">↗</span></a>
+                    <a className="pm-item" href="Viral Launch.html"><Icon name="share" size={16} /> Invite &amp; earn <span className="pm-ext">↗</span></a>
+                  </div>
+                  <div className="pm-sep" />
+                  <div className="pm-appearance">
+                    <span>Appearance</span>
+                    <div className="pm-seg">
+                      <button className={mode === "light" ? "on" : ""} onClick={() => setTheme("light")}>Light</button>
+                      <button className={mode === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>Dark</button>
+                    </div>
+                  </div>
+                  <div className="pm-sep" />
+                  <a className="pm-item pm-out" href="11 Profile.html"><Icon name="user" size={16} /> Account settings</a>
+                  <a className="pm-item pm-out" href="Lotto Global.html"><Icon name="bell" size={16} /> Help &amp; support</a>
+                  <a className="pm-item pm-out" href="01 Sign In.html"><Icon name="arrowR" size={16} /> Sign out</a>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
         <div className="dash-body">
-          {tab === "overview" && <Overview go={setTab} />}
+          {tab === "overview" && <Overview go={setTab} range={range} pending={pending} />}
           {tab === "network" && <Network />}
-          {tab === "commissions" && <Commissions />}
-          {tab === "payouts" && <Payouts />}
+          {tab === "commissions" && <Commissions range={range} />}
+          {tab === "payouts" && <Payouts pending={pending} payouts={payouts} onRequest={() => setWd(true)} />}
           {tab === "marketing" && <Marketing />}
         </div>
       </main>
@@ -76,11 +238,14 @@ function Dash() {
 }
 
 /* ---------------- Overview ---------------- */
-function Overview({ go }) {
+function Overview({ go, range, pending }) {
+  const rs = seriesFor(range);
+  const rangeSum = rs.data.reduce((a, d) => a + d.commission, 0);
+  const rangeSignups = rs.data.reduce((a, d) => a + d.signups, 0);
   const kpis = [
     { l: "Lifetime commission", v: money(A.kpi.lifetime), d: "+12.4% vs last mo", up: true, ic: "trophy", gold: true },
-    { l: "This month", v: money(A.kpi.thisMonth), d: "+" + money(42) + " this week", up: true, ic: "sparkle" },
-    { l: "Pending payout", v: money(A.kpi.pending), d: "Ready to withdraw", ic: "wallet" },
+    { l: rs.sub, v: money(rangeSum), d: "+" + rangeSignups + " signups", up: true, ic: "sparkle" },
+    { l: "Pending payout", v: money(pending), d: pending > 0 ? "Ready to withdraw" : "Payout requested", ic: "wallet" },
     { l: "Network size", v: A.kpi.network, d: "across 3 levels", ic: "users" },
     { l: "Active rate", v: Math.round(A.kpi.directRate * 100) + "%", d: "played this month", ic: "flame" },
     { l: "Conversion", v: Math.round(A.kpi.conv * 100) + "%", d: "click → signup", ic: "arrowR" },
@@ -100,8 +265,8 @@ function Overview({ go }) {
 
       <div className="dash-2col">
         <div className="dash-card">
-          <div className="dc-head"><h3>Commission earnings</h3><span className="dc-sub">Last 12 weeks</span></div>
-          <EarningsChart />
+          <div className="dc-head"><h3>Commission earnings</h3><span className="dc-sub">{rs.sub}</span></div>
+          <EarningsChart data={rs.data} />
         </div>
         <div className="dash-card">
           <div className="dc-head"><h3>By level</h3></div>
@@ -123,8 +288,8 @@ function Overview({ go }) {
   );
 }
 
-function EarningsChart() {
-  const w = A.weeks;
+function EarningsChart({ data }) {
+  const w = data || A.weeks;
   const max = Math.max(...w.map((x) => x.commission));
   const maxS = Math.max(...w.map((x) => x.signups));
   const W = 620, H = 200, pad = 28, bw = (W - pad * 2) / w.length;
@@ -141,7 +306,7 @@ function EarningsChart() {
         <path d={line} fill="none" stroke="var(--gold)" strokeWidth="2" />
         {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="3" fill="var(--gold)" stroke="var(--bg)" strokeWidth="1.5" />)}
       </svg>
-      <div className="chart-x">{w.map((x, i) => <span key={i}>{i % 2 === 0 ? x.label : ""}</span>)}</div>
+      <div className="chart-x">{w.map((x, i) => <span key={i}>{w.length <= 8 || i % 2 === 0 ? x.label : ""}</span>)}</div>
       <div className="chart-legend"><span className="lg-bar">Commission</span><span className="lg-line">New signups</span></div>
     </div>
   );
@@ -263,7 +428,8 @@ function NetworkTree() {
 }
 
 /* ---------------- Commissions ---------------- */
-function Commissions() {
+function Commissions({ range }) {
+  const rs = seriesFor(range);
   return (
     <>
       <div className="dash-2col">
@@ -282,8 +448,8 @@ function Commissions() {
         <div className="dash-card"><div className="dc-head"><h3>Tier progression</h3></div><TierLadder /></div>
       </div>
       <div className="dash-card" style={{ marginTop: 18 }}>
-        <div className="dc-head"><h3>Earnings trend</h3><span className="dc-sub">Weekly commission</span></div>
-        <EarningsChart />
+        <div className="dc-head"><h3>Earnings trend</h3><span className="dc-sub">{rs.sub}</span></div>
+        <EarningsChart data={rs.data} />
       </div>
     </>
   );
@@ -309,22 +475,23 @@ function TierLadder() {
 }
 
 /* ---------------- Payouts ---------------- */
-function Payouts() {
+function Payouts({ pending, payouts, onRequest }) {
+  const lifetime = 438 + payouts.filter((p) => p.date === "Today").reduce((a, p) => a + p.amount, 0);
   return (
     <>
       <div className="kpi-row three">
-        <div className="kpi kpi-gold"><span className="kpi-l">Available to withdraw</span><span className="kpi-v tnum">{money(A.kpi.pending)}</span><span className="kpi-d">commission balance</span></div>
-        <div className="kpi"><span className="kpi-l">Withdrawn lifetime</span><span className="kpi-v tnum">{money(438)}</span><span className="kpi-d">across 3 payouts</span></div>
+        <div className="kpi kpi-gold"><span className="kpi-l">Available to withdraw</span><span className="kpi-v tnum">{money(pending)}</span><span className="kpi-d">commission balance</span></div>
+        <div className="kpi"><span className="kpi-l">Withdrawn lifetime</span><span className="kpi-v tnum">{money(lifetime)}</span><span className="kpi-d">across {3 + payouts.filter((p) => p.date === "Today").length} payouts</span></div>
         <div className="kpi"><span className="kpi-l">Next auto-payout</span><span className="kpi-v">1 Jul</span><span className="kpi-d">when balance &gt; $50</span></div>
       </div>
       <div className="dash-card" style={{ marginTop: 18 }}>
-        <div className="dc-head"><h3>Payout history</h3><button className="dash-btn-gold sm"><Icon name="wallet" size={15} /> Request payout</button></div>
+        <div className="dc-head"><h3>Payout history</h3><button className="dash-btn-gold sm" disabled={pending <= 0} onClick={onRequest}><Icon name="wallet" size={15} /> Request payout</button></div>
         <div className="dl-table-wrap">
           <table className="dl-table">
             <thead><tr><th>Reference</th><th>Method</th><th>Date</th><th>Status</th><th className="num">Amount</th></tr></thead>
             <tbody>
-              {A.payouts.map((p) => (
-                <tr key={p.ref}>
+              {payouts.map((p, i) => (
+                <tr key={p.ref + "-" + i}>
                   <td className="mono">{p.ref}</td>
                   <td>{p.method}</td>
                   <td className="muted">{p.date}</td>
