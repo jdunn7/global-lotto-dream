@@ -1,9 +1,25 @@
 /* hermes-agent.js — "Hermes", an embedded AI operating partner docked at the
-   bottom of the PLG Board & Admin console. Wired to window.claude.complete and
-   grounded in the live ADMIN dataset. Self-injects CSS; mounts to <body>. */
+   bottom of the PLG back office (Board & Admin console, Marketing Hub). LIVE:
+   calls plg's admin-gated /api/hermes (Claude/Kimi behind it) with the page's
+   dataset as grounding — ADMIN figures on the console, MK on the Marketing Hub.
+   Self-injects CSS; mounts to <body>. */
 (function () {
+  var API_BASE = "https://plg.proposals.digital";
+  function marketingGrounding() {
+    var M = window.MK;
+    var parts = ["PlayLottoGlobal Marketing Hub dataset."];
+    try {
+      if (M.kpis) parts.push("Marketing KPIs: " + Object.keys(M.kpis).map(function (k) { return k + " " + M.kpis[k]; }).join(", ") + ".");
+      if (M.channels) parts.push("Channels: " + M.channels.map(function (c) { return c.name || c.id; }).filter(Boolean).slice(0, 12).join(", ") + ".");
+      if (M.campaigns) parts.push(M.campaigns.length + " campaigns; recent: " + M.campaigns.slice(0, 5).map(function (c) { return c.name || c.title; }).filter(Boolean).join(", ") + ".");
+      if (M.influencers) parts.push(M.influencers.length + " influencers tracked.");
+      if (M.brandKit && M.brandKit.voice) parts.push("Brand voice: " + M.brandKit.voice);
+    } catch (e) {}
+    return parts.join(" ");
+  }
   function grounding() {
-    var A = window.ADMIN; if (!A) return "No live data loaded.";
+    var A = window.ADMIN;
+    if (!A) return window.MK ? marketingGrounding() : "No live data loaded.";
     var k = A.kpis;
     var taxOwed = A.taxes.reduce(function (a, t) { return a + t.owed; }, 0);
     var liab = A.liabilities.reduce(function (a, l) { return a + l.v; }, 0);
@@ -18,8 +34,7 @@
       "Cap table: " + A.capTable.map(function (c) { return c.holder + " " + c.pct + "%"; }).join(", ") + ". Entities: " + A.corp.subs.map(function (s) { return s.name; }).join(", ") + " under " + A.corp.parent.name + "."
     ].join(" ");
   }
-  var SYS = "You are Hermes, the AI operating partner embedded in PlayLottoGlobal's Board & Admin console. You assist the board and executives across finance, growth, marketing, affiliate operations, risk, legal, accounting, taxes and corporate strategy. Style: concise, sharp, boardroom-professional; lead with the answer, then 1-2 supporting points. Use the LIVE CONTEXT figures when relevant and cite them. If a number isn't in context, say you'd need it wired from the data room. For legal/tax, give direction but flag where qualified counsel is required. Keep replies under ~120 words unless asked to expand.";
-
+  // Persona lives server-side in /api/hermes; this file only ships UI + grounding.
   var history = [];
   var CSS =
     "#hermes-spacer{height:74px}" +
@@ -55,7 +70,9 @@
     ".hz-typing i:nth-child(2){animation-delay:.2s}.hz-typing i:nth-child(3){animation-delay:.4s}" +
     "@keyframes hzb{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}";
 
-  var SUGG = ["What's our runway and burn?", "Summarize our top 3 risks", "Where can we improve margin?", "Draft a board update on growth"];
+  var SUGG = (typeof window !== "undefined" && !window.ADMIN && window.MK)
+    ? ["Draft a launch campaign for Naija Millions", "Write 3 ad hooks for EuroMillions rollover", "Which channels should we double down on?", "Draft this week's promo email"]
+    : ["What's our runway and burn?", "Summarize our top 3 risks", "Where can we improve margin?", "Draft a board update on growth"];
   var panel, body, input, sendBtn;
 
   function icon(p) { return '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>'; }
@@ -79,15 +96,23 @@
     sendBtn.disabled = true;
     var reply;
     try {
-      if (window.claude && window.claude.complete) {
-        var convo = history.slice(-8).map(function (m) { return m.r + ": " + m.t; }).join("\n");
-        var prompt = SYS + "\n\nLIVE CONTEXT: " + grounding() + "\n\nConversation:\n" + convo + "\nHermes:";
-        reply = await window.claude.complete(prompt);
-      } else {
-        reply = "I'm online, but the live model isn't connected in this preview. Wire window.claude.complete (or your LLM endpoint) and I'll answer from the live data room. From current context: runway " + (window.ADMIN ? window.ADMIN.kpis.runwayMo + " months, EBITDA " + window.ADMIN.money(window.ADMIN.kpis.ebitdaYTD) : "n/a") + ".";
-      }
+      // Rolling window of recent turns, mapped to Anthropic-Messages roles.
+      var msgs = history.slice(-12).map(function (m) {
+        return { role: m.r === "User" ? "user" : "assistant", content: m.t.slice(0, 4000) };
+      });
+      var res = await fetch(API_BASE + "/api/hermes", {
+        method: "POST",
+        credentials: "include", // admin SSO cookie — the endpoint is admin-only
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: msgs, context: grounding().slice(0, 8000) }),
+      });
+      var data = null; try { data = await res.json(); } catch (e2) {}
+      if (res.status === 401) reply = "Your session has expired — sign back in at the **Back Office** (lottery.proposals.digital/backoffice) and I'll be right here.";
+      else if (res.status === 403) reply = "Hermes is reserved for PLG administrators.";
+      else if (!res.ok) reply = "The model upstream had an issue (" + res.status + "). Try again in a moment.";
+      else reply = data && data.text;
     } catch (e) {
-      reply = "I hit an error reaching the model. Check the API connection and try again.";
+      reply = "I hit an error reaching the model. Check the connection and try again.";
     }
     typing.remove();
     addMsg("assistant", (reply || "").trim() || "—");

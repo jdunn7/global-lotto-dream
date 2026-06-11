@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>PLG Back Office — Sign in</title>
+<style>
+  :root { --bg: hsl(222 45% 6%); --card: hsl(222 36% 10%); --card2: hsl(222 30% 14%); --border: hsl(0 0% 100% / .09); --fg: #f2f4fb; --muted: #8a93b5; --gold: #c6a86a; --blue: #4f63b5; }
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100svh; display: grid; place-items: center; padding: 24px; background: radial-gradient(1100px 500px at 50% -10%, hsl(226 50% 16%), var(--bg)); color: var(--fg); font: 15px/1.55 "Inter", system-ui, sans-serif; }
+  .wrap { width: 100%; max-width: 460px; }
+  .brand { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 22px; }
+  .mark { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; font-weight: 800; font-size: 19px; color: #fff; background: linear-gradient(150deg, var(--gold), var(--blue)); box-shadow: 0 10px 26px -10px rgba(79,99,181,.8); }
+  .brand h1 { font-size: 1.15rem; letter-spacing: .01em; }
+  .brand small { display: block; color: var(--muted); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: .68rem; }
+  .card { background: linear-gradient(180deg, var(--card2), var(--card)); border: 1px solid var(--border); border-radius: 20px; padding: 26px; box-shadow: 0 30px 70px -30px #000; }
+  h2 { font-size: 1.05rem; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: .86rem; margin-bottom: 18px; }
+  label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); margin: 12px 0 6px; }
+  input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: hsl(222 28% 8%); color: var(--fg); font: inherit; }
+  input:focus { outline: none; border-color: var(--blue); }
+  button.cta { width: 100%; margin-top: 14px; padding: 12px; border: 0; border-radius: 12px; cursor: pointer; font: 600 .95rem/1 "Inter", sans-serif; color: #fff; background: linear-gradient(150deg, #5b76e8, #3b5bdb); }
+  button.cta:disabled { opacity: .55; cursor: default; }
+  button.ghost { width: 100%; margin-top: 10px; padding: 11px; border-radius: 12px; cursor: pointer; font: 600 .9rem/1 "Inter", sans-serif; color: var(--fg); background: transparent; border: 1px solid var(--border); }
+  .msg { margin-top: 12px; font-size: .84rem; color: var(--muted); }
+  .msg.err { color: #e07f7f; }
+  .tiles { display: grid; gap: 10px; margin-top: 6px; }
+  a.tile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: hsl(222 28% 9%); color: var(--fg); text-decoration: none; transition: border-color .15s, transform .15s; }
+  a.tile:hover { border-color: var(--gold); transform: translateY(-1px); }
+  a.tile .t-ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: hsl(222 24% 16%); font-size: 16px; flex: none; }
+  a.tile b { display: block; font-size: .92rem; }
+  a.tile span { display: block; color: var(--muted); font-size: .76rem; }
+  .who { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; padding: 10px 12px; border-radius: 12px; background: hsl(222 28% 9%); border: 1px solid var(--border); font-size: .82rem; color: var(--muted); }
+  .who b { color: var(--fg); }
+  .who button { background: none; border: 0; color: var(--muted); cursor: pointer; font: 600 .78rem/1 "Inter"; }
+  .who button:hover { color: var(--fg); }
+  .foot { text-align: center; margin-top: 16px; color: var(--muted); font-size: .74rem; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="mark">P</div>
+    <div><h1>PlayLottoGlobal</h1><small>Executive Back Office</small></div>
+  </div>
+
+  <div class="card">
+    <!-- loading -->
+    <div id="v-loading"><h2>Checking your session…</h2><p class="sub">One moment.</p></div>
+
+    <!-- login -->
+    <div id="v-login" class="hidden">
+      <h2>Admin sign in</h2>
+      <p class="sub">Restricted area — PLG administrators only. Sign in with your phone; we'll text you a code.</p>
+      <div id="step-phone">
+        <label>Phone number (with country code)</label>
+        <input id="phone" type="tel" placeholder="+1 555 123 4567" autocomplete="tel" />
+        <button class="cta" id="btn-send">Text me a code</button>
+      </div>
+      <div id="step-code" class="hidden">
+        <label>Enter the code we texted</label>
+        <input id="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="8" />
+        <button class="cta" id="btn-verify">Verify &amp; enter</button>
+        <button class="ghost" id="btn-back">Use a different number</button>
+      </div>
+      <button class="ghost" id="btn-google">Continue with Google</button>
+      <p class="msg" id="login-msg"></p>
+    </div>
+
+    <!-- not an admin -->
+    <div id="v-denied" class="hidden">
+      <h2>Admins only</h2>
+      <p class="sub">You're signed in, but this area is restricted to PlayLottoGlobal administrators.</p>
+      <button class="ghost" id="btn-out-denied">Sign out</button>
+    </div>
+
+    <!-- hub -->
+    <div id="v-hub" class="hidden">
+      <div class="who"><span>Signed in as <b id="who-name"></b></span><button id="btn-out">Sign out</button></div>
+      <div class="tiles">
+        <a class="tile" href="/PLG Admin Console.html"><span class="t-ic">📊</span><div><b>Admin Console</b><span>P&amp;L, KPIs, risks, cap table — with Hermes</span></div></a>
+        <a class="tile" href="/Marketing Hub.html"><span class="t-ic">📣</span><div><b>Marketing Suite</b><span>Campaigns, channels, influencers — with Hermes</span></div></a>
+        <a class="tile" href="https://plg.proposals.digital/admin"><span class="t-ic">🛡️</span><div><b>Oversight</b><span>Live ops — users, roles, payouts, fulfillment</span></div></a>
+        <a class="tile" href="/PLG Board Presentation.html"><span class="t-ic">📑</span><div><b>Board Presentation</b><span>Investor deck</span></div></a>
+        <a class="tile" href="/PLG System Spec.html"><span class="t-ic">🧩</span><div><b>System Spec</b><span>Product &amp; architecture reference</span></div></a>
+        <a class="tile" href="/PLG Ad Voiceover Scripts.html"><span class="t-ic">🎙️</span><div><b>Ad Voiceover Scripts</b><span>Creative library</span></div></a>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">Pages behind this door are enforced server-side (admin role required) — this screen is the front desk, not the lock.</p>
+</div>
+
+<script src="plg-api.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function show(view) {
+    ["v-loading", "v-login", "v-denied", "v-hub"].forEach(function (v) {
+      $(v).classList.toggle("hidden", v !== view);
+    });
+  }
+  function msg(text, isErr) {
+    var el = $("login-msg"); el.textContent = text || ""; el.className = "msg" + (isErr ? " err" : "");
+  }
+
+  // Route by session + role. The gate on each page re-checks server-side, so this
+  // screen is UX, not security.
+  async function route() {
+    try {
+      var s = await PLG_API.auth.session();
+      if (!s.authed) return show("v-login");
+      var me = await PLG_API.players.getProfile();
+      if (me && me.live && me.roles && me.roles.indexOf("admin") !== -1) {
+        $("who-name").textContent = me.name || (s.profile && s.profile.email) || "admin";
+        return show("v-hub");
+      }
+      return show("v-denied");
+    } catch (e) { show("v-login"); }
+  }
+
+  var sentTo = "";
+  $("btn-send").onclick = async function () {
+    var p = $("phone").value.trim().replace(/[^+0-9]/g, "");
+    if (p.length < 8) return msg("Enter your full number including country code, e.g. +1 954…", true);
+    this.disabled = true; msg("Sending…");
+    try {
+      await PLG_API.auth.sendPhoneOtp(p);
+      sentTo = p;
+      $("step-phone").classList.add("hidden"); $("step-code").classList.remove("hidden");
+      msg("Code sent to " + p + ".");
+    } catch (e) { msg(e && e.message ? e.message : "Couldn't send the code.", true); }
+    this.disabled = false;
+  };
+  $("btn-verify").onclick = async function () {
+    this.disabled = true; msg("Verifying…");
+    try {
+      await PLG_API.auth.verifyPhoneOtp({ phoneNumber: sentTo, code: $("otp").value.trim() });
+      msg(""); show("v-loading"); route();
+    } catch (e) { msg(e && e.message ? e.message : "That code didn't match.", true); }
+    this.disabled = false;
+  };
+  $("btn-back").onclick = function () {
+    $("step-code").classList.add("hidden"); $("step-phone").classList.remove("hidden"); msg("");
+  };
+  $("btn-google").onclick = function () {
+    // OAuth round-trips through plg; landing back here re-runs the session check.
+    PLG_API.auth.loginGoogle(window.location.href).catch(function (e) { msg(String(e.message || e), true); });
+  };
+  function signOut() { PLG_API.auth.logout().then(function () { show("v-login"); }).catch(function () { show("v-login"); }); }
+  $("btn-out").onclick = signOut;
+  $("btn-out-denied").onclick = signOut;
+
+  route();
+})();
+</script>
+</body>
+</html>
