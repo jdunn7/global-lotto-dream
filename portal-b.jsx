@@ -177,13 +177,41 @@ function Replica() {
   );
 }
 
+const MATERIALS = [
+  { file:"materials/plg-jackpot-post.png", name:"Jackpot Promo — Instagram Post", dims:"1080 × 1350", use:"Instagram / Facebook feed" },
+  { file:"materials/plg-affiliate-story.png", name:"Affiliate Recruit — Story", dims:"1080 × 1920", use:"Instagram / WhatsApp status" },
+  { file:"materials/plg-referral-promo.png", name:"Referral Promo — Landscape", dims:"1600 × 900", use:"X / Telegram / web banner" },
+  { file:"materials/plg-cover-banner.png", name:"Brand Cover Banner", dims:"851 × 315", use:"Facebook / profile cover" },
+];
+
+function Materials() {
+  return (
+    <div className="mat-grid">
+      {MATERIALS.map(m => (
+        <div key={m.file} className="card mat-card">
+          <a href={m.file} target="_blank" rel="noopener" className="mat-thumb"><img src={m.file} alt={m.name} loading="lazy" /></a>
+          <div className="mat-meta">
+            <div className="mat-name">{m.name}</div>
+            <div className="sub" style={{fontSize:"0.78rem"}}>{m.dims} · {m.use}</div>
+            <a className="btn btn-royal btn-sm" style={{marginTop:10,width:"100%"}} href={m.file} download>
+              <PIcon name="download" size={15} /> Download PNG
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ToolsPage({ route }) {
   const titles = { materials:"Download Materials", news:"News", faqs:"FAQs" };
   const icons = { materials:"download", news:"flag", faqs:"support" };
   return (
     <>
       <div className="sec-title"><h2>{titles[route]}</h2></div>
-      <div className="card"><div className="empty" style={{padding:60}}><PIcon name={icons[route]} size={48} /><p>{route==="faqs"?"Frequently asked questions will appear here.":route==="news"?"Latest PLG news and updates will appear here.":"Marketing materials and banners available to download will appear here."}</p></div></div>
+      {route==="materials"
+        ? <Materials />
+        : <div className="card"><div className="empty" style={{padding:60}}><PIcon name={icons[route]} size={48} /><p>{route==="faqs"?"Frequently asked questions will appear here.":"Latest PLG news and updates will appear here."}</p></div></div>}
     </>
   );
 }
