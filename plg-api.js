@@ -188,7 +188,33 @@
     buyTicket: (d) => liveReq("/api/tickets", { slug: TICKET_SLUG[d.gameId] || d.gameId, lines: d.lines }, "POST").then((r) => { emit("tickets", null); return r; }),
     listTickets: () => liveReq("/api/tickets", null, "GET").then((r) => (r.tickets || [])),
     getTicket: (tid) => req("GET", "/v1/tickets/" + tid, null, () => clone(store.tickets.find(t => t.id === tid) || null)),
-    getResults: (gid) => req("GET", "/v1/draws/results" + (gid ? "?game=" + gid : ""), null, () => (window.LOTTO ? clone(window.LOTTO.RESULTS) : [])),
+    // LIVE — real draw results from plg (/api/results), newest first, mapped to
+    // the local shape. No gid → latest draw per game; gid → that game's history.
+    // Demo results fallback when offline.
+    getResults: (gid) => {
+      const local = () => (window.LOTTO ? clone(window.LOTTO.RESULTS) : []);
+      const q = gid && TICKET_SLUG[gid] ? "?slug=" + TICKET_SLUG[gid] + "&limit=12" : "?limit=24";
+      return liveReq("/api/results" + q).then((r) => {
+        const seen = {};
+        const rows = [];
+        (r.results || []).forEach((x) => {
+          const rid = SLUG_TO_ID[x.lottery_slug] || x.lottery_slug;
+          if (!gid && seen[rid]) return; // one (latest) row per game in the overview
+          seen[rid] = 1;
+          rows.push({
+            id: rid,
+            date: new Date(x.draw_date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }),
+            balls: x.numbers || [],
+            bonus: x.bonus_numbers || [],
+            jackpotWon: (x.winners_count || 0) > 0,
+            jackpotUsd: Number(x.jackpot_usd) || 0,
+            name: x.lottery_name,
+            live: true,
+          });
+        });
+        return rows;
+      }).catch(() => delay(local()));
+    },
     getNextDraw: (gid) => req("GET", "/v1/draws/next?game=" + gid, null, () => { const g = window.LOTTO && window.LOTTO.gameById(gid); return g ? { gameId: gid, drawISO: g.nextDrawISO } : null; }),
   };
 
