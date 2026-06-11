@@ -118,6 +118,13 @@ function App() {
     }).catch(() => {});
   }, []);
 
+  // Any wallet mutation through the service layer (top-up, ticket buy) emits
+  // "wallet" — resync so every balance on screen reflects the server truth.
+  useEffect(() => {
+    if (!window.PLG_API || !PLG_API.on) return;
+    return PLG_API.on("wallet", syncWallet);
+  }, [syncWallet]);
+
   function onResult(r) {
     setHistory((h) => {
       const idx = h.findIndex((x) => x.status === "active" && x.gameId === r.gameId);

@@ -48,9 +48,26 @@ function Wallet({ go, user }) {
   const total = play + winnings + commission;
   const [amt, setAmt] = useState("100");
   const [method, setMethod] = useState("bank");
-  const [done, setDone] = useState(false);
   const withdrawable = winnings + commission;
   const val = Math.max(0, Math.min(withdrawable, parseFloat(amt) || 0));
+  // Real top-up against the plg wallet (test funds until the PSP goes live).
+  // PLG_API emits "wallet" on success, which app.jsx turns into a balance resync.
+  const [topping, setTopping] = useState(false);
+  const [topAmt, setTopAmt] = useState("100");
+  const [topBusy, setTopBusy] = useState(false);
+  const [topMsg, setTopMsg] = useState("");
+  // Withdrawals have no rail until the PSP is wired — say so instead of faking.
+  const [wdMsg, setWdMsg] = useState("");
+  const doTopup = async () => {
+    const dollars = Math.max(1, Math.min(500, parseFloat(topAmt) || 0));
+    setTopBusy(true); setTopMsg("");
+    try {
+      await PLG_API.wallet.topUp({ amount: dollars });
+      setTopMsg("Added " + LOTTO.formatFull(dollars, "$") + " in test funds.");
+      setTopping(false);
+    } catch (e) { setTopMsg(e && e.message ? e.message : "Top-up failed — try again."); }
+    setTopBusy(false);
+  };
 
   return (
     <div className="screen wallet">
@@ -63,7 +80,15 @@ function Wallet({ go, user }) {
           <div className="bal-card bal-total card">
             <span className="bal-l">Total balance</span>
             <span className="bal-v tnum">{LOTTO.formatFull(total, "$")}</span>
-            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus">Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR">Withdraw</Btn></div>
+            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus" onClick={() => { setTopping((t) => !t); setTopMsg(""); }}>Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR" onClick={() => document.querySelector(".withdraw-card") && document.querySelector(".withdraw-card").scrollIntoView({ behavior: "smooth" })}>Withdraw</Btn></div>
+            {topping && (
+              <div className="wd-amt-in" style={{ marginTop: 10 }}>
+                <span className="wd-cur">$</span>
+                <input value={topAmt} onChange={(e) => setTopAmt(e.target.value.replace(/[^0-9.]/g, ""))} inputMode="decimal" aria-label="Top-up amount" />
+                <button onClick={doTopup} disabled={topBusy}>{topBusy ? "Adding…" : "Add test funds"}</button>
+              </div>
+            )}
+            {topMsg && <span className="bal-sub" style={{ marginTop: 6 }}>{topMsg}</span>}
           </div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot play" /> Playable</span><span className="bal-v2 tnum">{LOTTO.formatFull(play, "$")}</span><span className="bal-sub">For buying tickets</span></div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot win" /> Winnings</span><span className="bal-v2 tnum">{LOTTO.formatFull(winnings, "$")}</span><span className="bal-sub">Withdrawable now</span></div>
@@ -74,33 +99,24 @@ function Wallet({ go, user }) {
           {/* withdraw */}
           <div className="card withdraw-card">
             <h3 className="co-h">Withdraw funds</h3>
-            {done ? (
-              <div className="withdraw-done">
-                <div className="confirm-badge sm"><Icon name="check" size={26} /></div>
-                <h4>Payout requested</h4>
-                <p>{LOTTO.formatFull(val, "$")} via {PAYOUT_METHODS.find((m) => m.id === method).label}. You'll get a confirmation shortly.</p>
-                <Btn variant="ghost" size="sm" onClick={() => setDone(false)}>Make another</Btn>
-              </div>
-            ) : (
-              <>
-                <label className="wd-amt">
-                  <span>Amount <em>· max {LOTTO.formatFull(withdrawable, "$")} withdrawable</em></span>
-                  <div className="wd-amt-in"><span className="wd-cur">$</span><input value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^0-9.]/g, ""))} /><button onClick={() => setAmt(String(withdrawable))}>Max</button></div>
-                </label>
-                <div className="wd-quick">{[50, 100, 250].map((q) => <button key={q} className={+amt === q ? "on" : ""} onClick={() => setAmt(String(q))}>${q}</button>)}</div>
-                <span className="wd-label">Payout to</span>
-                <div className="wd-methods">
-                  {PAYOUT_METHODS.map((m) => (
-                    <button key={m.id} className={`pay-m ${method === m.id ? "on" : ""}`} onClick={() => setMethod(m.id)}>
-                      <span className="pay-m-l"><Icon name={m.icon} size={18} /> <span className="wd-m-txt"><strong>{m.label}</strong><em>{m.sub}</em></span></span>
-                      <span className={`radio ${method === m.id ? "on" : ""}`} />
-                    </button>
-                  ))}
-                </div>
-                <Btn variant="gold" size="lg" className="pay-cta" iconRight="arrowR" onClick={() => val > 0 && setDone(true)} style={val <= 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}>Withdraw {LOTTO.formatFull(val, "$")}</Btn>
-                <div className="pay-secure"><Icon name="shield" size={13} /> Withdrawals go to verified accounts only</div>
-              </>
-            )}
+            <label className="wd-amt">
+              <span>Amount <em>· max {LOTTO.formatFull(withdrawable, "$")} withdrawable</em></span>
+              <div className="wd-amt-in"><span className="wd-cur">$</span><input value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^0-9.]/g, ""))} /><button onClick={() => setAmt(String(withdrawable))}>Max</button></div>
+            </label>
+            <div className="wd-quick">{[50, 100, 250].map((q) => <button key={q} className={+amt === q ? "on" : ""} onClick={() => setAmt(String(q))}>${q}</button>)}</div>
+            <span className="wd-label">Payout to</span>
+            <div className="wd-methods">
+              {PAYOUT_METHODS.map((m) => (
+                <button key={m.id} className={`pay-m ${method === m.id ? "on" : ""}`} onClick={() => setMethod(m.id)}>
+                  <span className="pay-m-l"><Icon name={m.icon} size={18} /> <span className="wd-m-txt"><strong>{m.label}</strong><em>{m.sub}</em></span></span>
+                  <span className={`radio ${method === m.id ? "on" : ""}`} />
+                </button>
+              ))}
+            </div>
+            {/* No payout rail until the PSP is live — never fake a success here. */}
+            <Btn variant="gold" size="lg" className="pay-cta" iconRight="arrowR" onClick={() => setWdMsg("Withdrawals open once our payment provider goes live — your balance is safe until then.")} style={val <= 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}>Withdraw {LOTTO.formatFull(val, "$")}</Btn>
+            {wdMsg && <div className="pay-secure" role="status"><Icon name="shield" size={13} /> {wdMsg}</div>}
+            <div className="pay-secure"><Icon name="shield" size={13} /> Withdrawals go to verified accounts only</div>
           </div>
 
           {/* payouts + transactions */}
@@ -549,7 +565,7 @@ function Billing({ go, user, connectedWallet, setConnectedWallet }) {
               </div>
               <label className="addc-check"><input type="checkbox" checked={f.def} onChange={e => setF(s => ({ ...s, def: e.target.checked }))} /> <span>Set as default payment method</span></label>
               <button className={`addc-submit ${valid ? "on" : ""}`} onClick={addCard}><Icon name="shield" size={16} /> Add card securely</button>
-              <span className="addc-secure"><Icon name="shield" size={12} /> 256-bit encrypted · we never store your full number</span>
+              <span className="addc-secure"><Icon name="shield" size={12} /> Preview only — card payments activate when our payment provider goes live. Use wallet top-up to play today.</span>
             </div>
           </div>
         </div>

@@ -134,8 +134,14 @@
   /* ============================ WALLET ============================ */
   const wallet = {
     getBalance: () => liveReq("/api/wallet", null, "GET").then((w) => ({ playable: (w.balance_cents || 0) / 100, winnings: 0, commission: 0, currency: w.currency || "USD", balance_cents: w.balance_cents || 0 })),
-    topUp: (d) => req("POST", "/v1/wallet/topup", d, () => { store.wallet.playable += +d.amount; persist(); emit("wallet", clone(store.wallet)); return { ok: true, balance: clone(store.wallet), txn: { id: id("txn"), type: "topup", amount: +d.amount } }; }),
-    withdraw: (d) => req("POST", "/v1/wallet/withdraw", d, () => { const amt = +d.amount; const avail = store.wallet.winnings + store.wallet.commission; if (amt > avail) throw new Error("Insufficient withdrawable balance"); let rem = amt; const fromW = Math.min(store.wallet.winnings, rem); store.wallet.winnings -= fromW; rem -= fromW; store.wallet.commission -= rem; persist(); emit("wallet", clone(store.wallet)); return { ok: true, balance: clone(store.wallet) }; }),
+    // LIVE — credits the real plg wallet through the same settlement path the
+    // future PSP webhook will use. Server-gated (WALLET_TEST_TOPUP) and labeled
+    // test funds until Nuvei (or similar) is wired. d.amount is dollars.
+    topUp: (d) => liveReq("/api/wallet", { amount_cents: Math.round((+d.amount || 0) * 100) }, "POST")
+      .then((r) => { emit("wallet", { balance_cents: r.balance_cents }); return { ok: true, test: true, balance_cents: r.balance_cents }; })
+      .catch((e) => { throw (e && e.status === 404 ? new Error("Top-ups are temporarily unavailable.") : e); }),
+    // No payout rail until the PSP is live — fail honestly instead of pretending.
+    withdraw: () => Promise.reject(new Error("Withdrawals open once our payment provider goes live.")),
     getTransactions: () => liveReq("/api/wallet", null, "GET").then((w) => (w.transactions || [])),
   };
 
