@@ -224,8 +224,10 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 /* download materials */
 .mat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
 .mat-card { overflow: hidden; display: flex; flex-direction: column; }
-.mat-thumb { display: block; background: var(--surface-2); border-bottom: 1px solid var(--line); aspect-ratio: 4 / 3; }
+.mat-thumb { display: block; background: var(--surface-2); border-bottom: 1px solid var(--line); height: 220px; flex: none; padding: 10px; box-sizing: border-box; }
 .mat-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.mat-card .mat-meta { display: flex; flex-direction: column; flex: 1; }
+.mat-card .mat-meta .btn { margin-top: auto !important; }
 .mat-meta { padding: 14px 16px 16px; }
 .mat-name { font-family: var(--fd); font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
 
