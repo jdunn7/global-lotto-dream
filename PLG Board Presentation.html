@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PlayLottoGlobal — Board Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0c1238; --navy-2:#141d52; --ink:#e8ecf8; --muted:#9aa3c8; --dim:#6b7398;
+    --royal:#5b76e8; --indigo:#4f63b5; --gold:#c6a86a; --gold-soft:#e6cд8c; --gold-soft:#e6cf90; --green:#5fae86; --slate:#6b7392;
+    --line:hsl(228 30% 100% / .09); --card:hsl(226 34% 13% / .72);
+    --ease:cubic-bezier(.16,1,.3,1); --fd:'Outfit',system-ui,sans-serif; --fs:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fs);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(120% 90% at 50% -10%,#23306f 0%,#141d52 36%,#0c1238 76%,#080d28 100%)}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(50% 50% at 88% 0%,rgba(198,168,106,.12),transparent 60%),radial-gradient(45% 45% at 4% 4%,rgba(79,99,181,.18),transparent 60%)}
+  h1,h2,h3{font-family:var(--fd);margin:0;letter-spacing:-.02em;line-height:1.06}
+  a{text-decoration:none;color:inherit}
+  .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 24px}
+
+  /* hero */
+  .hero{text-align:center;padding:64px 0 30px}
+  .hero img{height:58px;margin-bottom:26px}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border-radius:999px;background:hsl(226 40% 30% / .4);border:1px solid var(--line);color:var(--gold);font-family:var(--fd);font-weight:600;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase}
+  .hero h1{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:800;margin:18px 0 12px}
+  .hero h1 span{background:linear-gradient(180deg,#ecd9a8,#c6a86a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:1.08rem;max-width:36em;margin:0 auto 26px}
+  .hero-meta{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+  .hm{display:flex;flex-direction:column;gap:2px}
+  .hm-v{font-family:var(--fd);font-weight:800;font-size:1.5rem}
+  .hm-l{font-size:.76rem;color:var(--dim)}
+  .begin{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:999px;border:none;cursor:pointer;
+    background:linear-gradient(100deg,var(--indigo),var(--royal));color:#fff;font-family:var(--fd);font-weight:700;font-size:1.05rem;
+    box-shadow:0 16px 36px -14px rgba(91,118,232,.7);transition:transform .2s var(--ease),filter .2s}
+  .begin:hover{transform:translateY(-2px);filter:brightness(1.06)}
+
+  .progress{display:flex;align-items:center;gap:12px;justify-content:center;margin:6px 0 38px;color:var(--dim);font-size:.84rem}
+  .progress .track{width:200px;height:6px;border-radius:999px;background:hsl(226 30% 100% / .1);overflow:hidden}
+  .progress .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:999px;transition:width .4s var(--ease)}
+
+  /* act */
+  .act{margin-bottom:34px}
+  .act-h{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .act-n{font-family:var(--fd);font-weight:800;font-size:.78rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;white-space:nowrap}
+  .act-h h2{font-size:1.18rem;font-weight:700}
+  .act-line{flex:1;height:1px;background:var(--line)}
+
+  .step{display:flex;align-items:center;gap:20px;padding:20px 22px;border-radius:18px;background:var(--card);border:1px solid var(--line);
+    margin-bottom:12px;cursor:pointer;backdrop-filter:blur(12px);transition:transform .26s var(--ease),border-color .26s,box-shadow .26s;position:relative;overflow:hidden}
+  .step::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--royal));opacity:0;transition:opacity .26s}
+  .step:hover{transform:translateX(5px);border-color:hsl(228 40% 100% / .2);box-shadow:0 18px 40px -22px rgba(0,0,0,.7)}
+  .step:hover::before{opacity:1}
+  .step-n{width:46px;height:46px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;
+    font-family:var(--fd);font-weight:800;font-size:1.2rem;color:#fff;background:linear-gradient(135deg,var(--accent,var(--royal)),hsl(226 48% 30%))}
+  .step-tx{flex:1;min-width:0}
+  .step-t{font-family:var(--fd);font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .step-file{font-size:.66rem;font-weight:600;color:var(--dim);background:hsl(226 30% 100% / .07);padding:3px 8px;border-radius:6px;font-family:var(--fd)}
+  .step-d{color:var(--muted);font-size:.9rem;margin-top:4px}
+  .step-go{flex:none;display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:999px;border:1px solid var(--line);
+    color:var(--ink);font-family:var(--fd);font-weight:700;font-size:.86rem;background:hsl(226 30% 100% / .05);transition:all .2s}
+  .step:hover .step-go{background:var(--accent,var(--royal));border-color:transparent}
+  .step.done .step-n::after{content:"✓";position:absolute;width:20px;height:20px;border-radius:50%;background:var(--green);color:#06371f;font-size:.7rem;display:flex;align-items:center;justify-content:center;transform:translate(16px,-16px)}
+
+  .foot{text-align:center;color:var(--dim);font-size:.82rem;padding:30px 0 60px}
+  .foot a{color:var(--gold);font-weight:600}
+  @media(max-width:620px){.step{flex-wrap:wrap;gap:14px}.step-go{width:100%;justify-content:center}}
+  /* ── shimmering white theme ── */
+  body{ color:#16203c;
+    background:linear-gradient(135deg,#ffffff 0%,#eef2fb 28%,#ffffff 52%,#e8eef9 78%,#ffffff 100%);
+    background-size:300% 300%; animation:shimmerbg 18s ease-in-out infinite; }
+  @keyframes shimmerbg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  body::before{ background:radial-gradient(50% 50% at 88% 0%,rgba(198,168,106,.18),transparent 60%),radial-gradient(45% 45% at 4% 4%,rgba(79,99,181,.12),transparent 62%); }
+  body::after{ content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 34%,rgba(120,150,255,.10) 47%,rgba(214,185,120,.12) 53%,transparent 66%);
+    background-size:250% 250%; animation:sheen 9s linear infinite; }
+  @keyframes sheen{0%{background-position:130% 0}100%{background-position:-50% 0}}
+  :root{ --ink:#16203c; --muted:#5b6480; --dim:#9aa2bd; --line:hsl(226 30% 20% / .1); --card:hsl(0 0% 100% / .82); }
+  .eyebrow{ background:rgba(198,168,106,.16); color:#9a7d34; border-color:rgba(198,168,106,.4); }
+  .hero h1 span{ background:linear-gradient(180deg,#d9b765,#b8923a); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p,.step-d{ color:#5b6480; }
+  .hm-l{ color:#9aa2bd; }
+  .step{ background:rgba(255,255,255,.85); box-shadow:0 10px 30px -18px rgba(20,29,82,.4); }
+  .step:hover{ border-color:rgba(79,99,181,.4); box-shadow:0 20px 46px -22px rgba(20,29,82,.45); }
+  .step-file{ background:hsl(226 30% 20% / .07); color:#7d85a3; }
+  .step-go{ background:hsl(226 30% 20% / .05); color:#16203c; border-color:hsl(226 30% 20% / .12); }
+  .step:hover .step-go{ color:#fff; }
+  .progress{ color:#7d85a3; }
+  .progress .track{ background:hsl(226 30% 20% / .1); }
+  .foot{ color:#9aa2bd; }
+  .act-h h2{ color:#16203c; }
+</style>
+  <link rel="stylesheet" href="editor.css" />
+  <script src="editor.js" data-site="lotto" defer></script>
+  <link rel="icon" type="image/png" href="plg-logo.png" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <img src="plg-logo-full.png" alt="PlayLottoGlobal" />
+      <div><span class="eyebrow">Board of Directors · Confidential</span></div>
+      <h1>The PlayLottoGlobal <span>Platform Walkthrough</span></h1>
+      <p>A guided tour of the full product — from first touch to the boardroom. Presented in nine stops across five acts.</p>
+      <div class="hero-meta">
+        <div class="hm"><span class="hm-v">9</span><span class="hm-l">Connected products</span></div>
+        <div class="hm"><span class="hm-v">5</span><span class="hm-l">Acts</span></div>
+        <div class="hm"><span class="hm-v">FY2026</span><span class="hm-l">Board pack</span></div>
+      </div>
+      <button class="begin" id="begin">▶ Begin walkthrough</button>
+      <div class="progress"><span id="ptext">0 of 9 visited</span><div class="track"><div class="fill" id="pfill" style="width:0%"></div></div></div>
+    </header>
+    <div id="acts"></div>
+    <p class="foot">Tap any stop to open it. Your progress is saved as you go. · <a href="#" id="reset">Reset progress</a></p>
+  </div>
+
+<script>
+  var ACTS = [
+    { n:"Act 1", t:"The Opportunity", color:"#c6a86a", steps:[
+      { f:"PLG Gateway.html", t:"Gateway", d:"The front door — players and affiliates choose their path into the platform." }
+    ]},
+    { n:"Act 2", t:"The Product — Acquisition to Play", color:"#5b76e8", steps:[
+      { f:"Lotto Global.html", t:"Player App", d:"Play the world's biggest lotteries: number picker, live draws, wallet, tickets & rewards." },
+      { f:"Viral Launch.html", t:"Viral Growth Engine", d:"Skip-the-line waitlist, share-card studio, spin-to-win & link-in-bio — every player becomes a promoter." }
+    ]},
+    { n:"Act 3", t:"The Network — Affiliate & MLM", color:"#4f63b5", steps:[
+      { f:"PLG Member Hub.html", t:"Member Hub", d:"The member command center linking every tool that helps them earn and play." },
+      { f:"PLG Affiliate Portal.html", t:"Affiliate Portal", d:"Full MLM back-office: genealogy tree, e-wallet, payouts, replica site & support." },
+      { f:"Affiliate Dashboard.html", t:"Commission Dashboard", d:"Multi-level commission analytics, earnings, tiers & leaderboard." }
+    ]},
+    { n:"Act 4", t:"The Engine — Marketing & Ops", color:"#5fae86", steps:[
+      { f:"Marketing Hub.html", t:"Marketing Hub", d:"Hermes omnichannel comms, AI studio, workflow automation & the viral engine." }
+    ]},
+    { n:"Act 5", t:"Governance & The Ask", color:"#6b7392", steps:[
+      { f:"PLG Admin Console.html", t:"Board & Admin CRM", d:"Executive console: P&L, projections, risk, legal, taxes, cap table — with Hermes on hand." },
+      { f:"Proposal.html", t:"The Proposal", d:"Partnership scope, build, operating agreement, commercials & terms." }
+    ]}
+  ];
+
+  var KEY="plg_pres_progress", visited={};
+  try{ visited=JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){}
+  var order=[];
+  ACTS.forEach(function(a){a.steps.forEach(function(s){order.push(s.f);});});
+
+  var arr='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+  var host=document.getElementById("acts"), html="", idx=0;
+  ACTS.forEach(function(a){
+    html+='<div class="act"><div class="act-h"><span class="act-n">'+a.n+'</span><h2>'+a.t+'</h2><span class="act-line"></span></div>';
+    a.steps.forEach(function(s){
+      idx++;
+      html+='<a class="step'+(visited[s.f]?' done':'')+'" href="'+s.f+'" data-f="'+s.f+'" style="--accent:'+a.color+'">'
+        +'<span class="step-n">'+idx+'</span>'
+        +'<div class="step-tx"><div class="step-t">'+s.t+' <span class="step-file">'+s.f+'</span></div><div class="step-d">'+s.d+'</div></div>'
+        +'<span class="step-go">Open '+arr+'</span></a>';
+    });
+    html+='</div>';
+  });
+  host.innerHTML=html;
+
+  function updateProgress(){
+    var done=Object.keys(visited).filter(function(k){return visited[k];}).length;
+    document.getElementById("ptext").textContent=done+" of "+order.length+" visited";
+    document.getElementById("pfill").style.width=(done/order.length*100)+"%";
+  }
+  updateProgress();
+
+  document.querySelectorAll(".step").forEach(function(el){
+    el.addEventListener("click", function(){ visited[el.dataset.f]=true; try{localStorage.setItem(KEY,JSON.stringify(visited));}catch(e){} });
+  });
+  document.getElementById("begin").addEventListener("click", function(){ window.location.href=order[0]; });
+  document.getElementById("reset").addEventListener("click", function(e){ e.preventDefault(); visited={}; try{localStorage.removeItem(KEY);}catch(e2){} document.querySelectorAll(".step").forEach(function(el){el.classList.remove("done");}); updateProgress(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PlayLottoGlobal — System Wireframe & Build Spec</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#141d52; --navy-2:#1b2a6b; --indigo:#3b5bdb; --indigo-soft:#5b76e8; --gold:#c6a86a; --gold-deep:#9c7d3c;
+    --ink:#16203c; --muted:#5d6680; --dim:#8a92ad;
+    --line:#e3e8f3; --line-soft:#eef2fa; --bg:#f5f7fc; --card:#ffffff; --code-bg:#0e1530; --code-fg:#cdd6f4;
+    --green:#2b8a5b; --amber:#b07d1a; --red:#c0445a;
+    --fd:'Outfit',system-ui,sans-serif; --fs:'Inter',system-ui,sans-serif; --fm:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fs);color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--gold);color:#fff}
+  .layout{display:grid;grid-template-columns:262px 1fr;max-width:1280px;margin:0 auto;align-items:start}
+
+  /* sidebar TOC */
+  .toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:30px 18px 40px;border-right:1px solid var(--line);background:var(--card)}
+  .toc-brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .toc-brand img{height:34px}
+  .toc-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);font-weight:700;margin-bottom:20px}
+  .toc a{display:block;padding:7px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .15s}
+  .toc a:hover{background:var(--line-soft);color:var(--ink)}
+  .toc a.h{font-family:var(--fd);font-weight:700;color:var(--ink);margin-top:14px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+  .toc a.sub{padding-left:22px;font-size:.82rem}
+
+  main{padding:46px 56px 100px;min-width:0}
+  .hero{border-radius:22px;padding:38px 40px;background:linear-gradient(140deg,var(--navy-2),var(--navy));color:#fff;position:relative;overflow:hidden;margin-bottom:38px}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 80% at 88% 0%,rgba(198,168,106,.28),transparent 60%)}
+  .hero .eyebrow{position:relative;font-family:var(--fd);font-weight:600;letter-spacing:.18em;font-size:.72rem;text-transform:uppercase;color:var(--gold)}
+  .hero h1{position:relative;font-family:var(--fd);font-weight:800;font-size:2.3rem;letter-spacing:-.02em;margin:12px 0 10px;line-height:1.05}
+  .hero p{position:relative;color:#b8c0e0;max-width:46em}
+  .hero-meta{position:relative;display:flex;gap:28px;flex-wrap:wrap;margin-top:22px}
+  .hero-meta div{display:flex;flex-direction:column}
+  .hero-meta b{font-family:var(--fd);font-weight:800;font-size:1.3rem}
+  .hero-meta span{font-size:.74rem;color:var(--dim)}
+
+  h2{font-family:var(--fd);font-weight:800;font-size:1.55rem;letter-spacing:-.02em;margin:46px 0 4px;padding-top:10px;scroll-margin-top:20px}
+  h2 .num{color:var(--gold);font-size:1rem;vertical-align:middle;margin-right:10px}
+  h2+.lede{color:var(--muted);font-size:1.02rem;margin-bottom:22px;max-width:54em}
+  h3{font-family:var(--fd);font-weight:700;font-size:1.12rem;margin:30px 0 12px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+  h3 .pin{width:26px;height:26px;border-radius:8px;background:var(--indigo);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex:none}
+  p{margin-bottom:12px}
+  .muted{color:var(--muted)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:16px;box-shadow:0 2px 10px -6px rgba(20,29,82,.12)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  ul{margin:0 0 12px 2px;list-style:none}
+  li{position:relative;padding-left:22px;margin-bottom:7px;font-size:.94rem}
+  li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:var(--gold)}
+  li b{color:var(--ink)}
+  .route{font-family:var(--fm);font-size:.82rem;color:var(--indigo);background:#eef1fd;padding:2px 7px;border-radius:5px;white-space:nowrap;font-weight:500}
+  .arrow{color:var(--gold);font-weight:700;padding:0 4px}
+  code{font-family:var(--fm);font-size:.85em;background:#eef1fb;padding:2px 6px;border-radius:5px;color:var(--navy-2)}
+
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:999px;vertical-align:middle}
+  .t-app{background:#e8edfc;color:var(--indigo)}
+  .t-aff{background:#fbf3e2;color:var(--gold-deep)}
+  .t-admin{background:#f3e8f0;color:#8a3d6e}
+  .t-public{background:#e6f4ec;color:var(--green)}
+  .t-new{background:var(--gold);color:#fff}
+
+  /* flow map */
+  .map{background:var(--code-bg);border-radius:16px;padding:26px;margin-bottom:18px;overflow-x:auto}
+  .map pre{font-family:var(--fm);font-size:.8rem;line-height:1.7;color:#a9b4e0;white-space:pre}
+  .map .n{color:#8ab4ff;font-weight:600}.map .g{color:var(--gold)}.map .c{color:#6b76a8}.map .gr{color:#7fd4a3}
+
+  /* screen block */
+  .screen{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+  .screen-h{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--line-soft);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .screen-h .sn{width:28px;height:28px;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:.8rem;flex:none}
+  .screen-h h4{font-family:var(--fd);font-weight:700;font-size:1.02rem;flex:1;min-width:0}
+  .screen-b{padding:16px 18px}
+  .screen-b table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .screen-b td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  .screen-b td:first-child{font-weight:600;color:var(--ink);width:38%}
+  .screen-b tr:last-child td{border-bottom:none}
+
+  .callout{border-left:3px solid var(--gold);background:#fcf8ef;padding:14px 18px;border-radius:0 12px 12px 0;margin-bottom:16px;font-size:.92rem}
+  .callout.blue{border-color:var(--indigo);background:#eef1fd}
+  .callout b{color:var(--ink)}
+
+  .spec{background:var(--code-bg);border-radius:16px;padding:0;overflow:hidden;margin-bottom:18px}
+  .spec-h{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:#0a1026;border-bottom:1px solid #1e2952}
+  .spec-h span{color:#cdd6f4;font-family:var(--fd);font-weight:700;font-size:.85rem}
+  .spec-h em{color:#6b76a8;font-style:normal;font-size:.72rem;font-family:var(--fm)}
+  .spec pre{font-family:var(--fm);font-size:.82rem;line-height:1.72;color:#cdd6f4;padding:20px 22px;overflow-x:auto;white-space:pre-wrap}
+  .spec pre .k{color:var(--gold)}.spec pre .c{color:#6b76a8}.spec pre .s{color:#7fd4a3}
+
+  footer{color:var(--dim);font-size:.82rem;border-top:1px solid var(--line);padding-top:22px;margin-top:40px}
+  @media(max-width:920px){.layout{grid-template-columns:1fr}.toc{display:none}main{padding:30px 22px 80px}.grid2{grid-template-columns:1fr}}
+</style>
+  <link rel="icon" type="image/png" href="plg-logo.png" />
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="toc-brand"><img src="plg-logo-full.png" alt="PLG" /></div>
+    <div class="toc-tag">System Spec · v1</div>
+    <a class="h" href="#overview">Overview</a>
+    <a href="#model" class="sub">The unified model</a>
+    <a href="#roles" class="sub">Roles &amp; access</a>
+    <a class="h" href="#sitemap">Sitemap & flow</a>
+    <a class="h" href="#global">Global systems</a>
+    <a href="#g-nav" class="sub">Navigation spine</a>
+    <a href="#g-auth" class="sub">Auth & session</a>
+    <a href="#g-theme" class="sub">Theme (dark/light)</a>
+    <a href="#g-wallet" class="sub">Wallet & money</a>
+    <a href="#g-api" class="sub">Service layer</a>
+    <a class="h" href="#screens">Screen wireframes</a>
+    <a href="#s-public" class="sub">Public & entry</a>
+    <a href="#s-play" class="sub">Player app</a>
+    <a href="#s-affiliate" class="sub">Affiliate</a>
+    <a href="#s-marketing" class="sub">Marketing</a>
+    <a href="#s-admin" class="sub">Board / Admin</a>
+    <a class="h" href="#buildspec">Build spec prompt</a>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="eyebrow">PlayLottoGlobal · Confidential</div>
+      <h1>System Wireframe &amp; Unified Build Spec</h1>
+      <p>The complete map of every screen, how they wire together, the shared systems that bind them into one product, and a ready-to-paste brief for the app builder. This is the single source of truth for how PlayLottoGlobal should behave end to end.</p>
+      <div class="hero-meta">
+        <div><b>4</b><span>Product surfaces</span></div>
+        <div><b>11</b><span>Core screens</span></div>
+        <div><b>1</b><span>Service layer</span></div>
+        <div><b>3</b><span>User roles</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== OVERVIEW ===================== -->
+    <h2 id="overview"><span class="num">01</span>Overview</h2>
+    <p class="lede">PlayLottoGlobal is <b>one product with four role-gated surfaces</b>, not four separate apps. Every surface shares a single spine: one identity, one wallet, one theme, one data/service layer. A user moves between them based on who they are — never re-logging-in, never losing state.</p>
+
+    <h3 id="model"><span class="pin">A</span>The unified model</h3>
+    <div class="card">
+      <p>Think of it as concentric rings around a shared core. The core is the <code>PLG_API</code> service layer + session + wallet. Each surface is a view onto that core, gated by role.</p>
+      <ul>
+        <li><span class="tag t-public">Public</span> <b>Gateway &amp; growth</b> — anyone, no login. Splash, viral landing, live news. Funnels into sign-up.</li>
+        <li><span class="tag t-app">Player</span> <b>The app</b> — any signed-in player. Play, draws, wallet, tickets, rewards, profile.</li>
+        <li><span class="tag t-aff">Affiliate</span> <b>The network</b> — players who opted into the affiliate program. Member Hub, portal, commission dashboard, viral tools.</li>
+        <li><span class="tag t-admin">Staff</span> <b>Back office</b> — staff/board only. Marketing Hub (Hermes) and the Board &amp; Admin CRM.</li>
+      </ul>
+      <div class="callout blue"><b>One rule that makes it unified:</b> every button writes through <code>PLG_API</code> and every read comes from it. No screen invents its own state. Change a balance in checkout → the wallet popover, dashboard, and admin revenue all reflect it because they read the same store.</div>
+    </div>
+
+    <h3 id="roles"><span class="pin">B</span>Roles &amp; access</h3>
+    <div class="card">
+      <table style="width:100%;border-collapse:collapse;font-size:.9rem">
+        <tr style="border-bottom:2px solid var(--line)"><td style="padding:8px 10px;font-weight:700;font-family:var(--fd)">Role</td><td style="padding:8px 10px;font-weight:700;font-family:var(--fd)">Unlocks</td><td style="padding:8px 10px;font-weight:700;font-family:var(--fd)">Becomes one by…</td></tr>
+        <tr><td style="padding:8px 10px"><b>Visitor</b></td><td style="padding:8px 10px">Gateway, Viral landing, Live news, Results</td><td style="padding:8px 10px">— (default)</td></tr>
+        <tr><td style="padding:8px 10px"><b>Player</b></td><td style="padding:8px 10px">+ Full app, wallet, tickets, rewards, billing</td><td style="padding:8px 10px">Signing up / logging in</td></tr>
+        <tr><td style="padding:8px 10px"><b>Affiliate</b></td><td style="padding:8px 10px">+ Member Hub, Portal, Commission dashboard, Viral tools</td><td style="padding:8px 10px">Joining the affiliate program (1 tap in app)</td></tr>
+        <tr><td style="padding:8px 10px"><b>Staff / Board</b></td><td style="padding:8px 10px">+ Marketing Hub, Admin CRM, Hermes</td><td style="padding:8px 10px">Granted by an admin (role flag)</td></tr>
+      </table>
+      <div class="callout">Access is additive — an affiliate is still a player and still a visitor. The nav simply reveals more entry points as the role grows.</div>
+    </div>
+
+    <!-- ===================== SITEMAP ===================== -->
+    <h2 id="sitemap"><span class="num">02</span>Sitemap &amp; flow</h2>
+    <p class="lede">How every screen connects. Solid arrows are primary paths; everything also reachable from the global nav and profile menu.</p>
+    <div class="map"><pre><span class="c">                          ┌─────────────────────────┐</span>
+                          │   <span class="g">PLG GATEWAY</span> (splash)   │  <span class="c">public entry</span>
+                          └───────────┬─────────────┘
+            ┌─────────────────────────┼─────────────────────────┐
+            ▼                         ▼                         ▼
+   <span class="n">Viral Launch</span>              <span class="n">Sign In / Up</span>              <span class="n">Live News / Results</span>
+   <span class="c">waitlist · share</span>           <span class="c">auth</span>                     <span class="c">SEO · social proof</span>
+            │                         │                         │
+            └────────────►  <span class="g">PLAYER APP (Lobby)</span>  ◄────────────┘
+                                      │
+        ┌──────────────┬─────────────┼──────────────┬───────────────┐
+        ▼              ▼             ▼              ▼               ▼
+  <span class="n">Pick Numbers</span>    <span class="n">Live Draw</span>     <span class="n">My Tickets</span>     <span class="n">Rewards</span>        <span class="n">Wallet</span>
+        │              ▲             │                              │
+        ▼              │             ▼                              ▼
+   <span class="n">Checkout</span> ───► <span class="n">Confirmation</span>   <span class="n">Digital Ticket</span>              <span class="n">Billing</span>
+        <span class="c">(writes wallet + ticket via PLG_API)</span>                      <span class="c">cards · crypto</span>
+
+            <span class="g">PROFILE MENU</span>  <span class="c">(any signed-in user)</span>
+                  │
+      ┌───────────┼───────────────┬──────────────────┐
+      ▼           ▼               ▼                  ▼
+  <span class="n">Profile</span>   <span class="gr">Member Hub</span> ──► <span class="gr">Affiliate Portal</span>   <span class="gr">Commission Dash</span>   <span class="c">(affiliate)</span>
+                  │
+                  ▼
+            <span class="gr">Viral tools</span>  <span class="c">(share studio · link-in-bio · spin)</span>
+
+            <span class="g">STAFF ENTRY</span>  <span class="c">(role: staff)</span>
+                  │
+          ┌───────┴────────┐
+          ▼                ▼
+   <span class="n">Marketing Hub</span>     <span class="n">Admin / Board CRM</span>  <span class="c">+ Hermes agent (bottom dock)</span></pre></div>
+    <div class="callout blue"><b>Presentation order</b> (for the board walkthrough): Gateway <span class="arrow">→</span> Player App <span class="arrow">→</span> Viral <span class="arrow">→</span> Member Hub <span class="arrow">→</span> Portal <span class="arrow">→</span> Commission Dash <span class="arrow">→</span> Marketing Hub <span class="arrow">→</span> Admin CRM <span class="arrow">→</span> Proposal. This is the existing <span class="route">PLG Board Presentation.html</span>.</div>
+
+    <!-- ===================== GLOBAL SYSTEMS ===================== -->
+    <h2 id="global"><span class="num">03</span>Global systems</h2>
+    <p class="lede">The shared spine. These five systems exist once and every screen consumes them — this is what makes the suite "one system" rather than a folder of pages.</p>
+
+    <h3 id="g-nav"><span class="pin">1</span>Navigation spine</h3>
+    <div class="card">
+      <ul>
+        <li><b>Top bar</b> (player app): logo <span class="route">→ home</span>, primary nav (Home · Games · Results · News · Rewards), wallet popover, notifications, profile-menu avatar.</li>
+        <li><b>Profile menu</b> is the cross-surface launcher — Profile, Wallet, Refer &amp; earn, Billing, Member Hub ↗, Affiliate dashboard ↗, Marketing hub ↗ (staff), Admin ↗ (staff), theme toggle, sign out.</li>
+        <li><b>Sidebar</b> (all back-office surfaces): identical dock component — resizable, dockable left/right/bottom, persists per page (<span class="route">sidebar-dock.js</span>).</li>
+        <li><b>Bottom nav</b> (mobile, player app): Home · Games · Tickets · Rewards · Profile.</li>
+      </ul>
+      <div class="callout">Rule: the logo always returns to that surface's home; the profile avatar always opens the cross-surface menu. Consistent everywhere.</div>
+    </div>
+
+    <h3 id="g-auth"><span class="pin">2</span>Auth &amp; session</h3>
+    <div class="card">
+      <ul>
+        <li>One session object: <code>{ authed, role, profile }</code>. Set by <span class="route">auth.login / auth.signup</span>, cleared by <span class="route">auth.logout</span>.</li>
+        <li>Guests can browse public surfaces. Hitting a gated action (buy, withdraw, view portal) <b>routes to Sign In</b>, then returns to the intended screen.</li>
+        <li>"Browse as guest" exists on the auth screen; the app boots into a logged-in demo state for review.</li>
+        <li>Role lives on the session — the nav and route guards read <code>session.role</code> to show/hide affiliate &amp; staff entries.</li>
+      </ul>
+    </div>
+
+    <h3 id="g-theme"><span class="pin">3</span>Theme — dark / light <span class="tag t-new">fixed</span></h3>
+    <div class="card">
+      <p>One theme key drives the entire suite. <b>Single source of truth:</b> <code>localStorage["lg_mode"]</code> = <code>"dark" | "light"</code>.</p>
+      <ul>
+        <li>Toggling sets the key and adds/removes <code>html.light</code>. Every page reads the key on load, so the choice carries across all surfaces.</li>
+        <li>Light overrides live in <span class="route">extra.css</span> (app) + per-surface <code>html.light</code> blocks (dashboard, marketing, portal, admin).</li>
+        <li><b>The fix:</b> structural chrome (sidebars, top bars, nav controls, tables, tree nodes) was hardcoding dark <code>hsl()</code> values, so it stayed dark while cards flipped. Those now have <code>html.light</code> retints — no more split appearance.</li>
+      </ul>
+      <div class="callout blue"><b>Builder rule going forward:</b> never hardcode a surface color. Use the semantic tokens (<code>--bg</code>, <code>--bg-card</code>, <code>--border</code>, <code>--fg</code>…). Tokens flip automatically; raw <code>hsl()</code> does not. Every new dark value needs a matching <code>html.light</code> override.</div>
+    </div>
+
+    <h3 id="g-wallet"><span class="pin">4</span>Wallet &amp; money</h3>
+    <div class="card">
+      <ul>
+        <li>One wallet object: <code>{ playable, winnings, commission }</code>. Shown in the header popover, the Wallet page, the dashboard, and (aggregated) admin revenue.</li>
+        <li>Writes: <span class="route">wallet.topUp</span>, <span class="route">wallet.withdraw</span>, <span class="route">payments.checkout</span>, <span class="route">payouts.request</span>. Each emits an event so every open view updates live.</li>
+        <li>Payment methods: cards (live brand detection + Luhn) via <span class="route">payments.addCard</span>; crypto via <span class="route">payments.connectWallet</span> (MetaMask, Coinbase, WalletConnect, Phantom, Trust, Rainbow).</li>
+      </ul>
+    </div>
+
+    <h3 id="g-api"><span class="pin">5</span>Service layer — the unifier</h3>
+    <div class="card">
+      <p><span class="route">plg-api.js</span> exposes one namespaced API. Today it resolves against a localStorage mock; flip <code>PLG_API.config.mode = "live"</code> + set <code>baseUrl</code> and every call becomes a real REST request — no UI changes.</p>
+      <div class="grid2">
+        <ul>
+          <li><code>auth.*</code> — signup, login, session, reset</li>
+          <li><code>players.*</code> — profile, stats, bank details</li>
+          <li><code>wallet.*</code> — balance, topUp, withdraw</li>
+          <li><code>payments.*</code> — cards, crypto, checkout</li>
+          <li><code>tickets.*</code> — games, buy, results, draws</li>
+        </ul>
+        <ul>
+          <li><code>affiliate.*</code> — network, commissions, waitlist, invite</li>
+          <li><code>payouts.*</code> — request, list, stats</li>
+          <li><code>marketing.*</code> — campaigns, Hermes send, AI generate</li>
+          <li><code>support.*</code> — tickets, FAQs</li>
+          <li><code>admin.*</code> — KPIs, P&amp;L, risks, cap table…</li>
+        </ul>
+      </div>
+      <div class="callout"><b>Wire-to-backend checklist:</b> 1) host the REST API matching the documented routes, 2) set <code>baseUrl</code> + <code>mode:"live"</code>, 3) pass the bearer token from <code>auth.login</code>. The UI is already done.</div>
+    </div>
+
+    <!-- ===================== SCREENS ===================== -->
+    <h2 id="screens"><span class="num">04</span>Screen wireframes</h2>
+    <p class="lede">Each screen: what's on it, what every action does, and where it routes. <span class="route">file.html</span> = the standalone tab; the same screen also lives inside the main app by route.</p>
+
+    <h3 id="s-public">Public &amp; entry <span class="tag t-public">no login</span></h3>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">G</span><h4>Gateway</h4><span class="route">PLG Gateway.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Purpose</td><td>The front door. Choose your path: play or partner.</td></tr>
+        <tr><td>"Become an Affiliate"</td><td><span class="arrow">→</span> <span class="route">Viral Launch</span></td></tr>
+        <tr><td>"Play Lottery"</td><td><span class="arrow">→</span> <span class="route">Player App</span></td></tr>
+        <tr><td>Member login</td><td><span class="arrow">→</span> <span class="route">Affiliate Portal</span></td></tr>
+        <tr><td>Movable</td><td>Customize mode: drag/resize blocks, persisted.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">V</span><h4>Viral Launch</h4><span class="route">Viral Launch.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Waitlist join</td><td>Email <span class="arrow">→</span> <span class="route">affiliate.joinWaitlist</span> → position + referral link + milestones</td></tr>
+        <tr><td>Share buttons</td><td>WhatsApp / X / Facebook deep links; "Simulate referral" advances queue</td></tr>
+        <tr><td>Share Studio</td><td>Canvas generates branded jackpot/win/invite card → <b>downloads real PNG</b></td></tr>
+        <tr><td>Spin-to-win</td><td>Email-gated wheel → prize → referral popup (email/phone invite)</td></tr>
+        <tr><td>Link-in-bio</td><td>Influencer builder: handle, photo slots, earnings estimator, live preview</td></tr>
+        <tr><td>Embed widget</td><td>Copy-paste snippet for partner sites</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">N</span><h4>Live News &amp; Results</h4><span class="route">15 Live News.html · 09 Results.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Purpose</td><td>SEO + social proof. Worldwide jackpots, movers, headlines, winners, results grid.</td></tr>
+        <tr><td>Any game card</td><td><span class="arrow">→</span> <span class="route">Pick Numbers</span> for that game</td></tr>
+        <tr><td>Data</td><td>Live ticker via heartbeat; reads <span class="route">tickets.getResults</span></td></tr>
+      </table></div>
+    </div>
+
+    <h3 id="s-play">Player app <span class="tag t-app">player</span></h3>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">1</span><h4>Sign In / Up</h4><span class="route">01 Sign In.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Login / Signup</td><td><span class="route">auth.login</span> / <span class="route">auth.signup</span> <span class="arrow">→</span> Lobby</td></tr>
+        <tr><td>Browse as guest</td><td><span class="arrow">→</span> Lobby (visitor role)</td></tr>
+        <tr><td>Security badges</td><td>SSL / PCI / licensed trust row</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">2</span><h4>Lobby (Home)</h4><span class="route">02 Lobby.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Hero</td><td>Rotating featured jackpot + countdown; "Pick Numbers" / "Lucky Dip"</td></tr>
+        <tr><td>Game board</td><td>Each game card <span class="arrow">→</span> <span class="route">Pick Numbers</span></td></tr>
+        <tr><td>Ticker / winners</td><td>Live heartbeat (jackpots creep, winners stream)</td></tr>
+        <tr><td>Results · winners</td><td>Latest draws + recent winners feed</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">3</span><h4>Pick Numbers</h4><span class="route">03 Pick Numbers.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Number grid</td><td>Tap to select; per-game rules (main + bonus pools)</td></tr>
+        <tr><td>Lucky Dip / Clear</td><td>Quick-pick a line / reset</td></tr>
+        <tr><td>Bet slip</td><td>Add lines, quick-add N Lucky Dips, live cost</td></tr>
+        <tr><td>Enter the draw</td><td>Writes slip <span class="arrow">→</span> <span class="route">Checkout</span></td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">4</span><h4>Checkout</h4><span class="route">04 Checkout.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Line summary</td><td>Edit lines <span class="arrow">→</span> Pick Numbers</td></tr>
+        <tr><td>Draws selector</td><td>1 / 2 / month / 3-month + auto-play toggle (one card)</td></tr>
+        <tr><td>Payment</td><td>Wallet or card; insufficient → top-up prompt</td></tr>
+        <tr><td>Social proof</td><td>Live "recent winner" card under payment</td></tr>
+        <tr><td>Pay</td><td><span class="route">payments.checkout</span> + <span class="route">tickets.buyTicket</span> <span class="arrow">→</span> Confirmation</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">5</span><h4>Confirmation <span class="arrow">→</span> 6 · Live Draw</h4><span class="route">05 / 06</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Confirmation</td><td>Ticket ref, "Watch the draw" <span class="arrow">→</span> Live Draw; "My tickets"</td></tr>
+        <tr><td>Live Draw</td><td>Ball-machine animation, line match highlight, win reveal + confetti, result persists to history</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">7</span><h4>My Tickets <span class="arrow">→</span> 8 · Digital Ticket</h4><span class="route">07 / 08</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Ticket list</td><td>Active/checked/winner; tap <span class="arrow">→</span> Digital Ticket</td></tr>
+        <tr><td>Digital ticket</td><td>Perforated pass, QR + barcode. "Add to wallet" (saves pass), "Share" (link), "Watch draw"</td></tr>
+      </table></div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-h"><span class="sn">R</span><h4>Rewards · Wallet · Billing · Profile</h4><span class="route">10 / 12 / 14 / 11</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Rewards</td><td>Bonuses, free lines, loyalty; "Become affiliate" CTA → grants affiliate role</td></tr>
+        <tr><td>Wallet</td><td>3 balances, withdraw flow (bank/PayPal/USDC), payout + txn history</td></tr>
+        <tr><td>Billing</td><td>Cards (live brand detect, Luhn, card preview), crypto connect, invoices</td></tr>
+        <tr><td>Profile</td><td>Personal/contact/bank tabs; reset password</td></tr>
+      </table></div>
+    </div>
+
+    <h3 id="s-affiliate">Affiliate <span class="tag t-aff">affiliate</span></h3>
+    <div class="screen">
+      <div class="screen-h"><span class="sn">H</span><h4>Member Hub</h4><span class="route">PLG Member Hub.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Purpose</td><td>The affiliate launchpad — tiles to every earning/playing tool</td></tr>
+        <tr><td>Tiles</td><td>Play, Tickets, Results, Rewards · Invite, Dashboard, Network, Refer · Marketing, Share, Bio, News · Wallet, Billing, Profile, Portal</td></tr>
+        <tr><td>Live header</td><td>Wallet + commission tick in real time</td></tr>
+      </table></div>
+    </div>
+    <div class="screen">
+      <div class="screen-h"><span class="sn">P</span><h4>Affiliate Portal</h4><span class="route">PLG Affiliate Portal.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Dashboard</td><td>Live, movable/resizable widgets: stats, joinings chart, profile+QR, team, earnings</td></tr>
+        <tr><td>Networks</td><td>Genealogy tree, downline members</td></tr>
+        <tr><td>E-Wallet · Payout</td><td>Balance, withdraw drawer (amount, password, particulars)</td></tr>
+        <tr><td>Tools</td><td>Replica site, materials, news, FAQs</td></tr>
+        <tr><td>Mail · Support</td><td>Inbox + reader; ticket create/list, FAQ accordion</td></tr>
+      </table></div>
+    </div>
+    <div class="screen">
+      <div class="screen-h"><span class="sn">D</span><h4>Commission Dashboard</h4><span class="route">Affiliate Dashboard.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Sections</td><td>Overview · Network · Commissions · Payouts · Marketing</td></tr>
+        <tr><td>Shows</td><td>Multi-level commission, earnings chart, tier ladder, leaderboard, share links + QR</td></tr>
+        <tr><td>Theme toggle</td><td>Dark/light in top bar (now fully retints chrome)</td></tr>
+      </table></div>
+    </div>
+
+    <h3 id="s-marketing">Marketing <span class="tag t-admin">staff</span></h3>
+    <div class="screen">
+      <div class="screen-h"><span class="sn">M</span><h4>Marketing Hub</h4><span class="route">Marketing Hub.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Overview</td><td>Live KPIs (7/30/90d), reach &amp; leads chart, channels</td></tr>
+        <tr><td>Hermes inbox</td><td>Omnichannel (email/SMS/voice) composer; <span class="route">marketing.sendMessage</span></td></tr>
+        <tr><td>Campaigns</td><td>"New campaign" composer: channel, audience, projected impact, launch</td></tr>
+        <tr><td>AI studio</td><td>Image/video/voice generators with API-key entry; <span class="route">marketing.generateAsset</span></td></tr>
+        <tr><td>Workflows</td><td>Interactive node editor (add, connect, configure, run)</td></tr>
+        <tr><td>Planning · Viral · Brand · Copy · Ads · Influencers · Social</td><td>Full toolset</td></tr>
+        <tr><td>Settings</td><td>Avatar menu → 11 settings panels; dark/light toggle</td></tr>
+      </table></div>
+    </div>
+
+    <h3 id="s-admin">Board / Admin <span class="tag t-admin">staff</span></h3>
+    <div class="screen">
+      <div class="screen-h"><span class="sn">A</span><h4>Board &amp; Admin CRM</h4><span class="route">PLG Admin Console.html</span></div>
+      <div class="screen-b"><table>
+        <tr><td>Overview</td><td>6 KPIs, revenue &amp; EBITDA chart, P&amp;L snapshot, signup sources, board roster</td></tr>
+        <tr><td>Board members</td><td>Click avatar/row <span class="arrow">→</span> profile modal (bio, focus, tenure)</td></tr>
+        <tr><td>Sections</td><td>Revenue · Expenses · Demographics · Projections · Risk/Legal · Accounting/Taxes · Cap table</td></tr>
+        <tr><td>Hermes</td><td>AI operating partner docked at bottom — grounded in live board data (<code>window.claude.complete</code>)</td></tr>
+        <tr><td>Settings · scale</td><td>Sidebar settings menu; display-scale slider</td></tr>
+      </table></div>
+    </div>
+
+    <!-- ===================== BUILD SPEC ===================== -->
+    <h2 id="buildspec"><span class="num">05</span>Build spec prompt</h2>
+    <p class="lede">Paste this into the app builder to generate / refactor the product as one coherent system. It encodes every rule above.</p>
+
+    <div class="spec">
+      <div class="spec-h"><span>Unified Build Brief — PlayLottoGlobal</span><em>copy ↓</em></div>
+      <pre><span class="c"># PRODUCT</span>
+Build <span class="k">PlayLottoGlobal</span>: one product, four role-gated surfaces sharing a
+single spine. NOT four apps — one identity, one wallet, one theme, one
+data layer. Users move between surfaces by role without re-auth.
+
+<span class="c"># SURFACES &amp; ROLES (additive)</span>
+- <span class="k">Public</span>  (visitor): Gateway, Viral landing, Live news, Results
+- <span class="k">Player</span>  (signed in): app — play, draws, wallet, tickets, rewards, billing, profile
+- <span class="k">Affiliate</span> (opted in): Member Hub, Portal, Commission dashboard, Viral tools
+- <span class="k">Staff</span>   (granted): Marketing Hub (Hermes), Board/Admin CRM
+Access is additive; nav reveals more entries as role grows.
+
+<span class="c"># THE SPINE (build these once, every screen consumes them)</span>
+1. <span class="k">Service layer</span> `PLG_API`: one namespaced async API
+   (auth, players, wallet, payments, tickets, affiliate, payouts,
+    marketing, support, admin). Mock-backed via localStorage today;
+   flip `config.mode="live"` + `baseUrl` → real REST, zero UI change.
+   EVERY button writes through it; EVERY read comes from it.
+2. <span class="k">Session</span>: { authed, role, profile }. Guests browse public; a gated
+   action routes to Sign In then returns. Nav reads session.role.
+3. <span class="k">Wallet</span>: { playable, winnings, commission } shown in header popover,
+   Wallet page, dashboard, admin. Writes emit events; open views live-update.
+4. <span class="k">Theme</span>: ONE key `localStorage["lg_mode"]` = dark|light. Toggle adds
+   `html.light`. Read on load so choice carries across ALL surfaces.
+5. <span class="k">Nav</span>: logo→home; avatar→cross-surface profile menu; back-office
+   sidebar is one dockable/resizable component, persisted per page.
+
+<span class="c"># DESIGN SYSTEM (binding)</span>
+- Triple Seven tokens: Outfit (display) + Inter (body); emerald primary;
+  PLG brand = navy/indigo + muted gold. Restrained, executive — never rainbow.
+- NEVER hardcode a surface color. Use semantic tokens
+  (--bg, --bg-card, --border, --fg, --fg-muted…). Tokens flip with theme;
+  raw hsl() does not. Any dark value MUST ship a matching `html.light` override.
+- Radii 10/16/24/30px; soft 1px borders; gentle ease-out motion (200/300/500ms).
+- Icons: white stroke + dark outline; no emoji in chrome.
+
+<span class="c"># WIRING RULES</span>
+- Pick Numbers → Checkout → Confirmation → Live Draw is the buy spine;
+  Checkout calls payments.checkout + tickets.buyTicket, which move the wallet.
+- Every CTA resolves to a real route or PLG_API call — no dead buttons.
+- Rewards "Become affiliate" grants the affiliate role and reveals its nav.
+- Staff surfaces gate on session.role === "staff".
+
+<span class="c"># DELIVER</span>
+A single coherent build where any state change (a purchase, a payout, a
+new signup) propagates everywhere because all screens read one store.</pre>
+    </div>
+
+    <div class="callout blue"><b>How to use:</b> hand this spec + the existing files to the builder. It already matches what's built — use it to keep new work consistent, to onboard a developer, or to brief the backend team on the exact <code>PLG_API</code> contract to implement.</div>
+
+    <footer>
+      PlayLottoGlobal — System Wireframe &amp; Build Spec · v1 · Confidential.
+      Companion to <span class="route">PLG Board Presentation.html</span> (the click-through walkthrough) and <span class="route">plg-api.js</span> (the live service contract).
+    </footer>
+  </main>
+</div>
+</body>
+</html>

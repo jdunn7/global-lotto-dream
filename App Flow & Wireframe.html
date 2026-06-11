@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PlayLottoGlobal — App Flow & Wireframe</title>
+<link rel="stylesheet" href="flowmap.css" />
+  <link rel="icon" type="image/png" href="plg-logo.png" />
+</head>
+<body>
+
+<!-- right-rail dot nav -->
+<nav class="toc">
+  <a href="#map"><span>The whole map</span></a>
+  <a href="#ja"><span>A · Visitor lands</span></a>
+  <a href="#jd"><span>B · Buy a ticket</span></a>
+  <a href="#jb"><span>C · Affiliate makes content</span></a>
+  <a href="#jc"><span>D · A referral link is clicked</span></a>
+  <a href="#comm"><span>Commissions & downlines</span></a>
+  <a href="#fleet"><span>AI marketing fleet</span></a>
+  <a href="#econ"><span>Economics & discipline</span></a>
+  <a href="#roadmap"><span>Start → scale roadmap</span></a>
+  <a href="#wireframes"><span>Complete wireframes</span></a>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="hero-brand">
+      <img src="plg-logo-full.png" alt="PlayLottoGlobal" />
+      <span class="hero-stamp">wireframe · v1</span>
+    </div>
+    <h1>The complete <em>app flow</em>, mapped end to end.</h1>
+    <p class="sub">From a stranger landing on the site → to a player buying a ticket → to an affiliate flooding their feed with referral content → to commission flowing up the downline.</p>
+    <div class="meta">
+      <div><b>4</b>role-gated surfaces</div>
+      <div><b>4</b>complete user journeys</div>
+      <div><b>3</b>commission levels</div>
+      <div><b>7</b>autonomous AI agents</div>
+    </div>
+    <div class="legend">
+      <span class="lg"><span class="dot v"></span>Visitor · public, no login</span>
+      <span class="lg"><span class="dot p"></span>Player · signed in</span>
+      <span class="lg"><span class="dot a"></span>Affiliate · opted-in player</span>
+      <span class="lg"><span class="dot s"></span>Staff · back office</span>
+    </div>
+  </header>
+
+  <!-- ============ SECTION 1 — THE WHOLE MAP ============ -->
+  <section class="section" id="map">
+    <div class="sec-head">
+      <div class="sec-num">00</div>
+      <div>
+        <span class="jlabel">orientation</span>
+        <h2>One product, four doors</h2>
+      </div>
+    </div>
+    <p class="sec-intro">PlayLottoGlobal isn't four apps — it's <b>one product with four role-gated surfaces</b> sharing a single spine: one identity, one wallet, one theme, one data layer. Access is <b>additive</b> — an affiliate is still a player, a player is still a visitor. The nav simply unlocks more doors as the role grows.</p>
+
+    <div class="map">
+      <div class="maprow">
+        <div class="surface">
+          <div class="sh"><span class="pill v">Visitor</span></div>
+          <h4>Gateway & growth</h4>
+          <ul><li>Gateway splash</li><li>Viral launch / waitlist</li><li>Live news & results</li></ul>
+        </div>
+        <div class="surface">
+          <div class="sh"><span class="pill p">Player</span></div>
+          <h4>The app</h4>
+          <ul><li>Lobby · pick · checkout</li><li>Live draw · tickets</li><li>Wallet · rewards · billing</li></ul>
+        </div>
+        <div class="surface">
+          <div class="sh"><span class="pill a">Affiliate</span></div>
+          <h4>The network</h4>
+          <ul><li>Member Hub · Portal</li><li>Commission dashboard</li><li>Share studio · link-in-bio</li></ul>
+        </div>
+        <div class="surface">
+          <div class="sh"><span class="pill s">Staff</span></div>
+          <h4>Back office</h4>
+          <ul><li>Marketing Hub (Hermes)</li><li>Autonomous AI agent fleet</li><li>Board / Admin CRM</li></ul>
+        </div>
+      </div>
+      <div class="map-spine">becomes one by &rarr;&nbsp; <span class="hand">sign up</span> &nbsp;<span class="ar">→</span>&nbsp; <span class="hand">tap "join program"</span> &nbsp;<span class="ar">→</span>&nbsp; <span class="hand">granted by admin</span></div>
+    </div>
+
+    <div class="callout">
+      <span class="k">★</span>
+      <p><b>The one rule that makes it unified:</b> every button writes through one service layer and every read comes from it. Change a balance in checkout → the wallet popover, the affiliate dashboard, and admin revenue all move, because they read the same store. That's why a referred player's purchase can light up their upline's commission instantly.</p>
+    </div>
+  </section>
+
+  <!-- ============ JOURNEY A — VISITOR LANDS ============ -->
+  <section class="section" id="ja">
+    <div class="sec-head">
+      <div class="sec-num">A</div>
+      <div>
+        <span class="jlabel">journey one</span>
+        <h2>A stranger lands on the site</h2>
+      </div>
+    </div>
+    <p class="sec-intro">However they arrive — an ad, a shared post, a search result — every visitor hits the <b>Gateway</b> first and chooses a path. The happy path turns a visitor into a signed-in player.</p>
+
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-v">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Entry</span><span class="pill v">Visitor</span></div>
+          <div class="screen-body">
+            <div class="ph bar l"></div>
+            <div class="rowx"><span class="labk">ad</span><span class="labk">DM link</span><span class="labk">search</span></div>
+            <div class="ph block"></div>
+            <div class="lab">arrives from anywhere</div>
+          </div>
+        </div>
+        <div class="cap">They come from an ad, a creator's post, or organic search.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">lands on</span></div>
+
+      <div class="step">
+        <div class="screen sf-v">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Gateway</span><span class="pill v">Visitor</span></div>
+          <div class="screen-body">
+            <div class="ph h" style="width:60%;margin:0 auto"></div>
+            <div class="ph bar m" style="margin:0 auto"></div>
+            <div class="colx" style="margin-top:4px">
+              <div class="ph btn green">Play Lottery</div>
+              <div class="ph btn gold">Become an Affiliate</div>
+              <div class="ph btn ghost">Member login</div>
+            </div>
+          </div>
+        </div>
+        <div class="cap">The front door. <b>Choose your path</b> — play, partner, or sign in.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">taps "Play"</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Sign In / Up</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph block"></div>
+            <div class="ph bar l"></div>
+            <div class="ph bar l"></div>
+            <div class="ph btn">Create account</div>
+            <div class="ph btn ghost">Browse as guest</div>
+            <div class="rowx" style="justify-content:center;margin-top:2px"><span class="lab">🔒 SSL · PCI · licensed</span></div>
+          </div>
+        </div>
+        <div class="cap">Sign up, log in, or <b>browse as guest</b>. Trust badges reassure.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">enters</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Lobby (Home)</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph tall"></div>
+            <div class="grid3"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="ph bar m"></div>
+            <div class="lab">featured jackpot + game board</div>
+          </div>
+        </div>
+        <div class="cap">The app home: rotating jackpot, the game board, live winners ticker.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:10px">
+      <div class="note bubble green">The other two doors: <b>"Become an Affiliate"</b> opens the Viral Launch page (waitlist + share tools), and <b>"Member login"</b> drops an existing partner straight into the Affiliate Portal.</div>
+      <div class="note bubble blue">Guests can browse freely. The moment they hit a <b>gated action</b> — buy, withdraw, open the portal — they bounce to Sign In, then return exactly where they were.</div>
+    </div>
+
+    <p class="sec-intro" style="margin-top:24px"><b>Other doors from the Gateway</b> — the same public surface, different intent:</p>
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-v">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Viral Launch</span><span class="pill v">Visitor</span></div>
+          <div class="screen-body">
+            <div class="ph h" style="width:70%"></div>
+            <div class="ph bar l"></div>
+            <div class="rowx"><div class="ph block" style="flex:1"></div><div class="ph block" style="flex:1"></div></div>
+            <div class="ph btn gold">Join the waitlist</div>
+            <div class="lab">waitlist · spin-to-win · share</div>
+          </div>
+        </div>
+        <div class="cap">The growth engine — skip-the-line waitlist that hands back a referral link.</div>
+      </div>
+      <div class="conn"><span class="ar"> </span></div>
+      <div class="step">
+        <div class="screen sf-v">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Live News & Results</span><span class="pill v">Visitor</span></div>
+          <div class="screen-body">
+            <div class="rowx"><div class="ph block" style="flex:1"></div><div class="ph block" style="flex:1"></div></div>
+            <div class="ph bar l"></div><div class="ph bar m"></div>
+            <div class="grid3"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="lab">SEO + social proof → any game card opens Pick Numbers</div>
+          </div>
+        </div>
+        <div class="cap">Worldwide jackpots, movers, winners, results grid. Tapping a game jumps into play.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JOURNEY B — BUY A TICKET ============ -->
+  <section class="section" id="jd">
+    <div class="sec-head">
+      <div class="sec-num">B</div>
+      <div>
+        <span class="jlabel">journey two</span>
+        <h2>A player buys a lottery ticket</h2>
+      </div>
+    </div>
+    <p class="sec-intro">The core revenue spine. <b>Pick → Checkout → Confirmation → Live Draw.</b> Checkout writes the wallet and mints the ticket through the service layer — which is also the moment any referral commission is calculated.</p>
+
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Lobby</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph tall"></div>
+            <div class="grid2"><div class="tile"></div><div class="tile"></div></div>
+            <div class="lab">picks a game</div>
+          </div>
+        </div>
+        <div class="cap">Chooses a game from the board or featured jackpot.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Pick Numbers</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="grid5">
+              <div class="ball"></div><div class="ball on"></div><div class="ball"></div><div class="ball on"></div><div class="ball"></div>
+              <div class="ball on"></div><div class="ball"></div><div class="ball"></div><div class="ball gold"></div><div class="ball"></div>
+            </div>
+            <div class="rowx"><div class="ph btn ghost" style="flex:1">Lucky Dip</div><div class="ph btn ghost" style="flex:1">Clear</div></div>
+            <div class="ph btn">Add to bet slip</div>
+          </div>
+        </div>
+        <div class="cap">Tap the grid or <b>Lucky Dip</b>. Bet slip tallies lines & live cost.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">enter draw</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Checkout</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph bar l"></div><div class="ph bar m"></div>
+            <div class="rowx"><span class="labk">1 draw</span><span class="labk">×2</span><span class="labk">month</span></div>
+            <div class="ph block"></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Total</span><span class="amt">$24.00</span></div>
+            <div class="ph btn green">Pay</div>
+          </div>
+        </div>
+        <div class="cap">Choose draws + auto-play, pay by <b>wallet or card</b>. Low balance → top-up prompt.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">pay</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Confirmation</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph circle" style="margin:2px auto;background:var(--visitor)"></div>
+            <div class="ph bar m" style="margin:0 auto"></div>
+            <div class="labk" style="margin:0 auto">ref #LG-8841</div>
+            <div class="ph btn">Watch the draw</div>
+            <div class="ph btn ghost">My tickets</div>
+          </div>
+        </div>
+        <div class="cap">Ticket reference issued. Two ways forward.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">watch</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Live Draw</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph tall" style="border-radius:50%/30%"></div>
+            <div class="grid5"><div class="ball gold"></div><div class="ball gold"></div><div class="ball on"></div><div class="ball"></div><div class="ball on"></div></div>
+            <div class="amt win" style="text-align:center">You matched 3! 🎉</div>
+          </div>
+        </div>
+        <div class="cap">Ball-machine animation, match highlight, win reveal + confetti. Result saved to history.</div>
+      </div>
+    </div>
+
+    <div class="board" style="margin-top:6px">
+      <div class="note bubble blue" style="align-self:center">Anytime after: <b>My Tickets</b> lists active / checked / winning tickets →</div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="step">
+        <div class="screen phone sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Digital Ticket</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph bar m" style="margin:0 auto"></div>
+            <div class="ph block" style="height:54px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px)"></div>
+            <div class="ph block" style="height:38px;background:var(--gray-d)"></div>
+            <div class="rowx"><div class="ph btn ghost" style="flex:1">Add to wallet</div><div class="ph btn ghost" style="flex:1">Share</div></div>
+          </div>
+        </div>
+        <div class="cap">A perforated pass with QR + barcode. Add to phone wallet, share, or watch the draw.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="k">$</span>
+      <p><b>This is the commission moment.</b> When the player taps Pay, the service layer runs <span class="labk">payments.checkout</span> + <span class="labk">tickets.buyTicket</span> — moving the wallet <em>and</em>, if this player was referred, crediting commission up their upline chain. A purchase is never just a purchase; it's a payout event for whoever recruited them.</p>
+    </div>
+  </section>
+
+  <!-- ============ JOURNEY C — AFFILIATE MAKES CONTENT ============ -->
+  <section class="section" id="jb">
+    <div class="sec-head">
+      <div class="sec-num">C</div>
+      <div>
+        <span class="jlabel">journey three</span>
+        <h2>An affiliate makes content with their link</h2>
+      </div>
+    </div>
+    <p class="sec-intro">Once a player taps <b>"Become an affiliate"</b> (one tap, in Rewards or the Member Hub), the network surface unlocks. Every tool here exists to spin one thing — <b>their referral link</b> — into shareable content. Meet Amara: code <span class="labk">AMARA777</span>, link <span class="labk">playlottoglobal.com/r/AMARA777</span>.</p>
+
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Member Hub</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="ph h" style="width:50%"></div>
+            <div class="grid2"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="lab">launchpad → every earning tool</div>
+          </div>
+        </div>
+        <div class="cap">The affiliate launchpad. Tiles to play, invite, network, marketing.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">opens tools</span></div>
+
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Refer & Earn</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="lab">Your link</div>
+            <div class="ph block" style="height:30px;display:flex;align-items:center;justify-content:center"><span class="labk">/r/AMARA777</span></div>
+            <div class="rowx"><div class="ph btn gold" style="flex:1">Copy</div><div class="ph circle" style="width:30px;height:30px;border-radius:6px"></div></div>
+            <div class="rowx wrap"><span class="labk">WhatsApp</span><span class="labk">X</span><span class="labk">FB</span></div>
+          </div>
+        </div>
+        <div class="cap">The hub for the link itself — copy it, drop it on WhatsApp / X / Facebook, grab the QR.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">creates</span></div>
+
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Share Studio</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="ph tall" style="background:linear-gradient(135deg,var(--navy),var(--player))"></div>
+            <div class="rowx"><span class="labk">jackpot</span><span class="labk">win</span><span class="labk">invite</span></div>
+            <div class="ph btn gold">Download PNG</div>
+          </div>
+        </div>
+        <div class="cap">Generates a <b>branded share card</b> (jackpot / win / invite) → downloads a real PNG with her link baked in.</div>
+      </div>
+    </div>
+
+    <div class="board" style="margin-top:4px">
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Link-in-Bio</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="ph circle" style="margin:0 auto"></div>
+            <div class="ph bar s" style="margin:0 auto"></div>
+            <div class="colx"><div class="ph block" style="height:22px"></div><div class="ph block" style="height:22px"></div><div class="ph block" style="height:22px"></div></div>
+            <div class="lab">creator microsite · live jackpots</div>
+          </div>
+        </div>
+        <div class="cap">A personal creator page — handle, photo, live jackpots, earnings estimator. One link for every platform's bio.</div>
+      </div>
+
+      <div class="conn"><span class="ar"> </span></div>
+
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Embed Widget</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="ph block" style="height:50px;background:var(--navy)"></div>
+            <div class="ph bar l"></div>
+            <div class="ph btn ghost">Copy snippet</div>
+            <div class="lab">paste on any partner site</div>
+          </div>
+        </div>
+        <div class="cap">A copy-paste snippet so bloggers & partner sites embed a live jackpot widget carrying her code.</div>
+      </div>
+
+      <div class="conn"><span class="ar"> </span></div>
+
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Spin-to-Win</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="ph circle" style="width:60px;height:60px;margin:0 auto;background:conic-gradient(var(--affiliate),var(--player),var(--visitor),var(--affiliate))"></div>
+            <div class="ph bar m" style="margin:0 auto"></div>
+            <div class="lab">email-gated wheel → invite popup</div>
+          </div>
+        </div>
+        <div class="cap">A gamified, email-gated wheel she can drop anywhere — captures leads, then prompts an invite.</div>
+      </div>
+    </div>
+
+    <div class="note bubble" style="max-width:none;margin-top:18px">Every artifact above — the PNG card, the bio page, the embed, the spin wheel, the raw link — carries the same tracking code <b>AMARA777</b>. It doesn't matter <em>where</em> it's shared; the click is what gets attributed.</div>
+  </section>
+
+  <!-- ============ JOURNEY D — REFERRAL LINK CLICKED ============ -->
+  <section class="section" id="jc">
+    <div class="sec-head">
+      <div class="sec-num">D</div>
+      <div>
+        <span class="jlabel">journey four</span>
+        <h2>Someone clicks the referral link</h2>
+      </div>
+    </div>
+    <p class="sec-intro">This is where the loop closes. A friend taps Amara's link, gets <b>attributed to her downline</b>, signs up, and plays. From that point on, a slice of everything they spend flows back up to Amara — and to <em>her</em> upline.</p>
+
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Shared Content</span><span class="pill a">from Amara</span></div>
+          <div class="screen-body">
+            <div class="ph block" style="background:linear-gradient(135deg,var(--navy),var(--player))"></div>
+            <div class="ph bar m"></div>
+            <div class="labk">/r/AMARA777</div>
+            <div class="lab">post · DM · bio · embed</div>
+          </div>
+        </div>
+        <div class="cap">A friend sees Amara's card / story / bio link.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">clicks</span></div>
+
+      <div class="step">
+        <div class="screen sf-v">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Viral Landing</span><span class="pill v">Visitor</span></div>
+          <div class="screen-body">
+            <div class="ph h" style="width:75%"></div>
+            <div class="ph bar l"></div>
+            <div class="note bubble" style="padding:5px 9px;font-size:0.8rem;max-width:none;margin:0">Referred by <b>Amara</b> ✓</div>
+            <div class="ph btn gold">Claim & sign up</div>
+          </div>
+        </div>
+        <div class="cap"><b>Attribution captured.</b> The page knows who referred them; the code sticks to the session.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">signs up</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">New Player</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="ph circle" style="margin:0 auto"></div>
+            <div class="ph bar s" style="margin:0 auto"></div>
+            <div class="note bubble blue" style="padding:5px 9px;font-size:0.78rem;max-width:none;margin:0">added to AMARA777's<br>Level&nbsp;1 downline</div>
+            <div class="lab">account created · tagged to upline</div>
+          </div>
+        </div>
+        <div class="cap">Account created and <b>permanently tagged</b> to Amara's network as a direct (Level 1) referral.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">plays</span></div>
+
+      <div class="step">
+        <div class="screen sf-p">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Buys a Ticket</span><span class="pill p">Player</span></div>
+          <div class="screen-body">
+            <div class="grid5"><div class="ball on"></div><div class="ball"></div><div class="ball on"></div><div class="ball gold"></div><div class="ball"></div></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">spends</span><span class="amt">$100</span></div>
+            <div class="ph btn green">Pay</div>
+          </div>
+        </div>
+        <div class="cap">Runs the buy spine from Journey B — and the purchase fires a commission event.</div>
+      </div>
+
+      <div class="conn"><span class="ar">→</span><span class="conn-label">credits</span></div>
+
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Amara's Dashboard</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="lab">Commission (live)</div>
+            <div class="amt g">+ $8.00</div>
+            <div class="ph block" style="height:30px"></div>
+            <div class="lab">network +1 · earnings tick up</div>
+          </div>
+        </div>
+        <div class="cap"><b>Instantly.</b> $8 (8% of $100) lands in Amara's commission wallet — the dashboard ticks up live.</div>
+      </div>
+    </div>
+
+    <div class="note bubble green" style="max-width:none;margin-top:16px">And it doesn't stop at Amara. If <em>Amara herself</em> was referred by someone, that person earns the <b>Level 2</b> rate (4%) on the same $100, and their referrer earns <b>Level 3</b> (2%). One ticket, three payouts up the chain. ↓ That structure is next.</div>
+  </section>
+
+  <!-- ============ SECTION — COMMISSIONS, TIERS, DOWNLINES ============ -->
+  <section class="section" id="comm">
+    <div class="sec-head">
+      <div class="sec-num">$</div>
+      <div>
+        <span class="jlabel">the engine</span>
+        <h2>Commissions, tiers & the downline</h2>
+      </div>
+    </div>
+    <p class="sec-intro">PlayLottoGlobal runs a <b>3-level (uni-level) commission structure</b>. You earn on the people you recruit, the people <em>they</em> recruit, and one level deeper — three generations of "downline." Your tier sets the rates. Here's Amara's real network: <b>139 members</b> across three levels.</p>
+
+    <!-- DOWNLINE TREE -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:30px 0 4px">The downline, three levels deep</h3>
+    <div class="tree">
+      <div class="tnode you">YOU — Amara<small>code AMARA777 · Gold tier</small></div>
+      <div class="tconn"></div>
+      <div class="tlevel">
+        <span class="lvl-tag lvl1">L1</span>
+        <span class="lvl-meta"><b>14</b> direct referrals — people you personally invited</span>
+        <span class="lvl-rate">8%</span>
+      </div>
+      <div class="trow" style="margin-top:8px">
+        <div class="tnode">14 directs<small>your recruits</small></div>
+      </div>
+      <div class="tconn"></div>
+      <div class="tlevel">
+        <span class="lvl-tag lvl2">L2</span>
+        <span class="lvl-meta"><b>39</b> members — recruited by your directs</span>
+        <span class="lvl-rate">4%</span>
+      </div>
+      <div class="trow" style="margin-top:8px">
+        <div class="tnode">39 members<small>your team's recruits</small></div>
+      </div>
+      <div class="tconn"></div>
+      <div class="tlevel">
+        <span class="lvl-tag lvl3">L3</span>
+        <span class="lvl-meta"><b>86</b> members — recruited by your Level 2</span>
+        <span class="lvl-rate">2%</span>
+      </div>
+      <div class="trow" style="margin-top:8px">
+        <div class="tnode">86 members<small>third generation</small></div>
+      </div>
+    </div>
+    <div class="note bubble" style="max-width:none;margin-top:14px">14 + 39 + 86 = <b>139 in the network</b>. You earn commission on the <em>play volume</em> of all three levels — but the rate shrinks each level down, so width near the top (lots of directs) pays far more than depth.</div>
+
+    <!-- MONEY CASCADE -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:40px 0 4px">How one $100 ticket pays three people</h3>
+    <p class="sec-intro" style="margin-top:2px">Follow a single purchase up the chain. A Level-3 newcomer spends $100 — three uplines get paid at once, each at their distance-based rate (Gold tier shown).</p>
+    <div class="cascade">
+      <div class="cnode">
+        <div class="ch" style="background:var(--ink)">The buyer</div>
+        <div class="cb"><div class="big">$100</div><div class="sm">ticket purchase by a newly-referred player</div></div>
+      </div>
+      <div class="conn"><span class="ar">→</span><span class="conn-label">L1 · 8%</span></div>
+      <div class="cnode">
+        <div class="ch" style="background:var(--player)">Direct sponsor</div>
+        <div class="cb"><div class="big" style="color:var(--player)">$8.00</div><div class="sm">the person who recruited the buyer</div></div>
+      </div>
+      <div class="conn"><span class="ar">→</span><span class="conn-label">L2 · 4%</span></div>
+      <div class="cnode">
+        <div class="ch" style="background:#6a78c9">2nd upline</div>
+        <div class="cb"><div class="big" style="color:#6a78c9">$4.00</div><div class="sm">who recruited the sponsor</div></div>
+      </div>
+      <div class="conn"><span class="ar">→</span><span class="conn-label">L3 · 2%</span></div>
+      <div class="cnode">
+        <div class="ch" style="background:#9aa3d0">3rd upline</div>
+        <div class="cb"><div class="big" style="color:#9aa3d0">$2.00</div><div class="sm">one more generation up</div></div>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="k">14%</span>
+      <p><b>$14 of every $100</b> is distributed across three upline generations on the Gold tier. The platform keeps the rest. Because it's uni-level (not binary), there's no "weak leg" — every direct you add widens your highest-paying tier.</p>
+    </div>
+
+    <!-- TIER LADDER -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Tiers set your rates</h3>
+    <p class="sec-intro" style="margin-top:2px">The more lifetime volume your network refers, the higher your tier — and the fatter all three commission rates become. Rates below read <b>L1 / L2 / L3</b>.</p>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tname">Bronze</div>
+        <div class="tmin">$0+ referred volume</div>
+        <div class="trate">5 / 2 / 1%<small>L1 / L2 / L3</small></div>
+        <div class="tperk">Standard referral links</div>
+      </div>
+      <div class="tier">
+        <div class="tname">Silver</div>
+        <div class="tmin">$1,000+ referred volume</div>
+        <div class="trate">6 / 3 / 1%<small>L1 / L2 / L3</small></div>
+        <div class="tperk">+ Custom referral code</div>
+      </div>
+      <div class="tier cur">
+        <span class="badge-cur">Amara is here</span>
+        <div class="tname">Gold</div>
+        <div class="tmin">$5,000+ referred volume</div>
+        <div class="trate">8 / 4 / 2%<small>L1 / L2 / L3</small></div>
+        <div class="tperk">+ Priority payouts, banners</div>
+      </div>
+      <div class="tier">
+        <div class="tname">Platinum</div>
+        <div class="tmin">$20,000+ referred volume</div>
+        <div class="trate">10 / 5 / 3%<small>L1 / L2 / L3</small></div>
+        <div class="tperk">+ Account manager, events</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="pbar"><div class="pfill"></div></div>
+      <div class="pmeta"><span>$12,640 lifetime referred volume</span><span class="hand" style="font-size:1rem;color:var(--affiliate-deep)">$7,360 to Platinum →</span></div>
+    </div>
+
+    <!-- WHERE IT SURFACES -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Where the affiliate sees all this</h3>
+    <div class="board">
+      <div class="step">
+        <div class="screen wide sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Commission Dashboard</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="rowx wrap"><span class="labk">Overview</span><span class="labk">Network</span><span class="labk">Commissions</span><span class="labk">Payouts</span></div>
+            <div class="rowx"><div class="colx" style="flex:1"><span class="lab">Lifetime</span><span class="amt g">$3,640+</span></div><div class="colx" style="flex:1"><span class="lab">This month</span><span class="amt">$420</span></div></div>
+            <div class="ph tall"></div>
+            <div class="lab">earnings chart · tier ladder · leaderboard</div>
+          </div>
+        </div>
+        <div class="cap">Five tabs: <b>Overview · Network · Commissions · Payouts · Marketing.</b> Multi-level breakdown, earnings chart, tier progress, leaderboard.</div>
+      </div>
+
+      <div class="conn"><span class="ar"> </span></div>
+
+      <div class="step">
+        <div class="screen wide sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Affiliate Portal — Network</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="tree" style="gap:0;margin:2px 0">
+              <div class="tnode" style="padding:5px 12px;font-size:0.7rem">You</div>
+              <div class="tconn" style="height:14px"></div>
+              <div class="trow"><div class="tnode" style="padding:4px 9px;font-size:0.62rem">●</div><div class="tnode" style="padding:4px 9px;font-size:0.62rem">●</div><div class="tnode" style="padding:4px 9px;font-size:0.62rem">●</div></div>
+            </div>
+            <div class="lab">genealogy tree · downline members · group volume</div>
+          </div>
+        </div>
+        <div class="cap">The <b>genealogy tree</b> — every downline member, their level, volume, and the commission they've generated.</div>
+      </div>
+    </div>
+
+    <!-- PAYOUT -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Getting paid out</h3>
+    <div class="board">
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Commission Wallet</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="lab">Commission balance</div>
+            <div class="amt g" style="font-size:1.3rem">$318.40</div>
+            <div class="ph btn gold">Request payout</div>
+          </div>
+        </div>
+        <div class="cap">Commission accrues in its own wallet bucket, separate from playable & winnings.</div>
+      </div>
+      <div class="conn"><span class="ar">→</span><span class="conn-label">request</span></div>
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Payout Method</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="colx"><div class="ph btn ghost">Bank transfer</div><div class="ph btn ghost">PayPal</div><div class="ph btn ghost">USDC (crypto)</div></div>
+            <div class="lab">amount · password · particulars</div>
+          </div>
+        </div>
+        <div class="cap">Withdraw to bank, PayPal, or USDC. <b>Gold+ tiers get priority payout</b> processing.</div>
+      </div>
+      <div class="conn"><span class="ar">→</span><span class="conn-label">processed</span></div>
+      <div class="step">
+        <div class="screen sf-a">
+          <div class="screen-top"><span class="tdot"></span><span class="nm">Payout History</span><span class="pill a">Affiliate</span></div>
+          <div class="screen-body">
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Mar · USDC</span><span class="amt win">paid</span></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Feb · Bank</span><span class="amt win">paid</span></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">This req.</span><span class="lab" style="color:var(--affiliate-deep)">pending</span></div>
+          </div>
+        </div>
+        <div class="cap">Every request logged. Status flows pending → paid; staff see the aggregate in Admin revenue.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="k">↻</span>
+      <p><b>And the loop repeats.</b> Every paid-out affiliate is incentivised to make more content (Journey C), which gets more clicks (Journey D), which adds more downline who buy more tickets (Journey B) — widening the network and pushing toward the next tier. That's the whole flywheel on one page.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION — AI MARKETING FLEET ============ -->
+  <section class="section" id="fleet">
+    <div class="sec-head">
+      <div class="sec-num">AI</div>
+      <div>
+        <span class="jlabel">the growth engine · always-on</span>
+        <h2>The autonomous AI marketing fleet</h2>
+      </div>
+    </div>
+    <p class="sec-intro">Everything above gets <em>fed</em> by one thing: an always-on fleet of AI agents that manufacture demand around the clock. Operated from the <b>Marketing Hub (Hermes)</b>, the fleet runs cold outreach, content, ads, influencers, and generative media on <b>scheduled instances</b> — monitored remotely and tuned continuously. The goal is to make PlayLottoGlobal a <b>beacon</b>: constant, compounding interest and incentive that grows the brand exponentially.</p>
+
+    <!-- THE BRAIN -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:28px 0 4px">The brain — orchestration layer</h3>
+    <p class="sec-intro" style="margin-top:2px">No single model runs the show. A conductor routes each task to the right <b>LLM</b>, grounds it in <b>vector memory</b> (brand voice, performance history, what's converted before), and aims it at a <b>target persona</b>. Every output gets smarter because the memory keeps learning.</p>
+    <div class="brain">
+      <div class="brain-h"><span class="bdot"></span><h4>Hermes — fleet conductor</h4><span class="htag">routes · grounds · schedules · evaluates</span></div>
+      <div class="brain-grid">
+        <div class="brain-col">
+          <div class="bcl">Multiple LLMs</div>
+          <div class="chipstack">
+            <div class="mchip"><span class="mc-ic" style="background:var(--player)">R</span><span>Reasoning model<small>planning, strategy, routing</small></span></div>
+            <div class="mchip"><span class="mc-ic" style="background:var(--affiliate)">C</span><span>Copy model<small>SMS, email, blog, ad copy</small></span></div>
+            <div class="mchip"><span class="mc-ic" style="background:var(--visitor)">V</span><span>Vision / media model<small>image, video, AI faces</small></span></div>
+          </div>
+        </div>
+        <div class="brain-col">
+          <div class="bcl">Memory vectors</div>
+          <div class="chipstack">
+            <div class="mchip" style="display:block"><span>Brand voice & guidelines</span><div class="vec" style="margin-top:6px"><span class="vecbar v4"></span></div></div>
+            <div class="mchip" style="display:block"><span>Audience & persona library</span><div class="vec" style="margin-top:6px"><span class="vecbar v2"></span></div></div>
+            <div class="mchip" style="display:block"><span>Performance history (what converts)</span><div class="vec" style="margin-top:6px"><span class="vecbar v3"></span></div></div>
+          </div>
+        </div>
+        <div class="brain-col">
+          <div class="bcl">Persona & audience targeting</div>
+          <div class="persona-tags">
+            <span class="ptag">Aspirational first-timers</span>
+            <span class="ptag">Lapsed players</span>
+            <span class="ptag">High-frequency regulars</span>
+            <span class="ptag">Jackpot chasers</span>
+            <span class="ptag">Creators & affiliates</span>
+            <span class="ptag">Region / language segments</span>
+          </div>
+          <div class="lab" style="margin-top:10px">Every message is written <em>for a persona</em>, not broadcast blind.</div>
+        </div>
+      </div>
+      <div class="brain-foot">One conductor → many models → grounded in memory → aimed at a persona → measured → the memory updates. That loop is the moat.</div>
+    </div>
+
+    <!-- THE FLEET -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:40px 0 4px">The fleet — seven specialist agents</h3>
+    <p class="sec-intro" style="margin-top:2px">Each agent owns a channel end to end: it generates, schedules, ships, and reports back. All staff-operated through the Marketing Hub.</p>
+    <div class="fleet">
+      <div class="agent">
+        <div class="ah"><span class="a-ic">CO</span><span class="a-nm">Cold Outreach Agent<small>SMS + Email</small></span></div>
+        <div class="a-desc">Builds and runs persona-segmented cold sequences — drip cadences, reply detection, hand-off to a human when a lead heats up.</div>
+        <div class="a-out"><span class="aout">SMS blasts</span><span class="aout">email drips</span><span class="aout">follow-ups</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · sends in timed waves</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">SEO</span><span class="a-nm">Blog & SEO Agent<small>long-form content</small></span></div>
+        <div class="a-desc">Researches keywords, drafts and publishes blog posts and landing copy tuned to search intent and each persona's questions.</div>
+        <div class="a-out"><span class="aout">blog posts</span><span class="aout">SEO pages</span><span class="aout">newsletters</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · daily publish cadence</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">AD</span><span class="a-nm">Ad Creative Agent<small>paid acquisition</small></span></div>
+        <div class="a-desc">Generates ad copy + creative variants, launches across channels, A/B tests, and reallocates spend toward winners.</div>
+        <div class="a-out"><span class="aout">ad copy</span><span class="aout">static + video ads</span><span class="aout">A/B tests</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · continuous optimization</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">INF</span><span class="a-nm">Influencer Acquisition<small>human creators</small></span></div>
+        <div class="a-desc">Sources real creators by niche & audience fit, runs outreach, negotiates, and onboards them straight into the affiliate program.</div>
+        <div class="a-out"><span class="aout">prospecting</span><span class="aout">outreach</span><span class="aout">affiliate onboarding</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · weekly recruit batches</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">AIP</span><span class="a-nm">AI Influencer Studio<small>synthetic personas</small></span></div>
+        <div class="a-desc">Creates and runs fully synthetic AI influencers — consistent face, voice & persona — posting branded content and pushing referral links.</div>
+        <div class="a-out"><span class="aout">AI personas</span><span class="aout">posts + reels</span><span class="aout">DMs</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · always-on posting</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">MED</span><span class="a-nm">Video & Photo Studio<small>generative media</small></span></div>
+        <div class="a-desc">Produces short-form video, photography and branded graphics on a schedule — feeding ads, socials, AI influencers and the share studio.</div>
+        <div class="a-out"><span class="aout">short video</span><span class="aout">photos</span><span class="aout">share cards</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · batch render runs</div>
+      </div>
+      <div class="agent">
+        <div class="ah"><span class="a-ic">SOC</span><span class="a-nm">Social & Scheduler<small>distribution</small></span></div>
+        <div class="a-desc">The dispatcher — queues every asset to the right platform at the right time, watches engagement, and routes results back to memory.</div>
+        <div class="a-out"><span class="aout">multi-platform</span><span class="aout">queue + post</span><span class="aout">listening</span></div>
+        <div class="a-foot">⏱ <span class="sd">scheduled</span> · 24/7 timeline</div>
+      </div>
+      <div class="agent" style="border-top-color:var(--navy);justify-content:center;background:var(--paper-2)">
+        <div class="ah"><span class="a-ic" style="background:var(--navy)">★</span><span class="a-nm">Remote operator<small>you + Hermes</small></span></div>
+        <div class="a-desc">A human watches the whole fleet from the Marketing Hub — reading dashboards, approving spend, and nudging the agents when the numbers move.</div>
+        <div class="a-foot" style="border:none;padding-top:2px">monitored remotely · tuned continuously</div>
+      </div>
+    </div>
+
+    <!-- OPERATING LOOP -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:40px 0 4px">The operating loop — scheduled, monitored, self-tuning</h3>
+    <div class="loop">
+      <div class="lstep"><div class="ln">01</div><div class="lt">Plan</div><div class="ld">Conductor picks goals & personas for the window.</div></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lstep"><div class="ln">02</div><div class="lt">Generate</div><div class="ld">Agents draft copy, media, sequences & ads.</div></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lstep"><div class="ln">03</div><div class="lt">Schedule</div><div class="ld">Everything queued to fire on timed instances.</div></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lstep"><div class="ln">04</div><div class="lt">Publish</div><div class="ld">Sends, posts, ads & outreach go live automatically.</div></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lstep"><div class="ln">05</div><div class="lt">Monitor</div><div class="ld">Remote operator watches live results & spend.</div></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lstep"><div class="ln">06</div><div class="lt">Tweak → learn</div><div class="ld">Winners scale, losers cut; memory updates.</div></div>
+    </div>
+    <div class="note bubble blue" style="max-width:none;margin-top:14px">The loop never stops. Step 06 feeds straight back into step 01 — every cycle the fleet knows a little more about what makes <em>this</em> audience play.</div>
+
+    <!-- TRUST BUILDING -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Consistency is the trust engine</h3>
+    <p class="sec-intro" style="margin-top:2px">Lottery is a trust business — people only hand over money to a brand that <em>feels</em> safe and familiar. The fleet's real job isn't a single viral hit; it's <b>showing up everywhere, on-message, every single day.</b> That steady drumbeat of outreach and content builds credibility <em>subconsciously</em>, long before a person ever consciously decides to play.</p>
+    <div class="trust">
+      <div class="tcard">
+        <div class="tn">01</div>
+        <h5>Always present</h5>
+        <p>Scheduled posts, ads, emails and SMS mean PlayLottoGlobal is in the feed daily. Repeated exposure breeds recognition — the brain reads familiar as trustworthy.</p>
+      </div>
+      <div class="tcard">
+        <div class="tn">02</div>
+        <h5>One consistent voice</h5>
+        <p>Every agent pulls from the same brand-voice memory, so the tone, look and promise never wobble across channels. Consistency reads as stability.</p>
+      </div>
+      <div class="tcard">
+        <div class="tn">03</div>
+        <h5>Proof in every touch</h5>
+        <p>Real winners, payouts, jackpots and licensing badges thread through the content — social proof that quietly answers "is this legit?" before it's asked.</p>
+      </div>
+      <div class="tcard">
+        <div class="tn">04</div>
+        <h5>Persona-perfect</h5>
+        <p>Because each message is written for a specific persona, it feels personal, not broadcast. "They get me" is the fastest shortcut to trust.</p>
+      </div>
+    </div>
+    <p class="sec-intro" style="margin-top:18px">Stacked over weeks, those four habits move a stranger up an invisible ladder — from never having heard of the brand, to feeling like they already know it:</p>
+    <div class="ladder">
+      <div class="lrung"><span class="lrt">Exposure</span><span class="lrs">they keep seeing us</span></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lrung"><span class="lrt">Recognition</span><span class="lrs">"I know that brand"</span></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lrung"><span class="lrt">Familiarity</span><span class="lrs">feels safe & normal</span></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lrung"><span class="lrt">Credibility</span><span class="lrs">proof backs it up</span></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lrung"><span class="lrt">Trust</span><span class="lrs">comfortable to act</span></div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="lrung win"><span class="lrt">They play</span><span class="lrs">& they refer</span></div>
+    </div>
+    <div class="note bubble green" style="max-width:none;margin-top:14px">None of this is a hard sell. It's the <b>mere-exposure effect</b> at scale — the fleet makes the brand feel inevitable, so by the time someone's ready to play, PlayLottoGlobal is the name they already trust.</div>
+
+    <!-- PSYCHOLOGY -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">The psychology — consistency builds trust, novelty holds attention</h3>
+    <p class="sec-intro" style="margin-top:2px">The trick isn't repeating the same ad until people tune out — it's keeping the <b>brand, voice and cadence rock-steady</b> while constantly refreshing the <b>creative</b>. Consistency is what the subconscious reads as <em>safe</em>; novelty is what keeps it <em>looking</em>. Run both dials at once and trust and interest compound instead of fatiguing.</p>
+    <div class="cascade">
+      <div class="cnode">
+        <div class="ch" style="background:var(--player)">Hold steady</div>
+        <div class="cb"><div class="sm"><b>Consistency</b> — same logo, voice, promise &amp; daily rhythm across every channel.</div><div class="lab" style="margin-top:8px;color:var(--player);font-weight:700">→ builds TRUST</div></div>
+      </div>
+      <div class="conn"><span class="plus">+</span></div>
+      <div class="cnode">
+        <div class="ch" style="background:var(--affiliate)">Keep fresh</div>
+        <div class="cb"><div class="sm"><b>Novelty</b> — new ad creatives, formats &amp; hooks every cycle so the eye never glazes over.</div><div class="lab" style="margin-top:8px;color:var(--affiliate-deep);font-weight:700">→ holds INTEREST</div></div>
+      </div>
+      <div class="conn"><span class="ar">→</span></div>
+      <div class="cnode">
+        <div class="ch" style="background:var(--navy)">The result</div>
+        <div class="cb"><div class="big" style="font-size:1.1rem;color:var(--navy)">Compounding pull</div><div class="sm" style="margin-top:3px">familiar enough to trust, fresh enough to watch.</div></div>
+      </div>
+    </div>
+
+    <div class="psy">
+      <div class="pcard">
+        <h5>Mere-exposure effect</h5>
+        <div class="def">We prefer what we've simply seen before — repetition alone grows liking, with no argument needed.</div>
+        <div class="use"><b>The play:</b> show up daily so familiarity does the persuading.</div>
+      </div>
+      <div class="pcard">
+        <h5>Processing fluency</h5>
+        <div class="def">The easier something is to process, the more true and trustworthy it <em>feels</em>. A consistent brand is effortless to read.</div>
+        <div class="use"><b>The play:</b> same colors, voice &amp; logo everywhere — instant recognition.</div>
+      </div>
+      <div class="pcard">
+        <h5>Novelty &amp; ad fatigue</h5>
+        <div class="def">The brain filters out the repeated and snaps to the new. Stale creative goes invisible; a fresh execution re-captures the eye.</div>
+        <div class="use"><b>The play:</b> rotate new ad creatives constantly — same message, new clothes.</div>
+      </div>
+      <div class="pcard">
+        <h5>The consistency principle</h5>
+        <div class="def">A brand that's reliably <em>present</em> is read as a reliable <em>company</em>. Going dark quietly erodes trust.</div>
+        <div class="use"><b>The play:</b> never miss the cadence — steady beats loud.</div>
+      </div>
+      <div class="pcard">
+        <h5>Social proof</h5>
+        <div class="def">People look to other people to decide what's safe. Real winners and payouts answer "is this legit?" before it's asked.</div>
+        <div class="use"><b>The play:</b> thread winners, counts &amp; testimonials through every asset.</div>
+      </div>
+      <div class="pcard">
+        <h5>Top-of-mind / recency</h5>
+        <div class="def">When the urge to play hits, people reach for the brand they thought of most recently — not the best one.</div>
+        <div class="use"><b>The play:</b> frequency keeps PLG first in line at the moment of decision.</div>
+      </div>
+      <div class="pcard">
+        <h5>Reciprocity</h5>
+        <div class="def">Give value first and people feel a pull to give back. Free beats a cold ask every time.</div>
+        <div class="use"><b>The play:</b> free spins, tips &amp; jackpot news long before any pitch.</div>
+      </div>
+      <div class="pcard">
+        <h5>Authority &amp; safety cues</h5>
+        <div class="def">Visible credibility markers lower the guard — licensing, security, polish all signal "you can relax here."</div>
+        <div class="use"><b>The play:</b> bake trust badges &amp; clean craft into every creative.</div>
+      </div>
+    </div>
+    <div class="note bubble blue" style="max-width:none;margin-top:14px">Why the fleet is built for this: a human can't keep a daily cadence across six channels <em>and</em> ship fresh creative every cycle. Automated, scheduled agents can — that's exactly what turns these principles from theory into a habit the brand never breaks.</div>
+
+    <!-- COMMERCIAL SPLIT -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Who pays for what</h3>
+    <p class="sec-intro" style="margin-top:2px">A clean separation: a flat retainer buys the fleet and the brand work; every variable running cost sits with PlayLottoGlobal directly.</p>
+    <div class="split">
+      <div class="bill t7">
+        <div class="bl-to">Flat retainer → paid to</div>
+        <div class="bl-who">Triple Seven Studios</div>
+        <div class="bl-amt">$2,500<small> / month</small></div>
+        <ul>
+          <li>The full AI marketing &amp; brand-development fleet</li>
+          <li>Conductor, agents, prompts, memory &amp; persona models</li>
+          <li>Strategy, setup, remote monitoring &amp; ongoing tuning</li>
+        </ul>
+        <div class="bl-note">One predictable number for the engine — the people and systems that run it.</div>
+      </div>
+      <div class="bill">
+        <div class="bl-to">Pass-through → in the name &amp; payment of</div>
+        <div class="bl-who">PlayLottoGlobal</div>
+        <div class="bl-var">API costs · ad spend · subscriptions</div>
+        <ul>
+          <li>LLM &amp; media-generation API usage</li>
+          <li>Paid ad budgets across every channel</li>
+          <li>SaaS tools &amp; platform subscriptions</li>
+        </ul>
+        <div class="bl-note">Billed directly to PLG accounts — full ownership &amp; visibility of every variable cost.</div>
+      </div>
+    </div>
+
+    <!-- AI CREDIT PROJECTIONS -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">AI credit projections — the model mix</h3>
+    <p class="sec-intro" style="margin-top:2px">The biggest variable in PLG's pass-through is <b>AI credits</b>. The conductor routes every task to the <b>cheapest model that can do it well</b> — free OpenRouter models soak up the bulk of trivial calls, value models do the heavy lifting, and premium models are reserved for brand-critical output. Below is a blended <b>monthly projection</b> at launch volume.</p>
+    <div class="proj-wrap">
+      <table class="proj">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Tier</th>
+            <th>Routed for</th>
+            <th class="r">Share of calls</th>
+            <th class="r">Projected / mo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="m-nm">Free OpenRouter pool<small>open models, $0 tier</small></span></td>
+            <td><span class="tierbadge tb-free">Free</span></td>
+            <td>Basic tasks — routing, tagging, classification, simple variations &amp; first drafts</td>
+            <td class="r">55%<div class="sharebar"><i style="width:55%;background:var(--visitor)"></i></div></td>
+            <td class="r"><span class="m-amt free">$0</span></td>
+          </tr>
+          <tr>
+            <td><span class="m-nm">DeepSeek V4<small>low-cost reasoning</small></span></td>
+            <td><span class="tierbadge tb-value">Value</span></td>
+            <td>Bulk drafting &amp; heavy reasoning at scale — blog bodies, outreach sequences, ad variants</td>
+            <td class="r">20%<div class="sharebar"><i style="width:20%"></i></div></td>
+            <td class="r"><span class="m-amt">$185</span></td>
+          </tr>
+          <tr>
+            <td><span class="m-nm">Kimi 2.6 Code<small>code &amp; automation</small></span></td>
+            <td><span class="tierbadge tb-value">Value</span></td>
+            <td>Workflow logic, data wrangling, scheduling scripts &amp; agent tool-use</td>
+            <td class="r">10%<div class="sharebar"><i style="width:10%"></i></div></td>
+            <td class="r"><span class="m-amt">$130</span></td>
+          </tr>
+          <tr>
+            <td><span class="m-nm">Gemini 3.1<small>multimodal · long context</small></span></td>
+            <td><span class="tierbadge tb-multi">Multimodal</span></td>
+            <td>Image/video understanding &amp; generation prompts, long-context research, asset captioning</td>
+            <td class="r">9%<div class="sharebar"><i style="width:9%;background:var(--staff)"></i></div></td>
+            <td class="r"><span class="m-amt">$240</span></td>
+          </tr>
+          <tr>
+            <td><span class="m-nm">Claude 4.8<small>premium quality</small></span></td>
+            <td><span class="tierbadge tb-prem">Premium</span></td>
+            <td>Brand-voice copy, strategy, final polish &amp; anything customer-facing &amp; high-stakes</td>
+            <td class="r">6%<div class="sharebar"><i style="width:6%;background:var(--affiliate)"></i></div></td>
+            <td class="r"><span class="m-amt">$345</span></td>
+          </tr>
+          <tr class="total">
+            <td><span class="m-nm">Blended AI credits</span></td>
+            <td colspan="2"><span class="lab">cheapest-capable routing keeps the average call near-free</span></td>
+            <td class="r">100%</td>
+            <td class="r"><span class="m-amt">≈ $900<small style="font-family:var(--fs);font-size:0.66rem;color:var(--dim);font-weight:600"> / mo</small></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note bubble" style="max-width:none;margin-top:14px">Figures are launch-volume estimates and scale with output. Because <b>~55% of calls run on free models</b>, credit spend grows far slower than content volume — doubling output doesn't double the bill. All of it is billed to <b>PlayLottoGlobal</b> directly, separate from the Triple Seven retainer.</div>
+
+    <div class="callout">
+      <span class="k">✦</span>
+      <p><b>Why this becomes a beacon.</b> The fleet floods every channel with persona-perfect content and incentive, the affiliate engine turns that interest into a self-replicating downline, and the operating loop makes each cycle sharper than the last. Fixed cost in, compounding attention and players out — that's how the brand grows exponentially.</p>
+    </div>
+  </section>
+
+  <!-- ============ UNIT ECONOMICS & DISCIPLINE ============ -->
+  <section class="section" id="econ">
+    <div class="sec-head">
+      <div class="sec-num">$$</div>
+      <div>
+        <span class="jlabel">the business sense</span>
+        <h2>Margins, overhead &amp; spending discipline</h2>
+      </div>
+    </div>
+    <p class="sec-intro">Growth only matters if the math underneath it works. The whole model rests on a simple discipline: <b>sell &amp; retain more tickets — don't buy growth by overspending.</b> Every marketing dollar has to come back as more ticket margin than it cost, or it's just burning runway.</p>
+
+    <!-- MARGIN WATERFALL -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:28px 0 4px">Where every $100 of ticket sales goes</h3>
+    <p class="sec-intro" style="margin-top:2px">A representative split. Most of a ticket funds prizes; what's left after commissions and processing is the <b>gross margin</b> that has to cover marketing <em>and</em> overhead — and still leave profit.</p>
+    <div class="stack">
+      <div class="seg" style="width:50%;background:var(--navy)">Prizes $50</div>
+      <div class="seg" style="width:12%;background:var(--affiliate)">Comm. $12</div>
+      <div class="seg" style="width:3%;background:var(--dim);font-size:0.6rem">$3</div>
+      <div class="seg" style="width:5%;background:var(--player);font-size:0.62rem">Tech $5</div>
+      <div class="seg" style="width:30%;background:var(--visitor)">Gross margin $30</div>
+    </div>
+    <div class="stack-key">
+      <span class="skey"><span class="sw" style="background:var(--navy)"></span><b>$50</b> · prize pool &amp; winnings reserve</span>
+      <span class="skey"><span class="sw" style="background:var(--affiliate)"></span><b>$12</b> · affiliate commissions (blended)</span>
+      <span class="skey"><span class="sw" style="background:var(--dim)"></span><b>$3</b> · payment processing</span>
+      <span class="skey"><span class="sw" style="background:var(--player)"></span><b>$5</b> · tech, API &amp; infra</span>
+      <span class="skey"><span class="sw" style="background:var(--visitor)"></span><b>$30</b> · gross margin (before marketing &amp; overhead)</span>
+    </div>
+    <div class="note bubble" style="max-width:none;margin-top:12px">Illustrative ratios, not booked figures. The headline: roughly <b>$30 of contribution per $100 sold</b> is the pool that pays for acquisition and fixed costs. Keep <b>CAC + overhead per $100 under $30</b> and the brand prints profit; go over and volume just accelerates losses.</div>
+
+    <!-- OVERHEAD -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Overhead is lean — and deliberately split</h3>
+    <div class="split">
+      <div class="bill t7">
+        <div class="bl-to">Fixed — predictable every month</div>
+        <div class="bl-who">Low, flat overhead</div>
+        <div class="bl-amt">$2,500<small> / mo</small></div>
+        <ul>
+          <li>Triple Seven fleet &amp; brand-development retainer</li>
+          <li>No big team, no office, no agency minimums</li>
+          <li>The one number that doesn't move with volume</li>
+        </ul>
+        <div class="bl-note">A fixed cost this small means break-even arrives at very low ticket volume.</div>
+      </div>
+      <div class="bill">
+        <div class="bl-to">Variable — scales only with activity</div>
+        <div class="bl-who">Pay-as-you-grow costs</div>
+        <div class="bl-var">≈ $900 API · ad spend · processing</div>
+        <ul>
+          <li>AI credits ≈ $900/mo, ~55% on free models</li>
+          <li>Ad spend — throttled to ROAS, never fixed</li>
+          <li>Processing scales 1:1 with sales (self-funding)</li>
+        </ul>
+        <div class="bl-note">Variable costs rise only when revenue does — they can't sink the business on their own.</div>
+      </div>
+    </div>
+
+    <!-- DISCIPLINE: don't overspend -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Sell more tickets — don't overspend to fake it</h3>
+    <p class="sec-intro" style="margin-top:2px">The classic failure mode is buying vanity growth: pouring cash into ads that don't pay back, mistaking spend for traction. The fleet exists to grow <b>cheaply and measurably</b> — every channel earns its budget.</p>
+    <div class="gb">
+      <div class="gbcard good">
+        <h5><span class="mk">✓</span> Spend that compounds</h5>
+        <ul>
+          <li>Channels where <b>LTV &gt; CAC</b> — scale only the winners</li>
+          <li>Owned reach: SEO, content, affiliates, AI influencers (near-zero marginal cost)</li>
+          <li>Retention &amp; reactivation — cheaper than net-new every time</li>
+          <li>Ad spend throttled up <em>after</em> ROAS is proven, not before</li>
+        </ul>
+      </div>
+      <div class="gbcard bad">
+        <h5><span class="mk">✕</span> Spend that bleeds</h5>
+        <ul>
+          <li>Blanket ad budgets with no payback tracking</li>
+          <li>Chasing impressions &amp; followers that never convert</li>
+          <li>Discounting margin away to inflate ticket counts</li>
+          <li>Fixed agency retainers that don't flex with results</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="k">↗</span>
+      <p><b>The lever is volume × retention, not budget.</b> Because gross margin per ticket is fixed, profit grows by selling more tickets to players who come back — not by spending more to acquire one-time buyers. The fleet's job is to make acquisition <em>cheaper</em> over time as memory and persona-targeting sharpen, so each new player costs less than the last.</p>
+    </div>
+
+    <!-- AUDIENCE DRIVERS -->
+    <h3 style="font-family:var(--fd);font-weight:700;font-size:1.15rem;margin:44px 0 4px">Understand the audience — what actually drives them</h3>
+    <p class="sec-intro" style="margin-top:2px">You can't sell more tickets cheaply without knowing <em>why</em> people play. These are the real drivers behind a lottery purchase — the fleet's persona models target the right one for the right person, instead of guessing.</p>
+    <div class="psy">
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>The dream / hope</h5>
+        <div class="def">A cheap ticket buys a few days of "what if I won?" — the fantasy is the product, not the odds.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> vivid jackpot dreams &amp; winner stories.</div>
+      </div>
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>Ritual &amp; routine</h5>
+        <div class="def">Many play the same numbers, same draw, every week. Habit beats persuasion.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> reminders, auto-play, streaks &amp; draw alerts.</div>
+      </div>
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>Near-miss pull</h5>
+        <div class="def">"So close" lights up the same circuits as a win and keeps people coming back.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> surface near-misses &amp; "play again" moments.</div>
+      </div>
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>Social &amp; belonging</h5>
+        <div class="def">Syndicates, office pools and "everyone's playing" make it a shared event.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> group play, referrals &amp; community wins.</div>
+      </div>
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>Escape &amp; ritual reward</h5>
+        <div class="def">A small affordable thrill — a break from the ordinary that feels deserved.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> low-stakes fun framing, never pressure.</div>
+      </div>
+      <div class="pcard" style="border-top-color:var(--visitor)">
+        <h5>Aspiration &amp; status</h5>
+        <div class="def">The win represents freedom, security, a different life — identity, not just cash.</div>
+        <div class="use" style="color:var(--visitor)"><b style="color:var(--visitor)">Lean in:</b> "what your win unlocks" — life, not numbers.</div>
+      </div>
+    </div>
+    <div class="note bubble green" style="max-width:none;margin-top:14px">Knowing the driver is what makes cheap growth possible: a message matched to someone's real motivation converts far better — so <b>CAC falls</b> while relevance (and trust) rises. Audience understanding isn't soft; it's the input that keeps the unit economics healthy. <span class="hand">Play responsibly is part of the brand, not an afterthought.</span></div>
+  </section>
+
+  <!-- ============ PROFIT ROADMAP — START TO SCALE ============ -->
+  <section class="section" id="roadmap">
+    <div class="sec-head">
+      <div class="sec-num">→</div>
+      <div>
+        <span class="jlabel">birds-eye view</span>
+        <h2>From start to scale — the profit roadmap</h2>
+      </div>
+    </div>
+    <p class="sec-intro">The whole business on one timeline. Each phase has a clear <b>profit model</b> and a single <b>growth lever</b> — early on you invest to prove the loop cheaply; later the affiliate network and retained players compound while fixed cost stays flat. The rail down the left is the journey; the cards are what makes money at each step.</p>
+
+    <!-- profit trajectory -->
+    <div class="traj">
+      <div class="curve">
+        <div class="fill"></div>
+        <div class="be"><span>break-even</span></div>
+        <div class="zlo">investment</div>
+        <div class="zhi">compounding profit</div>
+      </div>
+      <div class="phlabels">
+        <div>Launch<small>prove the loop</small></div>
+        <div>Traction<small>find ROAS</small></div>
+        <div>Growth<small>scale winners</small></div>
+        <div>Scale<small>compound &amp; defend</small></div>
+      </div>
+    </div>
+
+    <!-- the roadmap rail -->
+    <div class="roadmap">
+      <div class="phase">
+        <div class="prail">
+          <span class="pnode" style="background:var(--navy)">0</span>
+          <div class="pl-name">Launch</div>
+          <div class="pl-time">Month 0–1</div>
+          <span class="pl-tag" style="background:#e7eaf3;color:var(--navy)">Pre-break-even</span>
+        </div>
+        <div class="pcardx">
+          <div class="hd">Prove the loop works — cheaply</div>
+          <div class="gl">Stand up the four surfaces, switch on the fleet, and seed the first affiliates. No paid ad spend yet — only owned, near-free channels. The goal is a single validated loop: a referral → a signup → a retained, paying player.</div>
+          <div class="pfields">
+            <div class="pfield"><div class="fl">Profit model</div><div class="fv"><b>Investment phase.</b> Fixed cost ≈ $2,500/mo + minimal API; revenue still small.</div></div>
+            <div class="pfield"><div class="fl">Primary lever</div><div class="fv">Affiliate seeding + owned content (SEO, organic, AI influencers).</div></div>
+            <div class="pfield"><div class="fl">Spend posture</div><div class="fv">Near-zero ad spend. Validate CAC before funding it.</div></div>
+            <div class="pfield"><div class="fl">Milestone</div><div class="fv">First cohort retained · positive contribution per ticket.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="prail">
+          <span class="pnode" style="background:var(--player)">1</span>
+          <div class="pl-name">Traction</div>
+          <div class="pl-time">Month 2–4</div>
+          <span class="pl-tag" style="background:#eef2fe;color:#2c43a8">Break-even</span>
+        </div>
+        <div class="pcardx">
+          <div class="hd">Find the channels where LTV &gt; CAC</div>
+          <div class="gl">Test small, measured paid budgets alongside the owned engine; kill what doesn't pay back within days, double the winners. Stand up retention loops (auto-play, alerts, reactivation) so players come back without re-paying to acquire them.</div>
+          <div class="pfields">
+            <div class="pfield"><div class="fl">Profit model</div><div class="fv"><b>Contribution-positive.</b> Monthly margin starts covering the flat overhead.</div></div>
+            <div class="pfield"><div class="fl">Primary lever</div><div class="fv">Channel testing + the commission flywheel (downlines begin).</div></div>
+            <div class="pfield"><div class="fl">Spend posture</div><div class="fv">Small paid tests, ROAS-gated. Scale only proven channels.</div></div>
+            <div class="pfield"><div class="fl">Milestone</div><div class="fv">Break-even · 2–3 ROAS-proven acquisition channels.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="prail">
+          <span class="pnode" style="background:var(--affiliate)">2</span>
+          <div class="pl-name">Growth</div>
+          <div class="pl-time">Month 5–12</div>
+          <span class="pl-tag" style="background:#fff6e6;color:var(--affiliate-deep)">Profitable</span>
+        </div>
+        <div class="pcardx">
+          <div class="hd">Compound the network, scale the winners</div>
+          <div class="gl">Pour margin into proven channels and deepen the affiliate network — tier progression (Bronze→Platinum) pulls partners to recruit more, widening L1/L2/L3 volume. Persona-targeting sharpens each cycle, so CAC falls while retention and LTV rise.</div>
+          <div class="pfields">
+            <div class="pfield"><div class="fl">Profit model</div><div class="fv"><b>Net profitable.</b> Margin funds growth; ad spend throttled up on proven ROAS only.</div></div>
+            <div class="pfield"><div class="fl">Primary lever</div><div class="fv">Multi-level commission volume + retained-player LTV.</div></div>
+            <div class="pfield"><div class="fl">Spend posture</div><div class="fv">Aggressive on winners, ruthless on losers. Reinvest, don't burn.</div></div>
+            <div class="pfield"><div class="fl">Milestone</div><div class="fv">Predictable CAC &lt; LTV at volume · the brand becomes a beacon.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="prail">
+          <span class="pnode" style="background:var(--visitor)">3</span>
+          <div class="pl-name">Scale</div>
+          <div class="pl-time">Year 2+</div>
+          <span class="pl-tag" style="background:#ecf8f0;color:#1f7a4c">Compounding</span>
+        </div>
+        <div class="pcardx">
+          <div class="hd">Market leadership on a lean machine</div>
+          <div class="gl">Expand to new regions and personas, spin up more AI influencers, and let automated optimization run the fleet. Fixed cost stays flat against a much larger revenue base, so each new dollar is high-margin. The moat is the memory + the self-replicating affiliate network.</div>
+          <div class="pfields">
+            <div class="pfield"><div class="fl">Profit model</div><div class="fv"><b>High-margin &amp; compounding.</b> Overhead is tiny relative to revenue.</div></div>
+            <div class="pfield"><div class="fl">Primary lever</div><div class="fv">Organic + affiliate-driven growth; expansion markets.</div></div>
+            <div class="pfield"><div class="fl">Spend posture</div><div class="fv">Efficient, automated, ROAS-led. Spend follows proven return.</div></div>
+            <div class="pfield"><div class="fl">Milestone</div><div class="fv">Category beacon · growth largely self-sustaining.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="k">★</span>
+      <p><b>The model in one line:</b> keep fixed cost flat and small, only ever pay for growth that pays itself back, and let the affiliate network + retained players compound. Every phase moves the same two numbers in the right direction — <b>CAC down, LTV up</b> — so the gap between them <em>is</em> the profit, and it widens as you scale.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMPLETE SCREEN WIREFRAMES ============ -->
+  <section class="section" id="wireframes">
+    <div class="sec-head">
+      <div class="sec-num">WF</div>
+      <div>
+        <span class="jlabel">full-detail blueprints</span>
+        <h2>Complete screen wireframes</h2>
+      </div>
+    </div>
+    <p class="sec-intro">The storyboards above show <em>flow</em>; these show <em>layout</em>. Full-size, annotated wireframes of the core screens on every surface — the structural blueprint a designer or developer builds from. Greys are placeholders; numbered pins call out the key elements.</p>
+
+    <!-- PUBLIC -->
+    <div class="wfgroup-h"><span class="gp" style="background:var(--visitor)">Public</span><h3>Entry &amp; growth</h3></div>
+    <div class="wfflow">
+      <div class="wfunit" style="width:340px">
+        <div class="dweb">
+          <div class="dchrome"><span class="cd"></span><span class="cd"></span><span class="cd"></span><span class="url"><span>playlottoglobal.com</span></span></div>
+          <div class="dbody" style="gap:9px;align-items:center;text-align:center">
+            <div class="ph h" style="width:62%"></div>
+            <div class="ph bar m" style="width:80%"></div>
+            <div class="rowx" style="gap:8px;margin-top:4px;width:100%;justify-content:center">
+              <div class="ph btn green" style="width:120px">Play Lottery</div>
+              <div class="ph btn gold" style="width:120px">Become Affiliate</div>
+            </div>
+            <div class="ph btn ghost" style="width:140px">Member login</div>
+            <div class="grid3" style="width:100%;margin-top:6px"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+          </div>
+        </div>
+        <div class="wfcap">Gateway<small>the front door · choose a path</small></div>
+        <div class="wfnotes"><ul>
+          <li><span class="n">1</span>Two primary CTAs — <b>play</b> vs <b>partner</b> — given equal weight.</li>
+          <li><span class="n">2</span>Member login routes existing affiliates straight to the portal.</li>
+          <li><span class="n">3</span>Trust strip (licenses, jackpots) sits below the fold.</li>
+        </ul></div>
+      </div>
+
+      <div class="wfunit" style="width:340px">
+        <div class="dweb">
+          <div class="dchrome"><span class="cd"></span><span class="cd"></span><span class="cd"></span><span class="url"><span>/r/AMARA777</span></span></div>
+          <div class="dbody" style="gap:9px">
+            <div class="ph h" style="width:70%"></div>
+            <div class="ph bar l"></div>
+            <div class="rowx" style="gap:9px">
+              <div class="ph tall" style="flex:1;background:linear-gradient(135deg,var(--navy),var(--player))"></div>
+              <div class="colx" style="flex:1">
+                <div class="ph block" style="height:26px;display:flex;align-items:center;justify-content:center"><span class="labk">enter email</span></div>
+                <div class="ph btn gold">Join the waitlist</div>
+                <div class="rowx wrap"><span class="labk">WhatsApp</span><span class="labk">X</span><span class="labk">FB</span></div>
+              </div>
+            </div>
+            <div class="lab">spin-to-win · share studio · link-in-bio</div>
+          </div>
+        </div>
+        <div class="wfcap">Viral Launch<small>waitlist + share tooling</small></div>
+        <div class="wfnotes"><ul>
+          <li><span class="n">1</span>Email capture returns a referral position + the member's own link.</li>
+          <li><span class="n">2</span>Share rail (WhatsApp / X / FB) and Share Studio drive the loop.</li>
+          <li><span class="n">3</span>Referral attribution is captured the instant the page loads.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- PLAYER -->
+    <div class="wfgroup-h"><span class="gp" style="background:var(--player)">Player</span><h3>The buy spine</h3></div>
+    <div class="wfflow">
+
+      <div class="wfunit">
+        <div class="dphone"><div class="dscreen">
+          <div class="dstatus"><span>9:41</span><span>▰▰▰</span></div>
+          <div class="dbar"><div class="ph circle" style="width:18px;height:18px;border-radius:5px"></div><span class="bt">Home</span><div class="labk">$249</div><div class="ph circle" style="width:18px;height:18px"></div></div>
+          <div class="dcontent">
+            <div class="ph tall" style="height:74px"></div>
+            <div class="rowx" style="justify-content:center"><span class="labk">02</span><span class="labk">14</span><span class="labk">37</span><span class="labk">11</span></div>
+            <div class="grid2"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="ph bar m"></div>
+          </div>
+          <div class="dnav"><div class="ni on"></div><div class="ni"></div><div class="ni"></div><div class="ni"></div><div class="ni"></div></div>
+        </div></div>
+        <div class="wfcap">Lobby<small>home</small></div>
+      </div>
+
+      <div class="wfunit">
+        <div class="dphone"><div class="dscreen">
+          <div class="dstatus"><span>9:41</span><span>▰▰▰</span></div>
+          <div class="dbar"><div class="ph circle" style="width:18px;height:18px;border-radius:5px"></div><span class="bt">Pick Numbers</span></div>
+          <div class="dcontent">
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Choose 5 + 2</span><span class="amt">€72M</span></div>
+            <div class="grid5">
+              <div class="ball"></div><div class="ball on"></div><div class="ball"></div><div class="ball on"></div><div class="ball"></div>
+              <div class="ball on"></div><div class="ball"></div><div class="ball"></div><div class="ball"></div><div class="ball on"></div>
+              <div class="ball"></div><div class="ball"></div><div class="ball on"></div><div class="ball"></div><div class="ball"></div>
+            </div>
+            <div class="rowx" style="justify-content:center"><div class="ball gold" style="width:24px"></div><div class="ball gold" style="width:24px"></div><div class="ball" style="width:24px"></div></div>
+            <div class="rowx"><div class="ph btn ghost" style="flex:1">Lucky Dip</div><div class="ph btn ghost" style="flex:1">Clear</div></div>
+            <div class="ph btn">Enter the draw</div>
+          </div>
+        </div></div>
+        <div class="wfcap">Pick Numbers<small>main + bonus pools</small></div>
+      </div>
+
+      <div class="wfunit">
+        <div class="dphone"><div class="dscreen">
+          <div class="dstatus"><span>9:41</span><span>▰▰▰</span></div>
+          <div class="dbar"><div class="ph circle" style="width:18px;height:18px;border-radius:5px"></div><span class="bt">Checkout</span></div>
+          <div class="dcontent">
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Line 1</span><span class="labk">edit</span></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Line 2</span><span class="labk">edit</span></div>
+            <div class="rowx" style="gap:5px"><span class="labk">1 draw</span><span class="labk">×2</span><span class="labk">month</span></div>
+            <div class="ph block" style="height:30px"></div>
+            <div class="rowx" style="justify-content:space-between"><span class="lab">Total</span><span class="amt">$24.00</span></div>
+            <div class="ph btn green">Pay $24.00</div>
+            <div class="ph block" style="height:26px;background:var(--paper-2);border:1.5px solid var(--line)"></div>
+          </div>
+        </div></div>
+        <div class="wfcap">Checkout<small>draws · payment</small></div>
+      </div>
+
+      <div class="wfunit">
+        <div class="dphone"><div class="dscreen">
+          <div class="dstatus"><span>9:41</span><span>▰▰▰</span></div>
+          <div class="dbar"><span class="bt" style="text-align:center">Live Draw</span></div>
+          <div class="dcontent" style="align-items:center">
+            <div class="ph circle" style="width:96px;height:96px;background:repeating-radial-gradient(circle at 40% 40%, var(--gray) 0 8px, var(--gray-d) 8px 16px)"></div>
+            <div class="grid5" style="width:100%"><div class="ball gold"></div><div class="ball gold"></div><div class="ball on"></div><div class="ball"></div><div class="ball on"></div></div>
+            <div class="ph bar m"></div>
+            <div class="ph block" style="height:34px;width:100%;background:var(--visitor);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.7rem;font-family:var(--fd)">You matched 3 🎉</div>
+          </div>
+        </div></div>
+        <div class="wfcap">Live Draw<small>reveal + result</small></div>
+      </div>
+
+      <div class="wfunit">
+        <div class="dphone"><div class="dscreen">
+          <div class="dstatus"><span>9:41</span><span>▰▰▰</span></div>
+          <div class="dbar"><div class="ph circle" style="width:18px;height:18px;border-radius:5px"></div><span class="bt">Your Ticket</span></div>
+          <div class="dcontent" style="align-items:center">
+            <div class="ph bar s"></div>
+            <div class="ph block" style="width:78px;height:78px;background:repeating-linear-gradient(45deg,var(--ink) 0 4px,transparent 4px 8px);border-radius:8px"></div>
+            <div class="grid5" style="width:100%"><div class="ball on"></div><div class="ball on"></div><div class="ball"></div><div class="ball gold"></div><div class="ball"></div></div>
+            <div class="ph block" style="height:30px;width:100%;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px)"></div>
+            <div class="rowx" style="width:100%"><div class="ph btn ghost" style="flex:1">Add to wallet</div><div class="ph btn ghost" style="flex:1">Share</div></div>
+          </div>
+        </div></div>
+        <div class="wfcap">Digital Ticket<small>QR + barcode pass</small></div>
+      </div>
+    </div>
+    <div class="wfnotes" style="max-width:none;margin-top:6px"><ul>
+      <li><span class="n">1</span><b>Pick → Checkout → Live Draw</b> is one uninterrupted flow; the bottom nav only shows on the Lobby, hidden in the buy funnel to reduce drop-off.</li>
+      <li><span class="n">2</span>Checkout is where <b>payments.checkout + tickets.buyTicket</b> fire — the wallet moves and any referral commission is credited here.</li>
+      <li><span class="n">3</span>The Digital Ticket is a saveable pass (QR + barcode) so it works at retail/redemption and can be shared as social proof.</li>
+    </ul></div>
+
+    <!-- AFFILIATE -->
+    <div class="wfgroup-h"><span class="gp" style="background:var(--affiliate)">Affiliate</span><h3>Commission dashboard &amp; network</h3></div>
+    <div class="wfflow" style="display:block">
+      <div class="wfunit" style="width:100%">
+        <div class="dweb">
+          <div class="dchrome"><span class="cd"></span><span class="cd"></span><span class="cd"></span><span class="url"><span>playlottoglobal.com/dashboard</span></span></div>
+          <div class="dapp">
+            <div class="dside">
+              <div class="s-logo"></div>
+              <div class="s-item on a"></div><div class="s-item"></div><div class="s-item"></div><div class="s-item"></div><div class="s-item"></div>
+            </div>
+            <div class="dmain">
+              <div class="dtop"><div class="dh"></div><div class="labk" style="margin-left:auto">commission $318</div><div class="labk">playable $249</div></div>
+              <div class="dbody">
+                <div class="kpirow">
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                </div>
+                <div class="dcols" style="grid-template-columns:1.5fr 1fr">
+                  <div class="panel"><div class="pl">Earnings — last 12 weeks</div><div class="chart g"></div></div>
+                  <div class="panel"><div class="pl">Tier ladder</div>
+                    <div class="colx" style="gap:7px">
+                      <div class="rowx" style="justify-content:space-between"><span class="lab">Bronze</span><span class="lab">5/2/1%</span></div>
+                      <div class="rowx" style="justify-content:space-between"><span class="lab">Silver</span><span class="lab">6/3/1%</span></div>
+                      <div class="rowx" style="justify-content:space-between"><span class="labk">Gold ◀ you</span><span class="lab">8/4/2%</span></div>
+                      <div class="rowx" style="justify-content:space-between"><span class="lab">Platinum</span><span class="lab">10/5/3%</span></div>
+                      <div class="pbar" style="height:11px;margin-top:4px"><div class="pfill"></div></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel"><div class="pl">Downline members — L1 / L2 / L3</div>
+                  <div class="wtable">
+                    <div class="wtr head"><span>Member</span><span>Level</span><span>Volume</span><span>Comm.</span></div>
+                    <div class="wtr"><div class="c dk" style="width:70%"></div><div class="c" style="width:40%"></div><div class="c" style="width:60%"></div><div class="c" style="width:50%"></div></div>
+                    <div class="wtr"><div class="c dk" style="width:60%"></div><div class="c" style="width:40%"></div><div class="c" style="width:55%"></div><div class="c" style="width:45%"></div></div>
+                    <div class="wtr"><div class="c dk" style="width:75%"></div><div class="c" style="width:40%"></div><div class="c" style="width:50%"></div><div class="c" style="width:40%"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wfcap" style="margin-top:12px">Commission Dashboard<small>Overview · Network · Commissions · Payouts · Marketing</small></div>
+        <div class="wfnotes" style="max-width:none"><ul>
+          <li><span class="n">1</span>Left nav holds the five tabs; <b>commission &amp; playable balances</b> always pinned top-right.</li>
+          <li><span class="n">2</span>KPI strip → earnings chart + <b>tier ladder with progress to Platinum</b> → downline table grouped by level (8/4/2% rates).</li>
+          <li><span class="n">3</span>Every row is live data from the same store the player app writes to.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="wfgroup-h"><span class="gp" style="background:var(--staff)">Staff</span><h3>Marketing Hub — fleet cockpit</h3></div>
+    <div class="wfflow" style="display:block">
+      <div class="wfunit" style="width:100%">
+        <div class="dweb">
+          <div class="dchrome"><span class="cd"></span><span class="cd"></span><span class="cd"></span><span class="url"><span>playlottoglobal.com/marketing</span></span></div>
+          <div class="dapp">
+            <div class="dside">
+              <div class="s-logo"></div>
+              <div class="s-item on"></div><div class="s-item"></div><div class="s-item"></div><div class="s-item"></div><div class="s-item"></div><div class="s-item"></div>
+            </div>
+            <div class="dmain">
+              <div class="dtop"><div class="dh"></div><div class="labk" style="margin-left:auto;background:#f3e8f0;color:var(--staff)">Hermes ●</div></div>
+              <div class="dbody">
+                <div class="kpirow">
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                  <div class="kpi"><div class="kv"></div><div class="kl"></div></div>
+                </div>
+                <div class="dcols" style="grid-template-columns:1.5fr 1fr">
+                  <div class="panel"><div class="pl">Reach &amp; leads</div><div class="chart"></div></div>
+                  <div class="panel"><div class="pl">Channels</div><div class="barsrow"><i style="height:80%"></i><i style="height:55%"></i><i style="height:95%"></i><i style="height:40%"></i><i style="height:70%"></i></div></div>
+                </div>
+                <div class="panel"><div class="pl">Hermes — omnichannel composer</div>
+                  <div class="colx">
+                    <div class="rowx" style="gap:5px"><span class="labk">Email</span><span class="labk">SMS</span><span class="labk">Voice</span><span class="lab" style="margin-left:auto">audience: lapsed players</span></div>
+                    <div class="ph block" style="height:48px;background:var(--card);border:1.5px solid var(--line)"></div>
+                    <div class="rowx"><div class="ph btn" style="width:120px">Send via Hermes</div><div class="ph btn ghost" style="width:120px">AI draft</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wfcap" style="margin-top:12px">Marketing Hub<small>Overview · Hermes · Campaigns · AI Studio · Workflows</small></div>
+        <div class="wfnotes" style="max-width:none"><ul>
+          <li><span class="n">1</span>The cockpit the remote operator watches — <b>live KPIs</b>, reach chart and per-channel performance.</li>
+          <li><span class="n">2</span><b>Hermes composer</b> sends omnichannel (email / SMS / voice) to a chosen persona; "AI draft" pulls from the fleet's copy model.</li>
+          <li><span class="n">3</span>Campaigns, AI Studio (image/video/voice) and the node-based Workflow editor live behind the left nav.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>PlayLottoGlobal — App Flow &amp; Wireframe · v1 · <b>Confidential</b></span>
+    <span>Companion to the <b>System Spec</b> &amp; <b>Board Presentation</b></span>
+  </footer>
+
+</div>
+
+<div id="tweak-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const FLOW_TWEAKS = {
+  accent: ["#b08524", "#8a6717"],
+  grid: true,
+  notes: true,
+};
+const ACCENTS = [
+  ["#b08524", "#8a6717"], // gold
+  ["#3b5bdb", "#2c43a8"], // indigo
+  ["#2f9e63", "#1f7a4c"], // teal
+  ["#8a3d6e", "#6b2c54"], // plum
+];
+function FlowTweaks() {
+  const [t, setTweak] = useTweaks(FLOW_TWEAKS);
+  React.useEffect(() => {
+    const r = document.documentElement;
+    r.style.setProperty("--affiliate", t.accent[0]);
+    r.style.setProperty("--affiliate-deep", t.accent[1]);
+    document.body.classList.toggle("no-grid", !t.grid);
+    document.body.classList.toggle("no-notes", !t.notes);
+  }, [t]);
+  return (
+    <TweaksPanel>
+      <TweakSection label="Accent" />
+      <TweakColor label="Connector & notes" value={t.accent} options={ACCENTS}
+        onChange={(v) => setTweak("accent", v)} />
+      <TweakSection label="Wireframe style" />
+      <TweakToggle label="Dot grid paper" value={t.grid} onChange={(v) => setTweak("grid", v)} />
+      <TweakToggle label="Handwritten notes" value={t.notes} onChange={(v) => setTweak("notes", v)} />
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById("tweak-root")).render(<FlowTweaks />);
+</script>
+</body>
+</html>

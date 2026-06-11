@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PlayLottoGlobal — Ad Voiceover Scripts</title>
+<link rel="icon" type="image/png" href="plg-logo.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#141d52; --navy-2:#1b2a7a; --royal:#3b5bdb; --royal-soft:#5b76e8; --teal:#2bb6c4;
+    --gold:#f1b73a; --gold-deep:#d99412; --green:#2bbf7a; --pink:#e8557f; --purple:#8b6df0;
+    --ink:#16203c; --muted:#5b6480; --dim:#9aa2bd; --line:#e7ebf5; --line-soft:#eef2fa;
+    --bg:#f3f6fd; --card:#fff;
+    --fd:'Outfit',system-ui,sans-serif; --fs:'Inter',system-ui,sans-serif; --fm:'JetBrains Mono',monospace;
+    --shadow-sm:0 2px 12px -5px rgba(27,42,107,.16); --shadow:0 20px 50px -26px rgba(27,42,107,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fs);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.55}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60% 45% at 100% 0%,rgba(77,171,247,.09),transparent 60%),radial-gradient(50% 40% at 0% 0%,rgba(59,91,219,.07),transparent 60%)}
+  h1,h2,h3,h4{font-family:var(--fd);letter-spacing:-.02em;line-height:1.1}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 28px 90px}
+
+  /* hero */
+  .hero{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;padding:52px 0 30px;border-bottom:2px solid var(--line);margin-bottom:30px}
+  .hero img{height:52px}
+  .hero .htx{flex:1;min-width:280px}
+  .eyebrow{font-family:var(--fd);font-weight:700;letter-spacing:.16em;font-size:.72rem;text-transform:uppercase;color:var(--gold-deep)}
+  .hero h1{font-size:2.5rem;font-weight:800;margin:8px 0 6px}
+  .hero h1 span{background:linear-gradient(180deg,var(--gold),var(--gold-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:1.02rem;max-width:52ch}
+  .hero-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:4px}
+  .hero-meta div{display:flex;flex-direction:column}
+  .hero-meta b{font-family:var(--fd);font-weight:800;font-size:1.4rem;line-height:1}
+  .hero-meta span{font-size:.72rem;color:var(--dim);margin-top:2px}
+
+  /* delivery guide */
+  .guide{background:linear-gradient(140deg,var(--navy-2),var(--navy));color:#fff;border-radius:22px;padding:26px 28px;margin-bottom:34px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .guide::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 90% at 92% 0%,rgba(241,183,58,.22),transparent 60%)}
+  .guide h2{position:relative;font-size:1.18rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .guide h2 .d{width:9px;height:9px;border-radius:50%;background:var(--gold)}
+  .guide-grid{position:relative;display:grid;grid-template-columns:repeat(2,1fr);gap:14px 30px}
+  .gitem{font-size:.9rem;color:#c7d0f5;line-height:1.5}
+  .gitem b{color:#fff;font-family:var(--fd);font-weight:700;display:block;font-size:.82rem;letter-spacing:.02em;margin-bottom:2px}
+  .gitem .tag-do{color:#8de6b8;font-weight:700}.gitem .tag-no{color:#f6a6bb;font-weight:700}
+
+  /* script card */
+  .script{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-sm);margin-bottom:24px;overflow:hidden}
+  .s-head{display:flex;align-items:center;gap:14px;padding:18px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:linear-gradient(90deg,var(--line-soft),transparent)}
+  .s-num{width:42px;height:42px;border-radius:13px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--fd);font-weight:800;font-size:1rem;background:linear-gradient(150deg,var(--royal-soft),var(--navy))}
+  .s-title{flex:1;min-width:200px}
+  .s-title h3{font-size:1.24rem}
+  .s-title .who{font-size:.82rem;color:var(--muted);font-weight:500;margin-top:2px}
+  .s-pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--fd);font-weight:700;font-size:.7rem;letter-spacing:.03em;padding:6px 12px;border-radius:999px;text-transform:uppercase}
+  .pill.len{background:var(--navy);color:#fff}
+  .pill.plat{background:#eef1fb;color:var(--royal);border:1px solid var(--line)}
+  .pill.drv{background:rgba(241,183,58,.16);color:var(--gold-deep)}
+
+  .s-body{display:grid;grid-template-columns:1.35fr 1fr;gap:0}
+  .vo{padding:22px 24px;border-right:1px solid var(--line)}
+  .vo .lbl,.dir .lbl{font-family:var(--fd);font-weight:800;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+  .beat{display:grid;grid-template-columns:54px 1fr;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line-soft)}
+  .beat:last-child{border-bottom:none}
+  .tc{font-family:var(--fm);font-size:.74rem;color:var(--royal);font-weight:500;padding-top:3px}
+  .line{font-size:1.02rem;color:var(--ink);line-height:1.5}
+  .line.read{font-weight:500}
+  .line em{color:var(--gold-deep);font-style:normal;font-weight:600}
+  .line .vox{display:block;font-size:.74rem;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+  .super{display:inline-block;font-family:var(--fd);font-weight:700;font-size:.92rem;color:var(--navy);background:rgba(241,183,58,.18);border-radius:7px;padding:2px 9px;margin-top:4px}
+
+  .dir{padding:22px 24px;background:#fafbff;display:flex;flex-direction:column;gap:16px}
+  .dblock .dh{font-family:var(--fd);font-weight:700;font-size:.78rem;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+  .dblock .dh .ic{width:7px;height:7px;border-radius:2px;flex:none}
+  .dblock p{font-size:.86rem;color:var(--muted);line-height:1.5}
+  .legal{padding:12px 24px;border-top:1px solid var(--line);font-size:.76rem;color:var(--dim);background:var(--line-soft)}
+  .legal b{color:var(--muted)}
+
+  .foot{margin-top:40px;border-top:2px solid var(--line);padding-top:22px;color:var(--dim);font-size:.82rem;line-height:1.6}
+  .foot b{color:var(--muted);font-family:var(--fd)}
+
+  @media(max-width:780px){.s-body{grid-template-columns:1fr}.vo{border-right:none;border-bottom:1px solid var(--line)}.guide-grid{grid-template-columns:1fr}.hero h1{font-size:2rem}}
+  @media print{body{background:#fff}.script,.guide{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <img src="plg-logo-full.png" alt="PlayLottoGlobal" />
+    <div class="htx">
+      <div class="eyebrow">Creative · Audio</div>
+      <h1>Ad <span>voiceover</span> scripts</h1>
+      <p>Production-ready narration for PlayLottoGlobal video ads — written for a voice actor or the marketing fleet's AI voice model. Each script is timed, persona-targeted, and ships with on-screen direction.</p>
+    </div>
+    <div class="hero-meta">
+      <div><b>7</b><span>scripts</span></div>
+      <div><b>:06–:60</b><span>runtimes</span></div>
+      <div><b>6</b><span>personas</span></div>
+    </div>
+  </header>
+
+  <section class="guide">
+    <h2><span class="d"></span> Voice &amp; delivery guide</h2>
+    <div class="guide-grid">
+      <div class="gitem"><b>Tone</b> Aspirational, premium, warm. Confident — never pushy, never "get-rich-quick." The dream is the product; sell the feeling, not the odds.</div>
+      <div class="gitem"><b>Pace</b> Brand spots ~2 words/sec with room to breathe. Reels/TikTok faster and punchier. Let the jackpot number land.</div>
+      <div class="gitem"><b>Voice options</b> A warm cinematic lead (M or F), plus a younger energetic read for social. Keep one consistent brand voice profile across the fleet.</div>
+      <div class="gitem"><b>Pronunciation</b> "PlayLottoGlobal" (one word). EuroMillions · Mega&#8209;Sena (<i>MEH-ga SEH-na</i>) · EuroJackpot · Naira (<i>NY-ra</i>).</div>
+      <div class="gitem"><b><span class="tag-do">Do</span></b> Be hopeful, inclusive, global. Emphasize ease, security and "from anywhere." Always close on the responsible-play tag.</div>
+      <div class="gitem"><b><span class="tag-no">Don't</span></b> Guarantee wins, promise income, imply certainty, or target minors / vulnerable players. No pressure tactics.</div>
+    </div>
+  </section>
+
+  <!-- 1 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">01</span>
+      <div class="s-title"><h3>Tonight, the world plays</h3><div class="who">Brand hero · aspirational first-timers &amp; the dream</div></div>
+      <div class="s-pills"><span class="pill len">:30</span><span class="pill plat">TV · YouTube</span><span class="pill drv">The dream</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">Somewhere tonight, a single number is about to change <em>everything.</em></div></div>
+        <div class="beat"><span class="tc">0:07</span><div class="line read">Powerball. EuroMillions. Mega Millions. The world's biggest jackpots —</div></div>
+        <div class="beat"><span class="tc">0:14</span><div class="line read">now in the palm of your hand.</div></div>
+        <div class="beat"><span class="tc">0:18</span><div class="line read">Pick your numbers. Tap to play. From anywhere on Earth.</div></div>
+        <div class="beat"><span class="tc">0:25</span><div class="line read"><em>PlayLottoGlobal.</em> Your shot at the world.<span class="vox">warm, let it settle</span></div></div>
+        <div class="beat"><span class="tc">0:29</span><div class="line">Tag <span class="super">18+ · Play responsibly</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Slow push across a glowing night-city skyline → globe spins → diverse hands tapping a phone → numbers light up → ticket QR. End on logo over starfield.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Cinematic build — soft piano to swelling strings + heartbeat sub-bass. One bright "ascension" hit on "your shot at the world."</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>Logo + <b>playlottoglobal.com</b>. End card: "Play tonight's draw."</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> on-screen 18+ and "Play responsibly" for full end card; include local licensing line per market.</div>
+  </article>
+
+  <!-- 2 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">02</span>
+      <div class="s-title"><h3>Tonight could be the night</h3><div class="who">Social short · jackpot chasers</div></div>
+      <div class="s-pills"><span class="pill len">:15</span><span class="pill plat">TikTok · Reels</span><span class="pill drv">Urgency</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">Three hundred million dollars. One ticket.<span class="vox">fast, electric</span></div></div>
+        <div class="beat"><span class="tc">0:05</span><div class="line read">Pick five numbers — or let Lucky Dip choose for you.</div></div>
+        <div class="beat"><span class="tc">0:10</span><div class="line read"><em>PlayLottoGlobal.</em> Tonight could be the night.</div></div>
+        <div class="beat"><span class="tc">0:13</span><div class="line">Tag <span class="super">18+ · Play responsibly</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Vertical 9:16. Fast cuts: jackpot counter ticking up, thumb selecting numbers, confetti burst. Big kinetic text matching VO.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Trap / EDM with a hard drop on "tonight could be the night." Riser into the CTA.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>"Play in 60 seconds" + swipe-up / link-in-bio sticker.</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> persistent small "18+" corner bug; responsible-play tag on end frame.</div>
+  </article>
+
+  <!-- 3 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">03</span>
+      <div class="s-title"><h3>Get paid when the world plays</h3><div class="who">Recruitment · creators &amp; affiliates</div></div>
+      <div class="s-pills"><span class="pill len">:30</span><span class="pill plat">YouTube · Paid social</span><span class="pill drv">Opportunity</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">What if you got paid every time someone played the lottery?</div></div>
+        <div class="beat"><span class="tc">0:06</span><div class="line read">Share your link. They play. You earn — <em>twenty percent.</em> Again, and again.</div></div>
+        <div class="beat"><span class="tc">0:15</span><div class="line read">No inventory. No limits. The whole world is your audience.</div></div>
+        <div class="beat"><span class="tc">0:23</span><div class="line read">Become a <em>PlayLottoGlobal</em> affiliate. Start free, today.</div></div>
+        <div class="beat"><span class="tc">0:29</span><div class="line">Tag <span class="super">18+ · T&amp;Cs apply</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Creator films a phone; their referral link/QR appears; a map lights up with plays worldwide; commission counter ticks; payout to wallet.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Upbeat, entrepreneurial, modern pop-house. Satisfying "cha-ching" cue on each commission tick.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>"Earn 20% — forever." CTA: "Become an affiliate."</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> "Earnings vary. No income guaranteed. T&amp;Cs apply." 18+ tag on end card.</div>
+  </article>
+
+  <!-- 4 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">04</span>
+      <div class="s-title"><h3>Your numbers miss you</h3><div class="who">Reactivation · lapsed players · ritual &amp; near-miss</div></div>
+      <div class="s-pills"><span class="pill len">:30</span><span class="pill plat">Email video · Retargeting</span><span class="pill drv">Ritual</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">Remember your numbers? Seven… eleven… twenty-three…<span class="vox">warm, knowing</span></div></div>
+        <div class="beat"><span class="tc">0:07</span><div class="line read">They've still got your back. Every draw, waiting.</div></div>
+        <div class="beat"><span class="tc">0:13</span><div class="line read">One tap brings you back in — same numbers, every week, automatically.</div></div>
+        <div class="beat"><span class="tc">0:22</span><div class="line read"><em>PlayLottoGlobal.</em> Pick up right where you left off.</div></div>
+        <div class="beat"><span class="tc">0:29</span><div class="line">Tag <span class="super">18+ · Play responsibly</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Familiar numbers fade in like old friends; calendar of draws; one-tap "auto-play" toggle flips on; reassuring, nostalgic warmth.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Gentle, nostalgic acoustic — a hopeful lift on the final line. No hype.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>"Welcome back" + "Turn on auto-play." Keep tone supportive, never guilt-based.</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> avoid pressure / loss-chasing language. Include responsible-play tag + self-exclusion link in description.</div>
+  </article>
+
+  <!-- 5 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">05</span>
+      <div class="s-title"><h3>The whole world's lotteries. One account.</h3><div class="who">Explainer · trust &amp; first-time confidence</div></div>
+      <div class="s-pills"><span class="pill len">:60</span><span class="pill plat">YouTube · Landing</span><span class="pill drv">Trust</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">The biggest lotteries on Earth used to be out of reach. Wrong country. Wrong queue. Wrong day.</div></div>
+        <div class="beat"><span class="tc">0:09</span><div class="line read">Not anymore.</div></div>
+        <div class="beat"><span class="tc">0:11</span><div class="line read">With <em>PlayLottoGlobal,</em> the world's draws live in one secure account.</div></div>
+        <div class="beat"><span class="tc">0:18</span><div class="line read">Choose a lottery. Pick your numbers, or tap Lucky Dip.</div></div>
+        <div class="beat"><span class="tc">0:25</span><div class="line read">Pay securely. Get your digital ticket. We'll alert you the moment results drop.</div></div>
+        <div class="beat"><span class="tc">0:34</span><div class="line read">Win, and your money lands in your wallet — withdraw to bank, PayPal, or crypto.</div></div>
+        <div class="beat"><span class="tc">0:43</span><div class="line read">Licensed. Secure. Trusted by players in over a hundred countries.</div></div>
+        <div class="beat"><span class="tc">0:51</span><div class="line read"><em>PlayLottoGlobal.</em> The world is playing. Are you in?</div></div>
+        <div class="beat"><span class="tc">0:58</span><div class="line">Tag <span class="super">18+ · Play responsibly</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Documentary feel: real-world players across cities, clean UI screen-captures for each step (choose → pick → pay → ticket → alert → withdraw), trust badges, a genuine winner moment.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Warm, building, trustworthy bed. UI ticks and a soft "win" chime at 0:34. Resolve under the final line.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>Step labels on screen. End card: "Create your free account."</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> show licence numbers per market; "Trusted in 100+ countries" must be substantiated before air.</div>
+  </article>
+
+  <!-- 6 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">06</span>
+      <div class="s-title"><h3>From Lagos to the world</h3><div class="who">Region · Nigeria · social &amp; belonging</div></div>
+      <div class="s-pills"><span class="pill len">:20</span><span class="pill plat">Paid social · Local</span><span class="pill drv">Belonging</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">From Lagos to London. From Abuja to the world.<span class="vox">proud, vibrant</span></div></div>
+        <div class="beat"><span class="tc">0:06</span><div class="line read">Play the biggest global jackpots — right here, in Naira.</div></div>
+        <div class="beat"><span class="tc">0:12</span><div class="line read">Your people. Your numbers. Your shot.</div></div>
+        <div class="beat"><span class="tc">0:16</span><div class="line read"><em>PlayLottoGlobal.</em> The world is playing.</div></div>
+        <div class="beat"><span class="tc">0:19</span><div class="line">Tag <span class="super">18+ · Play responsibly</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>Bright Lagos energy — friends, a syndicate group-chat, market colour, phone showing Naira balance. Local faces, global jackpots on screen.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Afrobeats — warm, celebratory, danceable. Group cheer SFX on the final line.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>"Pay in Naira · Win worldwide." CTA: "Play now."</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> comply with Nigerian lottery/advertising regs; show local regulator licence + 18+.</div>
+  </article>
+
+  <!-- 7 -->
+  <article class="script">
+    <div class="s-head">
+      <span class="s-num">07</span>
+      <div class="s-title"><h3>One-tap bumper</h3><div class="who">Bumper sting · awareness &amp; recall</div></div>
+      <div class="s-pills"><span class="pill len">:06</span><span class="pill plat">YouTube bumper · Pre-roll</span><span class="pill drv">Recall</span></div>
+    </div>
+    <div class="s-body">
+      <div class="vo">
+        <div class="lbl">Voiceover</div>
+        <div class="beat"><span class="tc">0:00</span><div class="line read">The world's jackpots. One tap.<span class="vox">crisp, confident</span></div></div>
+        <div class="beat"><span class="tc">0:04</span><div class="line read"><em>PlayLottoGlobal.</em></div></div>
+        <div class="beat"><span class="tc">0:05</span><div class="line">Tag <span class="super">18+</span></div></div>
+      </div>
+      <div class="dir">
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--royal)"></span>Visual / B-roll</div><p>One gesture: thumb taps, jackpot flashes, logo locks up. Snappy, brand-colour, no clutter.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--gold)"></span>Music / SFX</div><p>Single rising sting + a satisfying "tap" + logo whoosh. Done.</p></div>
+        <div class="dblock"><div class="dh"><span class="ic" style="background:var(--teal)"></span>Super / CTA</div><p>Logo + "playlottoglobal.com". That's it.</p></div>
+      </div>
+    </div>
+    <div class="legal"><b>Legal:</b> 18+ bug on frame; responsible-play handled in companion assets.</div>
+  </article>
+
+  <p class="foot">
+    <b>Production:</b> these are ready for a human VO artist or the marketing fleet's AI voice model — keep one consistent brand voice profile so every spot sounds like the same brand. Record dry + with the music bed; deliver :30s as the master, then cut :15 / :06 lifts from the same read.<br>
+    <b>Compliance:</b> every market has its own gambling-ad rules — clear all licence lines, age gates and responsible-play tags with legal before air. Never imply guaranteed wins or income.<br>
+    PlayLottoGlobal — Ad Voiceover Scripts · v1 · Confidential.
+  </p>
+
+</div>
+</body>
+</html>
