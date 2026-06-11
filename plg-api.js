@@ -139,7 +139,11 @@
     // test funds until Nuvei (or similar) is wired. d.amount is dollars.
     topUp: (d) => liveReq("/api/wallet", { amount_cents: Math.round((+d.amount || 0) * 100) }, "POST")
       .then((r) => { emit("wallet", { balance_cents: r.balance_cents }); return { ok: true, test: true, balance_cents: r.balance_cents }; })
-      .catch((e) => { throw (e && e.status === 404 ? new Error("Top-ups are temporarily unavailable.") : e); }),
+      .catch((e) => {
+        if (e && e.status === 404) throw new Error("Top-ups are temporarily unavailable.");
+        if (e && e.status === 401) throw new Error("Your session expired — please sign in again to add funds.");
+        throw e;
+      }),
     // No payout rail until the PSP is live — fail honestly instead of pretending.
     withdraw: () => Promise.reject(new Error("Withdrawals open once our payment provider goes live.")),
     getTransactions: () => liveReq("/api/wallet", null, "GET").then((w) => (w.transactions || [])),
