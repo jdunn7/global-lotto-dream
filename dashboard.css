@@ -217,18 +217,22 @@
   .dash-2col, .dash-2col.b { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
-  .dash { grid-template-columns: 1fr; }
+  /* !important: the resizable-sidebar logic writes inline grid-template-columns
+     (dashboard.jsx / sidebar-dock.js); on phones the single column must win. */
+  .dash { grid-template-columns: 1fr !important; }
   .dash-side { position: fixed; bottom: 0; top: auto; left: 0; right: 0; height: auto; flex-direction: row; align-items: center; z-index: 50; padding: 8px; gap: 4px; overflow-x: auto; }
   .dash-brand, .dash-side-tag, .dash-tierbox, .dash-back { display: none; }
   .dash-nav { flex-direction: row; }
   .dash-nav-i { flex-direction: column; gap: 3px; font-size: 0.65rem; padding: 8px 12px; }
   .dash-body { padding-bottom: 90px; }
   .dash-top { flex-wrap: wrap; }
+  .dash-top-r { flex-wrap: wrap; width: 100%; row-gap: 8px; }
 }
 @media (max-width: 560px) {
   .kpi-row, .kpi-row.three, .banner-grid { grid-template-columns: 1fr; }
   .dash-top { padding: 14px 16px; }
   .dash-body { padding: 16px 16px 90px; }
+  .dash-btn-ghost, .dash-btn-gold { padding: 9px 12px; font-size: var(--text-xs); }
 }
 
 /* ---------------- wired header controls (range / withdraw / account) ---------------- */
