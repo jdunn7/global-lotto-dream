@@ -124,7 +124,10 @@
   var sentTo = "";
   $("btn-send").onclick = async function () {
     var p = $("phone").value.trim().replace(/[^+0-9]/g, "");
-    if (p.length < 8) return msg("Enter your full number including country code, e.g. +1 954…", true);
+    // Telnyx requires E.164 — add the missing "+" (and assume US for a bare
+    // 10-digit number) instead of bouncing a 500 off the SMS provider.
+    if (p && p[0] !== "+") p = "+" + (p.length === 10 ? "1" + p : p);
+    if (p.length < 9) return msg("Enter your full number including country code, e.g. +1 954…", true);
     this.disabled = true; msg("Sending…");
     try {
       await PLG_API.auth.sendPhoneOtp(p);
