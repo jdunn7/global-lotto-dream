@@ -1,17 +1,72 @@
 // flow.jsx — Auth, Checkout, Confirmation, Account screens
 
-/* ============================ AUTH ============================ */
+/* ============================ AUTH (real — bridged to plg Better Auth) ============================ */
+// Derive a friendly display name from an email local-part, e.g. "todd.poindexter@x.com" → "Todd Poindexter".
+function nameFromEmail(email) {
+  const local = ((email || "").split("@")[0] || "").replace(/[._+-]+/g, " ").trim();
+  if (!local) return "";
+  return local.split(" ").filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+const ERR_STYLE = { background: "#fdecec", color: "#b3261e", border: "1px solid #f3c0bd", borderRadius: 10, padding: "9px 13px", fontSize: ".84rem", lineHeight: 1.4, margin: "2px 0 14px" };
+
 function Auth({ onAuth, go }) {
   const [mode, setMode] = useState("signup"); // signup | login
   const [form, setForm] = useState({ name: "", email: "", pass: "" });
   const [touched, setTouched] = useState(false);
-  const valid = form.email.includes("@") && form.pass.length >= 6 && (mode === "login" || form.name.trim());
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  // phone-OTP sub-flow
+  const [pmode, setPmode] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
 
-  function submit(e) {
+  const valid = form.email.includes("@") && form.pass.length >= 8 && (mode === "login" || form.name.trim());
+
+  function finish(profile, fallbackEmail) {
+    const email = (profile && profile.email) || fallbackEmail || "";
+    onAuth({ name: (profile && profile.name) || nameFromEmail(email) || "Player", email });
+  }
+
+  async function submit(e) {
     e && e.preventDefault();
-    setTouched(true);
+    setTouched(true); setErr("");
     if (!valid) return;
-    onAuth({ name: mode === "login" ? "Amara Okafor" : form.name, email: form.email });
+    const email = form.email.trim().toLowerCase();
+    setBusy(true);
+    try {
+      const r = mode === "signup"
+        ? await PLG_API.auth.signup({ name: form.name.trim(), email, password: form.pass })
+        : await PLG_API.auth.login({ email, password: form.pass });
+      finish(r.profile, email);
+    } catch (e2) {
+      setErr(e2.message || "Something went wrong. Please try again.");
+    } finally { setBusy(false); }
+  }
+
+  function google() {
+    setErr("");
+    PLG_API.auth.loginGoogle(window.location.origin + window.location.pathname)
+      .catch((e) => setErr(e.message || "Google sign-in failed."));
+  }
+
+  async function sendOtp() {
+    setErr("");
+    const p = phone.trim();
+    if (p.replace(/[^0-9]/g, "").length < 7) { setErr("Enter your number with country code, e.g. +1 555 123 4567."); return; }
+    setBusy(true);
+    try { await PLG_API.auth.sendPhoneOtp(p); setOtpSent(true); }
+    catch (e) { setErr(e.message || "Couldn't send the code. Check the number and try again."); }
+    finally { setBusy(false); }
+  }
+  async function verifyOtp() {
+    setErr(""); setBusy(true);
+    try {
+      const r = await PLG_API.auth.verifyPhoneOtp({ phoneNumber: phone.trim(), code: code.trim() });
+      finish(r.profile, "");
+    } catch (e) { setErr(e.message || "That code didn't match. Request a new one and try again."); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -38,46 +93,83 @@ function Auth({ onAuth, go }) {
       <div className="auth-main">
         <div className="auth-card">
           <div className="auth-tabs">
-            <button className={mode === "signup" ? "on" : ""} onClick={() => setMode("signup")}>Sign up</button>
-            <button className={mode === "login" ? "on" : ""} onClick={() => setMode("login")}>Log in</button>
+            <button className={mode === "signup" ? "on" : ""} onClick={() => { setMode("signup"); setErr(""); }}>Sign up</button>
+            <button className={mode === "login" ? "on" : ""} onClick={() => { setMode("login"); setErr(""); }}>Log in</button>
             <span className="auth-tab-thumb" style={{ transform: mode === "login" ? "translateX(100%)" : "none" }} />
           </div>
 
-          <h2 className="auth-title">{mode === "signup" ? "Create your account" : "Welcome back"}</h2>
-          <p className="auth-sub">{mode === "signup" ? "Join in under a minute. No fees to sign up." : "Log in to play and check your tickets."}</p>
+          {!pmode ? (
+            <React.Fragment>
+              <h2 className="auth-title">{mode === "signup" ? "Create your account" : "Welcome back"}</h2>
+              <p className="auth-sub">{mode === "signup" ? "Join in under a minute. No fees to sign up." : "Log in to play and check your tickets."}</p>
 
-          <div className="auth-social">
-            <button className="auth-soc" onClick={() => onAuth({ name: "Amara Okafor", email: "amara@gmail.com" })}>
-              <span className="soc-g">G</span> Continue with Google
-            </button>
-            <button className="auth-soc" onClick={() => onAuth({ name: "Amara Okafor", email: "amara@icloud.com" })}>
-              <span className="soc-a"></span> Continue with Apple
-            </button>
-          </div>
-          <div className="auth-divider"><span>or with email</span></div>
+              {err && <div style={ERR_STYLE}>{err}</div>}
 
-          <form className="auth-form" onSubmit={submit}>
-            {mode === "signup" && (
-              <label className="field">
-                <span>Full name</span>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Amara Okafor" />
-                {touched && !form.name.trim() && <em className="field-err">Enter your name</em>}
-              </label>
-            )}
-            <label className="field">
-              <span>Email</span>
-              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@email.com" />
-              {touched && !form.email.includes("@") && <em className="field-err">Enter a valid email</em>}
-            </label>
-            <label className="field">
-              <span>Password</span>
-              <input type="password" value={form.pass} onChange={(e) => setForm({ ...form, pass: e.target.value })} placeholder="At least 6 characters" />
-              {touched && form.pass.length < 6 && <em className="field-err">Min. 6 characters</em>}
-            </label>
-            <Btn variant="gold" size="lg" className="auth-submit" type="submit" iconRight="arrowR">
-              {mode === "signup" ? "Create account" : "Log in"}
-            </Btn>
-          </form>
+              <div className="auth-social">
+                <button type="button" className="auth-soc" onClick={google} disabled={busy}>
+                  <span className="soc-g">G</span> Continue with Google
+                </button>
+                <button type="button" className="auth-soc" onClick={() => { setPmode(true); setErr(""); }} disabled={busy}>
+                  <span className="soc-g" style={{ fontSize: 15 }}>☎</span> Continue with phone
+                </button>
+              </div>
+              <div className="auth-divider"><span>or with email</span></div>
+
+              <form className="auth-form" onSubmit={submit}>
+                {mode === "signup" && (
+                  <label className="field">
+                    <span>Full name</span>
+                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your full name" />
+                    {touched && !form.name.trim() && <em className="field-err">Enter your name</em>}
+                  </label>
+                )}
+                <label className="field">
+                  <span>Email</span>
+                  <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@email.com" />
+                  {touched && !form.email.includes("@") && <em className="field-err">Enter a valid email</em>}
+                </label>
+                <label className="field">
+                  <span>Password</span>
+                  <input type="password" value={form.pass} onChange={(e) => setForm({ ...form, pass: e.target.value })} placeholder="At least 8 characters" />
+                  {touched && form.pass.length < 8 && <em className="field-err">Min. 8 characters</em>}
+                </label>
+                <Btn variant="gold" size="lg" className="auth-submit" type="submit" iconRight="arrowR" disabled={busy}>
+                  {busy ? "Please wait…" : (mode === "signup" ? "Create account" : "Log in")}
+                </Btn>
+              </form>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <h2 className="auth-title">Continue with phone</h2>
+              <p className="auth-sub">{otpSent ? "Enter the 6-digit code we texted you." : "We'll text you a one-time code. Include your country code."}</p>
+
+              {err && <div style={ERR_STYLE}>{err}</div>}
+
+              {!otpSent ? (
+                <div className="auth-form">
+                  <label className="field">
+                    <span>Phone number</span>
+                    <input type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 123 4567" />
+                  </label>
+                  <Btn variant="gold" size="lg" className="auth-submit" onClick={sendOtp} iconRight="arrowR" disabled={busy}>
+                    {busy ? "Sending…" : "Send code"}
+                  </Btn>
+                </div>
+              ) : (
+                <div className="auth-form">
+                  <label className="field">
+                    <span>Verification code</span>
+                    <input type="text" inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="123456" />
+                  </label>
+                  <Btn variant="gold" size="lg" className="auth-submit" onClick={verifyOtp} iconRight="arrowR" disabled={busy}>
+                    {busy ? "Verifying…" : "Verify & continue"}
+                  </Btn>
+                  <button type="button" className="auth-guest" onClick={() => { setOtpSent(false); setCode(""); setErr(""); }}>Use a different number</button>
+                </div>
+              )}
+              <button type="button" className="auth-guest" onClick={() => { setPmode(false); setOtpSent(false); setErr(""); }}>← Back to email</button>
+            </React.Fragment>
+          )}
 
           <button className="auth-guest" onClick={() => go("home")}>Browse as guest →</button>
           <div className="auth-badges"><SecurityBadges payments={false} /></div>
@@ -88,32 +180,34 @@ function Auth({ onAuth, go }) {
 }
 
 /* ============================ CHECKOUT ============================ */
-const DRAW_PLANS = [
-  { id: 1, label: "Single draw", sub: "Just the next draw", off: 0 },
-  { id: 4, label: "4 draws", sub: "≈ 2 weeks", off: 0.05 },
-  { id: 12, label: "12 draws", sub: "≈ 6 weeks", off: 0.1 },
-];
+// Real money flow: flat $6.50 per line for the next draw, paid from the wallet
+// (debited server-side by plg). No draw-plans/promo — plg has flat pricing.
+const TICKET_PRICE = 6.5;
 
 function Checkout({ go, slip, setSlip, user }) {
   const game = LOTTO.gameById(slip.gameId);
-  const [plan, setPlan] = useState(1);
-  const [autoplay, setAutoplay] = useState(false);
-  const [pay, setPay] = useState("wallet");
-  const [promo, setPromo] = useState("");
-  const [applied, setApplied] = useState(false);
   const lines = slip.lines;
-  const base = lines.length * game.price * plan;
-  const planOff = (DRAW_PLANS.find((p) => p.id === plan) || {}).off || 0;
-  const promoOff = applied ? 0.1 : 0;
-  const discount = base * (planOff + promoOff);
-  const total = Math.max(0, base - discount);
+  const total = lines.length * TICKET_PRICE;
   const walletBal = user.wallet;
-  const insufficient = pay === "wallet" && total > walletBal;
+  const insufficient = total > walletBal;
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
 
-  function confirm() {
-    if (insufficient) return;
-    setSlip({ ...slip, plan, autoplay, total, paidWith: pay });
-    go("confirmation", game.id);
+  async function confirm() {
+    setErr("");
+    if (insufficient) { setErr("Not enough in your wallet. Top up to play."); return; }
+    setBusy(true);
+    try {
+      // plg debits the wallet, mints the ticket(s) and credits the affiliate.
+      await PLG_API.tickets.buyTicket({ gameId: game.id, lines });
+      setSlip({ ...slip, plan: 1, total, paidWith: "wallet" });
+      go("confirmation", game.id);
+    } catch (e) {
+      setErr(String(e.message).includes("insufficient")
+        ? "Not enough in your wallet. Top up to play."
+        : (e.message || "Couldn't complete the purchase. Please try again."));
+      setBusy(false);
+    }
   }
 
   return (
@@ -143,56 +237,29 @@ function Checkout({ go, slip, setSlip, user }) {
             </div>
             <button className="co-edit" onClick={() => go("picker", game.id)}><Icon name="grid" size={14} /> Edit lines</button>
           </div>
-
-          <div className="co-card card">
-            <h3 className="co-h">How many draws?</h3>
-            <div className="plan-grid">
-              {DRAW_PLANS.map((p) => (
-                <button key={p.id} className={`plan ${plan === p.id ? "on" : ""}`} onClick={() => setPlan(p.id)}>
-                  {p.off > 0 && <span className="plan-save">Save {Math.round(p.off * 100)}%</span>}
-                  <span className="plan-label">{p.label}</span>
-                  <span className="plan-sub">{p.sub}</span>
-                </button>
-              ))}
-            </div>
-            <label className="co-toggle">
-              <span><strong>Auto-play</strong><em>Automatically renew these numbers each draw. Cancel anytime.</em></span>
-              <button className={`switch ${autoplay ? "on" : ""}`} onClick={() => setAutoplay(!autoplay)} type="button"><span /></button>
-            </label>
-          </div>
         </div>
 
         <aside className="checkout-right">
           <div className="pay-card card">
             <h3 className="co-h">Payment</h3>
             <div className="pay-methods">
-              <button className={`pay-m ${pay === "wallet" ? "on" : ""}`} onClick={() => setPay("wallet")}>
+              <button className="pay-m on" type="button">
                 <span className="pay-m-l"><Icon name="wallet" size={18} /> Wallet</span>
                 <span className="pay-m-r tnum">{LOTTO.formatFull(walletBal, "$")}</span>
               </button>
-              <button className={`pay-m ${pay === "card" ? "on" : ""}`} onClick={() => setPay("card")}>
-                <span className="pay-m-l"><Icon name="ticket" size={18} /> Visa •••• 4821</span>
-                <span className="pay-m-r pay-default">Default</span>
-              </button>
             </div>
-
-            <div className="promo">
-              <input value={promo} onChange={(e) => { setPromo(e.target.value); setApplied(false); }} placeholder="Promo code" />
-              <button onClick={() => setApplied(promo.trim().length > 0)} disabled={!promo.trim()}>Apply</button>
-            </div>
-            {applied && <div className="promo-ok"><Icon name="check" size={13} /> Code applied — 10% off</div>}
 
             <div className="summary">
-              <div className="sum-row"><span>{lines.length} line{lines.length !== 1 ? "s" : ""} × {plan} draw{plan !== 1 ? "s" : ""}</span><span className="tnum">{game.currency}{base.toFixed(2)}</span></div>
-              {discount > 0 && <div className="sum-row sum-off"><span>Discount</span><span className="tnum">−{game.currency}{discount.toFixed(2)}</span></div>}
-              <div className="sum-row sum-total"><span>Total</span><span className="tnum">{game.currency}{total.toFixed(2)}</span></div>
+              <div className="sum-row"><span>{lines.length} line{lines.length !== 1 ? "s" : ""} × $6.50</span><span className="tnum">${total.toFixed(2)}</span></div>
+              <div className="sum-row sum-total"><span>Total</span><span className="tnum">${total.toFixed(2)}</span></div>
             </div>
 
-            {insufficient && <div className="pay-warn"><Icon name="bell" size={13} /> Not enough in your wallet. Switch to card or top up.</div>}
+            {err && <div className="pay-warn"><Icon name="bell" size={13} /> {err}</div>}
+            {insufficient && !err && <div className="pay-warn"><Icon name="bell" size={13} /> Not enough in your wallet — <button type="button" onClick={() => go("wallet")} style={{ background: "none", border: "none", padding: 0, font: "inherit", color: "inherit", textDecoration: "underline", cursor: "pointer" }}>top up</button>.</div>}
 
-            <Btn variant="gold" size="lg" className="pay-cta" onClick={confirm} iconRight="arrowR"
-              style={insufficient ? { opacity: 0.5, cursor: "not-allowed" } : {}}>
-              Pay {game.currency}{total.toFixed(2)}
+            <Btn variant="gold" size="lg" className="pay-cta" onClick={confirm} iconRight="arrowR" disabled={busy}
+              style={(insufficient || busy) ? { opacity: 0.55, cursor: "not-allowed" } : {}}>
+              {busy ? "Processing…" : "Pay $" + total.toFixed(2)}
             </Btn>
             <div className="pay-secure"><Icon name="shield" size={13} /> Secure checkout · 18+ · Play responsibly</div>
             <div className="co-pays"><SecurityBadges trust={false} /></div>
