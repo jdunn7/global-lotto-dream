@@ -5,13 +5,34 @@ function Auth({ onAuth, go }) {
   const [mode, setMode] = useState("signup"); // signup | login
   const [form, setForm] = useState({ name: "", email: "", pass: "" });
   const [touched, setTouched] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
   const valid = form.email.includes("@") && form.pass.length >= 6 && (mode === "login" || form.name.trim());
 
-  function submit(e) {
+  // REAL auth against the PLG backend (same database/accounts as
+  // plg.proposals.digital, session cookie shared on .proposals.digital).
+  async function submit(e) {
     e && e.preventDefault();
-    setTouched(true);
-    if (!valid) return;
-    onAuth({ name: mode === "login" ? "Amara Okafor" : form.name, email: form.email });
+    setTouched(true); setErr("");
+    if (!valid || busy) return;
+    setBusy(true);
+    try {
+      const r = mode === "signup"
+        ? await PLG_API.auth.signup({ name: form.name.trim(), email: form.email.trim().toLowerCase(), password: form.pass })
+        : await PLG_API.auth.login({ email: form.email.trim().toLowerCase(), password: form.pass });
+      const u = r && r.profile;
+      if (!u || !u.email) throw new Error(mode === "signup" ? "Could not create your account." : "Could not sign you in.");
+      onAuth({ name: u.name || form.name.trim() || u.email.split("@")[0], email: u.email });
+    } catch (ex) {
+      setErr((ex && ex.message) || "Something went wrong — please try again.");
+    }
+    setBusy(false);
+  }
+
+  function google() {
+    setErr("");
+    PLG_API.auth.loginGoogle(window.location.origin + "/play")
+      .catch(function () { setErr("Google sign-in is unavailable right now."); });
   }
 
   return (
@@ -47,14 +68,12 @@ function Auth({ onAuth, go }) {
           <p className="auth-sub">{mode === "signup" ? "Join in under a minute. No fees to sign up." : "Log in to play and check your tickets."}</p>
 
           <div className="auth-social">
-            <button className="auth-soc" onClick={() => onAuth({ name: "Amara Okafor", email: "amara@gmail.com" })}>
+            <button className="auth-soc" onClick={google} disabled={busy}>
               <span className="soc-g">G</span> Continue with Google
-            </button>
-            <button className="auth-soc" onClick={() => onAuth({ name: "Amara Okafor", email: "amara@icloud.com" })}>
-              <span className="soc-a"></span> Continue with Apple
             </button>
           </div>
           <div className="auth-divider"><span>or with email</span></div>
+          {err && <em className="field-err" style={{ display: "block", marginBottom: 10 }}>{err}</em>}
 
           <form className="auth-form" onSubmit={submit}>
             {mode === "signup" && (
@@ -74,8 +93,8 @@ function Auth({ onAuth, go }) {
               <input type="password" value={form.pass} onChange={(e) => setForm({ ...form, pass: e.target.value })} placeholder="At least 6 characters" />
               {touched && form.pass.length < 6 && <em className="field-err">Min. 6 characters</em>}
             </label>
-            <Btn variant="gold" size="lg" className="auth-submit" type="submit" iconRight="arrowR">
-              {mode === "signup" ? "Create account" : "Log in"}
+            <Btn variant="gold" size="lg" className="auth-submit" type="submit" iconRight="arrowR" disabled={busy}>
+              {busy ? "One moment…" : mode === "signup" ? "Create account" : "Log in"}
             </Btn>
           </form>
 

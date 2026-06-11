@@ -59,8 +59,21 @@ function App() {
   const demoSlip = () => {const g = LOTTO.gameById(STARTGAME);const lines = [LOTTO.quickPick(g), LOTTO.quickPick(g)];return { gameId: g.id, lines, cost: lines.length * g.price, plan: 1, total: lines.length * g.price, paidWith: "wallet" };};
   const [view, setView] = useState({ name: START, gameId: STARTGAME, opts: START === "picker" ? {} : {} });
   const [slip, setSlip] = useState(["checkout", "confirmation", "draw"].includes(START) ? demoSlip() : null);
-  const [user, setUser] = useState({ name: "Amara Okafor", email: "amara@gmail.com", wallet: 248.5, winnings: 1284, commission: 412.6 });
+  // Real session: start logged OUT; the PLG backend (same database as
+  // plg.proposals.digital, cookie shared on .proposals.digital) restores the
+  // session + identity + real wallet balance on load.
+  const [user, setUser] = useState({ name: "", email: "", wallet: 0, winnings: 0, commission: 0 });
   const loggedIn = !!user.email;
+  useEffect(() => {
+    if (!window.PLG_API) return;
+    PLG_API.auth.session().then(function (s) {
+      if (!s.authed || !s.profile) return;
+      setUser(function (u) { return { ...u, name: s.profile.name || "", email: s.profile.email || "" }; });
+      PLG_API.wallet.getBalance()
+        .then(function (w) { setUser(function (u) { return { ...u, wallet: w.playable }; }); })
+        .catch(function () {});
+    }).catch(function () {});
+  }, []);
   const [connectedWallet, setConnectedWallet] = useState(null);
   const [selTicket, setSelTicket] = useState(START === "ticket" ? SEED_HISTORY[1] : null);
   const [affOpen, setAffOpen] = useState(false);
@@ -115,8 +128,19 @@ function App() {
     setHistory((h) => {const next = [t, ...h].slice(0, 14);persist(next);return next;});
     if ((s.paidWith || "wallet") === "wallet") setUser((u) => ({ ...u, wallet: Math.max(0, u.wallet - (s.total || s.cost)) }));
   }
-  function onAuth(u) {setUser({ ...u, wallet: 248.5, winnings: 1284, commission: 412.6 });go("home");}
-  function onSignOut() {setUser({ name: "", email: "", wallet: 248.5, winnings: 0, commission: 0 });go("auth");}
+  function onAuth(u) {
+    setUser({ name: u.name, email: u.email, wallet: 0, winnings: 0, commission: 0 });
+    if (window.PLG_API)
+      PLG_API.wallet.getBalance()
+        .then(function (w) { setUser(function (c) { return { ...c, wallet: w.playable }; }); })
+        .catch(function () {});
+    go("home");
+  }
+  function onSignOut() {
+    if (window.PLG_API) PLG_API.auth.logout().catch(function () {});
+    setUser({ name: "", email: "", wallet: 0, winnings: 0, commission: 0 });
+    go("auth");
+  }
 
   const nav = [
   { id: "home", label: "Home", icon: "home" },
