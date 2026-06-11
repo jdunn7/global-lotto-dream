@@ -43,6 +43,125 @@ const PAYOUTS = [
   { ref: "PO-4390", method: "PayPal", a: 75, status: "pending", when: "Today" },
 ];
 
+/* ===================== TOP-UP — "PLG Pay" sandbox gateway ===================== */
+/* Investor-demo payment sheet: looks and moves like a hosted card gateway, but
+   settles through the real flag-gated test top-up (PLG_API.wallet.topUp →
+   plg credit_wallet), so the credited balance and everything downstream
+   (ticket buys, ledger) are genuinely live. The SANDBOX badge is deliberate:
+   the money is test, the rails are real. Swaps for the PSP's hosted sheet later. */
+function TopupModal({ user, onClose }) {
+  const QUICK = [25, 50, 100, 250];
+  const [step, setStep] = useState("amount"); // amount | card | processing | done | error
+  const [amt, setAmt] = useState("100");
+  const dollars = Math.max(1, Math.min(500, Math.round(parseFloat(amt) || 0)));
+  // Pre-filled sandbox card (classic 4242 test PAN) so the demo is two clicks,
+  // while staying fully editable for a longer walk-through.
+  const [f, setF] = useState({ num: "4242 4242 4242 4242", name: (user && user.name ? user.name : "PLG PLAYER").toUpperCase(), exp: "12/29", cvc: "123" });
+  const brand = detectBrand(f.num);
+  const digits = f.num.replace(/\D/g, "");
+  const valid = digits.length >= 15 && !!f.name.trim() && /^\d{2}\/\d{2}$/.test(f.exp) && f.cvc.length >= 3;
+  const [phase, setPhase] = useState(0);
+  const [errMsg, setErrMsg] = useState("");
+  const [newBal, setNewBal] = useState(null);
+
+  const pay = async () => {
+    setStep("processing"); setPhase(0);
+    const timers = [setTimeout(() => setPhase(1), 900), setTimeout(() => setPhase(2), 1800)];
+    try {
+      // Hold the sheet in "processing" long enough to read like a real gateway.
+      const [r] = await Promise.all([
+        PLG_API.wallet.topUp({ amount: dollars }),
+        new Promise((res) => setTimeout(res, 2400)),
+      ]);
+      setNewBal((r.balance_cents || 0) / 100);
+      setStep("done");
+    } catch (e) { setErrMsg(e && e.message ? e.message : "Payment could not be completed."); setStep("error"); }
+    timers.forEach(clearTimeout);
+  };
+
+  const gatewayHead = (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+      <Icon name="shield" size={16} />
+      <strong style={{ fontSize: 15 }}>PLG&nbsp;Pay</strong>
+      <span className="chip" style={{ fontSize: 10, letterSpacing: "0.08em" }}>SANDBOX</span>
+    </div>
+  );
+
+  return (
+    <div className="addc-overlay" onClick={step === "processing" ? undefined : onClose}>
+      <div className="addc-modal" onClick={(e) => e.stopPropagation()}>
+        {step !== "processing" && <button className="addc-x" onClick={onClose}><Icon name="close" size={18} /></button>}
+        {gatewayHead}
+
+        {step === "amount" && (
+          <div className="addc-form">
+            <h3 className="addc-h">Add funds to your wallet</h3>
+            <div className="wd-quick">{QUICK.map((q) => <button key={q} className={+amt === q ? "on" : ""} onClick={() => setAmt(String(q))}>${q}</button>)}</div>
+            <label className="addc-field">
+              <span>Amount (USD) <em>· $1–$500</em></span>
+              <div className="wd-amt-in"><span className="wd-cur">$</span><input inputMode="decimal" value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^0-9.]/g, ""))} aria-label="Top-up amount" /></div>
+            </label>
+            <button className="addc-submit on" onClick={() => setStep("card")}><Icon name="arrowR" size={16} /> Continue — {LOTTO.formatFull(dollars, "$")}</button>
+            <span className="addc-secure"><Icon name="shield" size={12} /> Sandbox gateway — no real card is charged.</span>
+          </div>
+        )}
+
+        {step === "card" && (
+          <div className="addc-form">
+            <h3 className="addc-h">Pay {LOTTO.formatFull(dollars, "$")}</h3>
+            <div className={`addc-preview ${brand}`}>
+              <div className="addc-pv-top"><span className="addc-chip" /><BrandMark brand={brand} big /></div>
+              <div className="addc-pv-num">{fmtCardNum(f.num, brand) || "•••• •••• •••• ••••"}</div>
+              <div className="addc-pv-bot">
+                <div><span className="addc-pv-l">Card holder</span><span className="addc-pv-v">{f.name || "YOUR NAME"}</span></div>
+                <div><span className="addc-pv-l">Expires</span><span className="addc-pv-v">{f.exp || "MM/YY"}</span></div>
+              </div>
+            </div>
+            <label className="addc-field">
+              <span>Card number</span>
+              <div className="addc-input-wrap">
+                <input inputMode="numeric" autoComplete="cc-number" value={f.num} onChange={(e) => setF((s) => ({ ...s, num: fmtCardNum(e.target.value, detectBrand(e.target.value)) }))} />
+                <span className="addc-brandtag"><BrandMark brand={brand} /></span>
+              </div>
+            </label>
+            <div className="addc-row2">
+              <label className="addc-field"><span>Expiry</span><input inputMode="numeric" value={f.exp} onChange={(e) => { let n = e.target.value.replace(/\D/g, "").slice(0, 4); if (n.length >= 3) n = n.slice(0, 2) + "/" + n.slice(2); setF((s) => ({ ...s, exp: n })); }} /></label>
+              <label className="addc-field"><span>CVC</span><input inputMode="numeric" value={f.cvc} onChange={(e) => setF((s) => ({ ...s, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) }))} /></label>
+            </div>
+            <button className={`addc-submit ${valid ? "on" : ""}`} onClick={() => valid && pay()}><Icon name="shield" size={16} /> Pay {LOTTO.formatFull(dollars, "$")}</button>
+            <span className="addc-secure"><Icon name="shield" size={12} /> Sandbox — funds arrive as clearly-labeled test credit.</span>
+          </div>
+        )}
+
+        {step === "processing" && (
+          <div className="withdraw-done" aria-live="polite">
+            <div style={{ width: 44, height: 44, margin: "8px auto 14px", borderRadius: "50%", border: "3px solid var(--border)", borderTopColor: "var(--primary)", animation: "spin 0.9s linear infinite" }} />
+            <h4>{["Contacting issuer…", "Authorizing payment…", "Crediting your wallet…"][phase]}</h4>
+            <p>{LOTTO.formatFull(dollars, "$")} · {brand.toUpperCase()} ···· {digits.slice(-4)}</p>
+          </div>
+        )}
+
+        {step === "done" && (
+          <div className="withdraw-done">
+            <div className="confirm-badge sm"><Icon name="check" size={26} /></div>
+            <h4>Payment approved</h4>
+            <p>{LOTTO.formatFull(dollars, "$")} added{newBal != null ? <> · new balance <strong>{LOTTO.formatFull(newBal, "$")}</strong></> : null}.</p>
+            <button className="addc-submit on" onClick={onClose}><Icon name="check" size={16} /> Done</button>
+          </div>
+        )}
+
+        {step === "error" && (
+          <div className="withdraw-done">
+            <h4>Payment failed</h4>
+            <p>{errMsg}</p>
+            <button className="addc-submit on" onClick={() => setStep("card")}>Try again</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Wallet({ go, user }) {
   const winnings = user.winnings || 0, commission = user.commission || 0, play = user.wallet || 0;
   const total = play + winnings + commission;
@@ -50,24 +169,11 @@ function Wallet({ go, user }) {
   const [method, setMethod] = useState("bank");
   const withdrawable = winnings + commission;
   const val = Math.max(0, Math.min(withdrawable, parseFloat(amt) || 0));
-  // Real top-up against the plg wallet (test funds until the PSP goes live).
+  // Top-up runs through the PLG Pay sandbox sheet (real test credit underneath);
   // PLG_API emits "wallet" on success, which app.jsx turns into a balance resync.
-  const [topping, setTopping] = useState(false);
-  const [topAmt, setTopAmt] = useState("100");
-  const [topBusy, setTopBusy] = useState(false);
-  const [topMsg, setTopMsg] = useState("");
+  const [showTopup, setShowTopup] = useState(false);
   // Withdrawals have no rail until the PSP is wired — say so instead of faking.
   const [wdMsg, setWdMsg] = useState("");
-  const doTopup = async () => {
-    const dollars = Math.max(1, Math.min(500, parseFloat(topAmt) || 0));
-    setTopBusy(true); setTopMsg("");
-    try {
-      await PLG_API.wallet.topUp({ amount: dollars });
-      setTopMsg("Added " + LOTTO.formatFull(dollars, "$") + " in test funds.");
-      setTopping(false);
-    } catch (e) { setTopMsg(e && e.message ? e.message : "Top-up failed — try again."); }
-    setTopBusy(false);
-  };
 
   return (
     <div className="screen wallet">
@@ -80,15 +186,7 @@ function Wallet({ go, user }) {
           <div className="bal-card bal-total card">
             <span className="bal-l">Total balance</span>
             <span className="bal-v tnum">{LOTTO.formatFull(total, "$")}</span>
-            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus" onClick={() => { setTopping((t) => !t); setTopMsg(""); }}>Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR" onClick={() => document.querySelector(".withdraw-card") && document.querySelector(".withdraw-card").scrollIntoView({ behavior: "smooth" })}>Withdraw</Btn></div>
-            {topping && (
-              <div className="wd-amt-in" style={{ marginTop: 10 }}>
-                <span className="wd-cur">$</span>
-                <input value={topAmt} onChange={(e) => setTopAmt(e.target.value.replace(/[^0-9.]/g, ""))} inputMode="decimal" aria-label="Top-up amount" />
-                <button onClick={doTopup} disabled={topBusy}>{topBusy ? "Adding…" : "Add test funds"}</button>
-              </div>
-            )}
-            {topMsg && <span className="bal-sub" style={{ marginTop: 6 }}>{topMsg}</span>}
+            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus" onClick={() => setShowTopup(true)}>Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR" onClick={() => document.querySelector(".withdraw-card") && document.querySelector(".withdraw-card").scrollIntoView({ behavior: "smooth" })}>Withdraw</Btn></div>
           </div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot play" /> Playable</span><span className="bal-v2 tnum">{LOTTO.formatFull(play, "$")}</span><span className="bal-sub">For buying tickets</span></div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot win" /> Winnings</span><span className="bal-v2 tnum">{LOTTO.formatFull(winnings, "$")}</span><span className="bal-sub">Withdrawable now</span></div>
@@ -147,6 +245,7 @@ function Wallet({ go, user }) {
           </div>
         </div>
       </div>
+      {showTopup && <TopupModal user={user} onClose={() => setShowTopup(false)} />}
     </div>
   );
 }
