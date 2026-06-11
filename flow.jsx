@@ -79,7 +79,6 @@ function Auth({ onAuth, go }) {
             </Btn>
           </form>
 
-          <button className="auth-guest" onClick={() => go("home")}>Browse as guest →</button>
           <div className="auth-badges"><SecurityBadges payments={false} /></div>
         </div>
       </div>
