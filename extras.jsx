@@ -103,8 +103,16 @@ function Rewards({ go, user, onAffiliate }) {
 
 /* ============================ RESULTS ============================ */
 function Results({ go }) {
+  // Real draws from plg via the service layer; until they arrive (or offline)
+  // each game falls back to its demo row exactly as before.
+  const [live, setLive] = useState(null);
+  useEffect(() => {
+    let on = true;
+    if (window.PLG_API) PLG_API.tickets.getResults().then((rs) => { if (on && rs && rs.length) setLive(rs); }).catch(() => {});
+    return () => { on = false; };
+  }, []);
   const rows = LOTTO.GAMES.map((g) => {
-    const base = LOTTO.RESULTS.find((r) => r.id === g.id);
+    const base = (live && live.find((r) => r.id === g.id)) || LOTTO.RESULTS.find((r) => r.id === g.id);
     return base ? { ...base, g } : { id: g.id, g, date: "Latest draw", balls: g.hot.slice(0, g.pick.main), bonus: g.pick.bonus ? [g.hot[0]] : [], jackpotWon: false };
   });
   return (

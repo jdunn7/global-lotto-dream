@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>PlayLottoGlobal — Choose Your Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-0:#0a1242; --royal:#3b5bdb; --royal-soft:#5b76e8; --teal:#2bb6c4;
+    --gold:#f1b73a; --gold-soft:#f7cf6b; --gold-deep:#d99412;
+    --ink:#16203c; --muted:#5b6480; --line:#e7ebf5;
+    --ease:cubic-bezier(.16,1,.3,1); --fd:'Outfit',system-ui,sans-serif; --fs:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family:var(--fs); color:#fff; min-height:100vh; overflow-x:hidden; position:relative;
+    background:radial-gradient(120% 90% at 50% -10%, #2a3aa0 0%, #16216e 38%, #0a1242 78%, #070d33 100%);
+    -webkit-font-smoothing:antialiased;
+  }
+  .bgvid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#070d33}
+  .vid-veil{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(8,14,52,.58),rgba(7,11,40,.8) 70%,rgba(6,10,38,.9))}
+  .bg{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;mix-blend-mode:screen}
+  .aurora{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;mix-blend-mode:screen;animation:drift 18s var(--ease) infinite alternate}
+  .a1{width:640px;height:640px;background:radial-gradient(circle,#3b5bdb,transparent 65%);top:-220px;left:8%}
+  .a2{width:560px;height:560px;background:radial-gradient(circle,#2bb6c4,transparent 65%);bottom:-200px;right:6%;animation-delay:-6s}
+  .a3{width:480px;height:480px;background:radial-gradient(circle,#f1b73a,transparent 70%);top:30%;right:30%;opacity:.18;animation-delay:-11s}
+  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,30px) scale(1.12)}}
+  .balls{position:fixed;inset:0;z-index:2;pointer-events:none}
+  .ball{position:absolute;border-radius:50%;font-family:var(--fd);font-weight:800;display:flex;align-items:center;justify-content:center;color:#16203c;
+    box-shadow:inset 0 -3px 6px rgba(0,0,0,.3),inset 0 3px 5px rgba(255,255,255,.7),0 10px 26px -8px rgba(0,0,0,.5);opacity:.85;animation:floaty linear infinite}
+  .ball.gold{background:radial-gradient(120% 120% at 32% 24%,#f7cf6b,#f1b73a 60%,#d99412);color:#5a3d08}
+  .ball.white{background:radial-gradient(120% 120% at 32% 24%,#fff,#eef1fb 60%,#d7dcf0)}
+  @keyframes floaty{0%{transform:translateY(110vh) rotate(0)}100%{transform:translateY(-20vh) rotate(360deg)}}
+
+  /* toolbar */
+  .toolbar{position:fixed;top:18px;right:18px;z-index:40;display:flex;gap:10px;align-items:center}
+  .tbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);backdrop-filter:blur(12px);
+    color:#fff;font-family:var(--fd);font-weight:600;font-size:.82rem;padding:9px 16px;border-radius:999px;cursor:pointer;transition:all .18s var(--ease)}
+  .tbtn:hover{background:rgba(255,255,255,.2)}
+  .tbtn.on{background:linear-gradient(100deg,var(--royal),var(--teal));border-color:transparent;box-shadow:0 10px 26px -10px rgba(43,182,196,.7)}
+  .hint{position:fixed;top:64px;right:18px;z-index:40;max-width:260px;background:rgba(10,18,66,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);
+    color:#cdd6ff;font-size:.78rem;line-height:1.5;padding:11px 14px;border-radius:14px;display:none}
+  .hint.show{display:block;animation:rise .4s var(--ease)}
+
+  /* scalable stage */
+  .scaler{position:relative;z-index:3;width:100%;display:flex;justify-content:center;padding:40px 16px 60px}
+  .stage{position:relative;width:1100px;height:840px;flex:none;transform-origin:top center}
+
+  /* movable node */
+  .node{position:absolute;transition:box-shadow .25s var(--ease)}
+  .stage.edit .node{outline:1.5px dashed rgba(255,255,255,.35);border-radius:26px}
+  .stage.edit .node:hover{outline-color:var(--gold)}
+  .stage.edit .node .grip{cursor:grab}
+  .n-handle{position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:6;display:none;align-items:center;gap:5px;
+    padding:3px 12px;border-radius:999px;background:var(--gold);color:#5a3d08;font-family:var(--fd);font-weight:700;font-size:.66rem;white-space:nowrap;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
+  .stage.edit .n-handle{display:inline-flex}
+  .n-resize{position:absolute;right:-6px;bottom:-6px;width:22px;height:22px;z-index:6;display:none;cursor:nwse-resize;border-radius:50%;
+    background:var(--gold);border:2px solid #fff;box-shadow:0 4px 12px -4px rgba(0,0,0,.5)}
+  .stage.edit .n-resize{display:block}
+
+  /* content */
+  .logo-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  .logo-glow{position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.85),rgba(157,180,255,.35) 45%,transparent 70%);filter:blur(14px);animation:breathe 4s ease-in-out infinite}
+  .logo{position:relative;width:100%;height:100%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 24px 60px -18px rgba(0,0,0,.6)}
+  .logo img{width:62%;height:auto}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+
+  .headblock{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .title{font-family:var(--fd);font-weight:800;font-size:clamp(2.4rem,5vw,4rem);line-height:1;letter-spacing:-.02em;
+    background:linear-gradient(180deg,#fde5b0,#f1b73a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 4px 30px rgba(241,183,58,.25)}
+  .eyebrow{margin-top:12px;font-family:var(--fd);font-weight:600;letter-spacing:.28em;font-size:.86rem;color:#cdd6ff;text-transform:uppercase}
+  .lead{margin-top:10px;font-size:1.02rem;color:#aeb8e6}
+  .lead b{color:#fff;font-weight:600}
+  .rule{width:120px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto 0}
+
+  .card{position:relative;width:100%;height:100%;background:#fff;color:var(--ink);border-radius:26px;padding:30px;
+    box-shadow:0 30px 70px -30px rgba(4,10,45,.8);overflow:hidden;display:flex;flex-direction:column}
+  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px}
+  .card.c1::before{background:linear-gradient(90deg,var(--royal),var(--teal))}
+  .card.c2::before{background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
+  .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .badge-ic{width:56px;height:56px;border-radius:17px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 12px 26px -10px rgba(0,0,0,.4)}
+  .c1 .badge-ic{background:linear-gradient(150deg,var(--royal-soft),var(--teal))}
+  .c2 .badge-ic{background:linear-gradient(150deg,var(--gold-soft),var(--gold-deep))}
+  .tag{font-family:var(--fd);font-weight:700;font-size:.7rem;letter-spacing:.08em;color:var(--muted);background:#eef1fb;border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+  .c-title{font-family:var(--fd);font-weight:700;font-size:1.55rem;letter-spacing:-.02em;margin-bottom:9px}
+  .c-desc{color:var(--muted);font-size:.94rem;line-height:1.5;margin-bottom:16px}
+  .feats{display:flex;flex-direction:column;gap:10px;margin-bottom:auto}
+  .feat{display:flex;align-items:center;gap:11px;font-weight:500;font-size:.94rem}
+  .chk{width:21px;height:21px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;background:var(--royal)}
+  .cta{width:100%;border:none;cursor:pointer;border-radius:15px;padding:16px;margin-top:20px;font-family:var(--fd);font-weight:700;font-size:1.02rem;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;transition:transform .2s var(--ease),filter .2s}
+  .c1 .cta{background:linear-gradient(100deg,var(--royal),var(--teal));box-shadow:0 14px 30px -12px rgba(43,182,196,.7)}
+  .c2 .cta{background:linear-gradient(100deg,var(--gold-deep),var(--gold));color:#5a3d08;box-shadow:0 14px 30px -12px rgba(217,148,18,.6)}
+  .cta:hover{transform:translateY(-2px) scale(1.01);filter:brightness(1.05)}
+  .cta .arrow{transition:transform .25s var(--ease)}.cta:hover .arrow{transform:translateX(5px)}
+  .cta .shine{position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg)}
+  .cta:hover .shine{animation:shine .7s var(--ease)}
+  @keyframes shine{to{left:140%}}
+
+  .footnote{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#8893c9;font-size:.84rem;text-align:center}
+  .footnote a{color:#cdd6ff;text-decoration:none;font-weight:600}.footnote a:hover{color:#fff}
+
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .intro{animation:rise .7s var(--ease) forwards}
+  @media (prefers-reduced-motion:reduce){.intro{animation:none}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+  <link rel="stylesheet" href="editor.css" />
+  <script src="editor.js" data-site="lotto" defer></script>
+  <link rel="icon" type="image/png" href="plg-logo.png" />
+</head>
+<body>
+  <video class="bgvid" autoplay muted loop playsinline preload="auto" id="bgvid">
+    <source src="gateway-intro.mp4" type="video/mp4" />
+  </video>
+  <div class="vid-veil"></div>
+  <div class="bg"><span class="aurora a1"></span><span class="aurora a2"></span><span class="aurora a3"></span></div>
+  <div class="balls" id="balls"></div>
+
+  <div class="toolbar">
+    <button class="tbtn" id="resetBtn" title="Reset layout" style="display:none">↺ Reset</button>
+    <button class="tbtn" id="soundBtn" title="Toggle sound">🔇 Sound</button>
+    <button class="tbtn" id="editBtn">✎ Customize layout</button>
+  </div>
+  <div class="hint" id="hint">Drag any block to move it · pull the gold corner to resize · your layout saves automatically.</div>
+
+  <div class="scaler"><div class="stage" id="stage">
+    <!-- nodes get positioned by JS from the layout object -->
+    <div class="node intro" data-id="logo" style="animation-delay:.05s">
+      <span class="n-handle">✎ Logo</span>
+      <div class="grip logo-wrap"><span class="logo-glow"></span><span class="logo"><img src="plg-logo.png" alt="PLG Lotto" /></span></div>
+      <span class="n-resize"></span>
+    </div>
+
+    <div class="node intro" data-id="head" style="animation-delay:.2s">
+      <span class="n-handle">✎ Heading</span>
+      <div class="grip headblock">
+        <h1 class="title">PlayLottoGlobal</h1>
+        <div class="eyebrow">Premium Lottery Experience</div>
+        <p class="lead">Choose your path to <b>global lottery success</b></p>
+        <div class="rule"></div>
+      </div>
+      <span class="n-resize"></span>
+    </div>
+
+    <div class="node intro" data-id="card1" style="animation-delay:.34s">
+      <span class="n-handle">✎ Affiliate card</span>
+      <div class="grip card c1" style="margin: -8px -6px -8px -100px">
+        <div class="card-top">
+          <span class="badge-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z"/><path d="M5 20h14"/></svg></span>
+          <span class="tag">PLAYLOTTOGLOBAL</span>
+        </div>
+        <h2 class="c-title">Join as PLG Affiliate</h2>
+        <p class="c-desc">Become an exclusive affiliate and earn premium commissions from our global lottery network.</p>
+        <div class="feats">
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Automated income system</div>
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Global market access</div>
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Premium support</div>
+        </div>
+        <button class="cta" data-href="Viral Launch.html"><span class="shine"></span> Become an Affiliate <span class="arrow"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></button>
+      </div>
+      <span class="n-resize"></span>
+    </div>
+
+    <div class="node intro" data-id="card2" style="animation-delay:.44s">
+      <span class="n-handle">✎ Play card</span>
+      <div class="grip card c2" style="margin: 0px 140px 0px 184px">
+        <div class="card-top">
+          <span class="badge-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 0 2-2 2 2 0 0 1 4 0h6a2 2 0 0 1 4 0 2 2 0 0 0 2 2v6a2 2 0 0 0-2 2 2 2 0 0 1-4 0H9a2 2 0 0 1-4 0 2 2 0 0 0-2-2z"/></svg></span>
+          <span class="tag">PAY NOW</span>
+        </div>
+        <h2 class="c-title">Buy PLG Lottery Tickets</h2>
+        <p class="c-desc">Access the world's most prestigious lotteries with our secure, premium platform.</p>
+        <div class="feats">
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Secure transactions</div>
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Instant notifications</div>
+          <div class="feat"><span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg></span> Global lotteries</div>
+        </div>
+        <button class="cta" data-href="Lotto Global.html"><span class="shine"></span> Play Lottery <span class="arrow"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></button>
+      </div>
+      <span class="n-resize"></span>
+    </div>
+
+    <div class="node intro" data-id="foot" style="animation-delay:.6s">
+      <span class="n-handle">✎ Footer</span>
+      <div class="grip footnote" style="margin: 35px 0px 0px; width: 723px">18+ · Play responsibly · Licensed &amp; regulated &nbsp;·&nbsp; Already a member? <a href="PLG Affiliate Portal.html" style="margin: 17px">Member login →</a></div>
+      <span class="n-resize"></span>
+    </div>
+  </div></div>
+
+<script>
+  var STAGE_W = 1100, STAGE_H = 840, LS = "plg_gateway_layout_v1";
+  // default layout — spread out evenly, no overlaps
+  var DEFAULT = {
+    logo:  { x:475, y:0,   w:150, h:150 },
+    head:  { x:250, y:170, w:600, h:170 },
+    card1: { x:90,  y:360, w:440, h:400 },
+    card2: { x:570, y:360, w:440, h:400 },
+    foot:  { x:200, y:786, w:700, h:40  }
+  };
+  var layout = load();
+  function load(){ try{ return Object.assign({}, DEFAULT, JSON.parse(localStorage.getItem(LS)||"{}")); }catch(e){ return Object.assign({},DEFAULT); } }
+  function save(){ try{ localStorage.setItem(LS, JSON.stringify(layout)); }catch(e){} }
+
+  var stage = document.getElementById("stage");
+  var nodes = {};
+  document.querySelectorAll(".node").forEach(function(n){ nodes[n.dataset.id] = n; });
+
+  function place(id){
+    var p = layout[id], n = nodes[id];
+    n.style.left = p.x+"px"; n.style.top = p.y+"px"; n.style.width = p.w+"px"; n.style.height = p.h+"px";
+  }
+  function placeAll(){ Object.keys(nodes).forEach(place); }
+  placeAll();
+
+  // scale stage to fit viewport width
+  function fit(){
+    var avail = Math.min(window.innerWidth - 32, STAGE_W);
+    var s = avail / STAGE_W;
+    stage.style.transform = "scale("+s+")";
+    stage.parentElement.style.height = (STAGE_H * s + 100) + "px";
+    return s;
+  }
+  var scale = fit();
+  window.addEventListener("resize", function(){ scale = fit(); });
+
+  // edit mode
+  var edit = false;
+  var editBtn = document.getElementById("editBtn"), resetBtn = document.getElementById("resetBtn"), hint = document.getElementById("hint");
+  editBtn.addEventListener("click", function(){
+    edit = !edit;
+    stage.classList.toggle("edit", edit);
+    editBtn.classList.toggle("on", edit);
+    editBtn.innerHTML = edit ? "✓ Done" : "✎ Customize layout";
+    resetBtn.style.display = edit ? "inline-flex" : "none";
+    hint.classList.toggle("show", edit);
+  });
+  resetBtn.addEventListener("click", function(){ layout = Object.assign({}, DEFAULT); placeAll(); save(); });
+
+  // drag + resize
+  var drag = null;
+  function down(e, id, mode){
+    if(!edit) return;
+    e.preventDefault(); e.stopPropagation();
+    var p = layout[id];
+    drag = { id:id, mode:mode, sx:e.clientX, sy:e.clientY, ox:p.x, oy:p.y, ow:p.w, oh:p.h };
+  }
+  document.querySelectorAll(".node").forEach(function(n){
+    var id = n.dataset.id;
+    n.querySelector(".grip").addEventListener("pointerdown", function(e){ down(e, id, "move"); });
+    n.querySelector(".n-handle").addEventListener("pointerdown", function(e){ down(e, id, "move"); });
+    n.querySelector(".n-resize").addEventListener("pointerdown", function(e){ down(e, id, "resize"); });
+  });
+  window.addEventListener("pointermove", function(e){
+    if(!drag) return;
+    var dx = (e.clientX - drag.sx) / scale, dy = (e.clientY - drag.sy) / scale;
+    var p = layout[drag.id];
+    if(drag.mode === "move"){
+      p.x = Math.max(0, Math.min(STAGE_W - p.w, Math.round(drag.ox + dx)));
+      p.y = Math.max(0, Math.min(STAGE_H - p.h, Math.round(drag.oy + dy)));
+    } else {
+      p.w = Math.max(120, Math.min(STAGE_W - p.x, Math.round(drag.ow + dx)));
+      p.h = Math.max(60,  Math.min(STAGE_H - p.y, Math.round(drag.oh + dy)));
+    }
+    place(drag.id);
+  });
+  window.addEventListener("pointerup", function(){ if(drag){ drag = null; save(); } });
+
+  // navigation (only when not editing)
+  document.querySelectorAll(".cta").forEach(function(b){
+    b.addEventListener("click", function(e){
+      if(edit){ e.preventDefault(); return; }
+      var href = b.getAttribute("data-href");
+      b.style.transform = "scale(.97)";
+      setTimeout(function(){ window.location.href = href; }, 150);
+    });
+  });
+
+  // sound toggle for the background video
+  (function(){
+    var v = document.getElementById("bgvid"), sb = document.getElementById("soundBtn");
+    sb.addEventListener("click", function(){
+      v.muted = !v.muted;
+      if(!v.muted){ v.volume = 1; var p = v.play(); if(p&&p.catch) p.catch(function(){}); }
+      sb.classList.toggle("on", !v.muted);
+      sb.innerHTML = v.muted ? "\uD83D\uDD07 Sound" : "\uD83D\uDD0A Sound on";
+    });
+  })();
+
+  // floating lotto balls
+  var nums=[7,3,21,44,17,9,33,11,28,5,49,16], layer=document.getElementById("balls");
+  for(var i=0;i<10;i++){
+    var sz=22+Math.random()*30, b=document.createElement("span");
+    b.className="ball "+(Math.random()>.5?"gold":"white");
+    b.textContent=nums[i%nums.length];
+    b.style.width=b.style.height=sz+"px"; b.style.fontSize=(sz*0.4)+"px";
+    b.style.left=(Math.random()*96)+"%";
+    b.style.animationDuration=(16+Math.random()*16)+"s";
+    b.style.animationDelay=(-Math.random()*24)+"s";
+    layer.appendChild(b);
+  }
+</script>
+</body>
+</html>

@@ -48,9 +48,26 @@ function Wallet({ go, user }) {
   const total = play + winnings + commission;
   const [amt, setAmt] = useState("100");
   const [method, setMethod] = useState("bank");
-  const [done, setDone] = useState(false);
   const withdrawable = winnings + commission;
   const val = Math.max(0, Math.min(withdrawable, parseFloat(amt) || 0));
+  // Real top-up against the plg wallet (test funds until the PSP goes live).
+  // PLG_API emits "wallet" on success, which app.jsx turns into a balance resync.
+  const [topping, setTopping] = useState(false);
+  const [topAmt, setTopAmt] = useState("100");
+  const [topBusy, setTopBusy] = useState(false);
+  const [topMsg, setTopMsg] = useState("");
+  // Withdrawals have no rail until the PSP is wired — say so instead of faking.
+  const [wdMsg, setWdMsg] = useState("");
+  const doTopup = async () => {
+    const dollars = Math.max(1, Math.min(500, parseFloat(topAmt) || 0));
+    setTopBusy(true); setTopMsg("");
+    try {
+      await PLG_API.wallet.topUp({ amount: dollars });
+      setTopMsg("Added " + LOTTO.formatFull(dollars, "$") + " in test funds.");
+      setTopping(false);
+    } catch (e) { setTopMsg(e && e.message ? e.message : "Top-up failed — try again."); }
+    setTopBusy(false);
+  };
 
   return (
     <div className="screen wallet">
@@ -63,7 +80,15 @@ function Wallet({ go, user }) {
           <div className="bal-card bal-total card">
             <span className="bal-l">Total balance</span>
             <span className="bal-v tnum">{LOTTO.formatFull(total, "$")}</span>
-            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus">Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR">Withdraw</Btn></div>
+            <div className="bal-actions"><Btn variant="gold" size="sm" icon="plus" onClick={() => { setTopping((t) => !t); setTopMsg(""); }}>Top up</Btn><Btn variant="ghost" size="sm" icon="arrowR" onClick={() => document.querySelector(".withdraw-card") && document.querySelector(".withdraw-card").scrollIntoView({ behavior: "smooth" })}>Withdraw</Btn></div>
+            {topping && (
+              <div className="wd-amt-in" style={{ marginTop: 10 }}>
+                <span className="wd-cur">$</span>
+                <input value={topAmt} onChange={(e) => setTopAmt(e.target.value.replace(/[^0-9.]/g, ""))} inputMode="decimal" aria-label="Top-up amount" />
+                <button onClick={doTopup} disabled={topBusy}>{topBusy ? "Adding…" : "Add test funds"}</button>
+              </div>
+            )}
+            {topMsg && <span className="bal-sub" style={{ marginTop: 6 }}>{topMsg}</span>}
           </div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot play" /> Playable</span><span className="bal-v2 tnum">{LOTTO.formatFull(play, "$")}</span><span className="bal-sub">For buying tickets</span></div>
           <div className="bal-card card"><span className="bal-l"><span className="bal-dot win" /> Winnings</span><span className="bal-v2 tnum">{LOTTO.formatFull(winnings, "$")}</span><span className="bal-sub">Withdrawable now</span></div>
@@ -74,33 +99,24 @@ function Wallet({ go, user }) {
           {/* withdraw */}
           <div className="card withdraw-card">
             <h3 className="co-h">Withdraw funds</h3>
-            {done ? (
-              <div className="withdraw-done">
-                <div className="confirm-badge sm"><Icon name="check" size={26} /></div>
-                <h4>Payout requested</h4>
-                <p>{LOTTO.formatFull(val, "$")} via {PAYOUT_METHODS.find((m) => m.id === method).label}. You'll get a confirmation shortly.</p>
-                <Btn variant="ghost" size="sm" onClick={() => setDone(false)}>Make another</Btn>
-              </div>
-            ) : (
-              <>
-                <label className="wd-amt">
-                  <span>Amount <em>· max {LOTTO.formatFull(withdrawable, "$")} withdrawable</em></span>
-                  <div className="wd-amt-in"><span className="wd-cur">$</span><input value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^0-9.]/g, ""))} /><button onClick={() => setAmt(String(withdrawable))}>Max</button></div>
-                </label>
-                <div className="wd-quick">{[50, 100, 250].map((q) => <button key={q} className={+amt === q ? "on" : ""} onClick={() => setAmt(String(q))}>${q}</button>)}</div>
-                <span className="wd-label">Payout to</span>
-                <div className="wd-methods">
-                  {PAYOUT_METHODS.map((m) => (
-                    <button key={m.id} className={`pay-m ${method === m.id ? "on" : ""}`} onClick={() => setMethod(m.id)}>
-                      <span className="pay-m-l"><Icon name={m.icon} size={18} /> <span className="wd-m-txt"><strong>{m.label}</strong><em>{m.sub}</em></span></span>
-                      <span className={`radio ${method === m.id ? "on" : ""}`} />
-                    </button>
-                  ))}
-                </div>
-                <Btn variant="gold" size="lg" className="pay-cta" iconRight="arrowR" onClick={() => val > 0 && setDone(true)} style={val <= 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}>Withdraw {LOTTO.formatFull(val, "$")}</Btn>
-                <div className="pay-secure"><Icon name="shield" size={13} /> Withdrawals go to verified accounts only</div>
-              </>
-            )}
+            <label className="wd-amt">
+              <span>Amount <em>· max {LOTTO.formatFull(withdrawable, "$")} withdrawable</em></span>
+              <div className="wd-amt-in"><span className="wd-cur">$</span><input value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^0-9.]/g, ""))} /><button onClick={() => setAmt(String(withdrawable))}>Max</button></div>
+            </label>
+            <div className="wd-quick">{[50, 100, 250].map((q) => <button key={q} className={+amt === q ? "on" : ""} onClick={() => setAmt(String(q))}>${q}</button>)}</div>
+            <span className="wd-label">Payout to</span>
+            <div className="wd-methods">
+              {PAYOUT_METHODS.map((m) => (
+                <button key={m.id} className={`pay-m ${method === m.id ? "on" : ""}`} onClick={() => setMethod(m.id)}>
+                  <span className="pay-m-l"><Icon name={m.icon} size={18} /> <span className="wd-m-txt"><strong>{m.label}</strong><em>{m.sub}</em></span></span>
+                  <span className={`radio ${method === m.id ? "on" : ""}`} />
+                </button>
+              ))}
+            </div>
+            {/* No payout rail until the PSP is live — never fake a success here. */}
+            <Btn variant="gold" size="lg" className="pay-cta" iconRight="arrowR" onClick={() => setWdMsg("Withdrawals open once our payment provider goes live — your balance is safe until then.")} style={val <= 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}>Withdraw {LOTTO.formatFull(val, "$")}</Btn>
+            {wdMsg && <div className="pay-secure" role="status"><Icon name="shield" size={13} /> {wdMsg}</div>}
+            <div className="pay-secure"><Icon name="shield" size={13} /> Withdrawals go to verified accounts only</div>
           </div>
 
           {/* payouts + transactions */}
@@ -309,10 +325,12 @@ function DigitalTicket({ go, ticket }) {
 
 /* ============================ BILLING & CRYPTO CONNECT ============================ */
 const WALLET_APPS = [
-  { id: "metamask", name: "MetaMask", glyph: "🦊", cls: "metamask" },
-  { id: "wc", name: "WalletConnect", glyph: "🔗", cls: "wc" },
-  { id: "coinbase", name: "Coinbase", glyph: "🅒", cls: "coinbase" },
-  { id: "phantom", name: "Phantom", glyph: "👻", cls: "phantom" },
+  { id: "metamask", name: "MetaMask", glyph: "🦊", cls: "metamask", chain: "Ethereum" },
+  { id: "coinbase", name: "Coinbase Wallet", glyph: "C", cls: "coinbase", chain: "Base · Ethereum" },
+  { id: "wc", name: "WalletConnect", glyph: "◇", cls: "wc", chain: "Multi-chain" },
+  { id: "phantom", name: "Phantom", glyph: "👻", cls: "phantom", chain: "Solana" },
+  { id: "trust", name: "Trust Wallet", glyph: "🛡", cls: "trust", chain: "Multi-chain" },
+  { id: "rainbow", name: "Rainbow", glyph: "🌈", cls: "rainbow", chain: "Ethereum" },
 ];
 const INVOICES = [
   { t: "EuroMillions · 4 draws", d: "2 Jun 2026", a: 10 },
@@ -321,14 +339,92 @@ const INVOICES = [
   { t: "Mega Millions · 1 line", d: "18 May 2026", a: 2 },
 ];
 
-function Billing({ go, connectedWallet, setConnectedWallet }) {
+/* ---- card brand detection + validation ---- */
+const CARD_BRANDS = {
+  visa: { label: "Visa", len: 16, cvc: 3 },
+  mc: { label: "Mastercard", len: 16, cvc: 3 },
+  amex: { label: "American Express", len: 15, cvc: 4 },
+  disco: { label: "Discover", len: 16, cvc: 3 },
+  unknown: { label: "Card", len: 16, cvc: 3 },
+};
+function detectBrand(num) {
+  const n = (num || "").replace(/\D/g, "");
+  if (/^4/.test(n)) return "visa";
+  if (/^(5[1-5]|2[2-7])/.test(n)) return "mc";
+  if (/^3[47]/.test(n)) return "amex";
+  if (/^(6011|65|64[4-9])/.test(n)) return "disco";
+  return "unknown";
+}
+function luhnOK(num) {
+  const n = (num || "").replace(/\D/g, "");
+  if (n.length < 13) return false;
+  let sum = 0, alt = false;
+  for (let i = n.length - 1; i >= 0; i--) { let d = +n[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } sum += d; alt = !alt; }
+  return sum % 10 === 0;
+}
+function fmtCardNum(v, brand) {
+  const n = (v || "").replace(/\D/g, "").slice(0, brand === "amex" ? 15 : 16);
+  if (brand === "amex") return n.replace(/(\d{4})(\d{0,6})(\d{0,5})/, (m, a, b, c) => [a, b, c].filter(Boolean).join(" "));
+  return n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+}
+function expNotPast(exp) {
+  const m = exp.match(/^(\d{2})\/(\d{2})$/); if (!m) return false;
+  const mm = +m[1], yy = 2000 + +m[2];
+  if (mm < 1 || mm > 12) return false;
+  return new Date(yy, mm, 0, 23, 59, 59) >= new Date();
+}
+function BrandMark({ brand, big }) {
+  if (brand === "mc") return <span className={`bm bm-mc ${big ? "big" : ""}`}><i /><i /></span>;
+  const txt = { visa: "VISA", amex: "AMEX", disco: "DISC", unknown: "CARD" }[brand] || "CARD";
+  return <span className={`bm bm-txt bm-${brand} ${big ? "big" : ""}`}>{txt}</span>;
+}
+
+function Billing({ go, user, connectedWallet, setConnectedWallet }) {
   const [cards, setCards] = useState([
-    { id: 1, brand: "visa", name: "Visa", last: "4821", exp: "08/27", def: true },
-    { id: 2, brand: "mc", name: "Mastercard", last: "6390", exp: "02/26", def: false },
+    { id: 1, brand: "visa", name: (user && user.name) || "Cardholder", last: "4821", exp: "08/27", def: true },
   ]);
+  const [showForm, setShowForm] = useState(false);
+  const [f, setF] = useState({ num: "", name: "", exp: "", cvc: "", def: false });
+  const [touched, setTouched] = useState({});
+  const [connecting, setConnecting] = useState(null);
+  const [walletErr, setWalletErr] = useState("");
+
+  const brand = detectBrand(f.num);
+  const meta = CARD_BRANDS[brand];
+  const digits = f.num.replace(/\D/g, "");
+  const vNum = luhnOK(f.num) && digits.length === meta.len;
+  const vName = f.name.trim().length > 1;
+  const vExp = expNotPast(f.exp);
+  const vCvc = f.cvc.length === meta.cvc;
+  const valid = vNum && vName && vExp && vCvc;
+
+  function setNum(v) { setF(s => ({ ...s, num: fmtCardNum(v, detectBrand(v)) })); }
+  function setExp(v) {
+    let n = v.replace(/\D/g, "").slice(0, 4);
+    if (n.length >= 3) n = n.slice(0, 2) + "/" + n.slice(2);
+    setF(s => ({ ...s, exp: n }));
+  }
+  function addCard() {
+    setTouched({ num: 1, name: 1, exp: 1, cvc: 1 });
+    if (!valid) return;
+    setCards(cs => {
+      const next = cs.map(c => f.def ? { ...c, def: false } : c);
+      return [...next, { id: Date.now(), brand, name: f.name.trim(), last: digits.slice(-4), exp: f.exp, def: f.def || cs.length === 0 }];
+    });
+    setShowForm(false); setF({ num: "", name: "", exp: "", cvc: "", def: false }); setTouched({});
+  }
+  function makeDefault(id) { setCards(cs => cs.map(c => ({ ...c, def: c.id === id }))); }
+  function removeCard(id) { setCards(cs => { const n = cs.filter(c => c.id !== id); if (n.length && !n.some(c => c.def)) n[0].def = true; return n; }); }
+
   function connect(app) {
-    const addr = "0x" + Math.random().toString(16).slice(2, 6) + "…" + Math.random().toString(16).slice(2, 6);
-    setConnectedWallet({ app: app.id, name: app.name, cls: app.cls, glyph: app.glyph, addr, bal: 1840.22 });
+    setWalletErr(""); setConnecting(app.id);
+    setTimeout(() => {
+      // simulate the wallet handshake + account fetch
+      const hex = () => Math.floor(Math.random() * 16).toString(16);
+      const addr = "0x" + Array.from({ length: 4 }, hex).join("") + "…" + Array.from({ length: 4 }, hex).join("");
+      setConnectedWallet({ app: app.id, name: app.name, cls: app.cls, glyph: app.glyph, chain: app.chain, addr, bal: +(300 + Math.random() * 4200).toFixed(2) });
+      setConnecting(null);
+    }, 1500);
   }
 
   return (
@@ -341,18 +437,22 @@ function Billing({ go, connectedWallet, setConnectedWallet }) {
           <div className="bill-card card">
             <h3 className="co-h">Payment methods</h3>
             <div className="method-list" style={{ marginTop: 14 }}>
+              {cards.length === 0 && <div className="method-empty">No cards saved yet. Add one to pay instantly.</div>}
               {cards.map((c) => (
                 <div className="method-row" key={c.id}>
-                  <span className={`method-ic ${c.brand}`}>{c.brand === "visa" ? "VISA" : "MC"}</span>
+                  <span className={`method-ic ${c.brand}`}><BrandMark brand={c.brand} /></span>
                   <div className="method-info">
-                    <span className="method-name">{c.name} •••• {c.last} {c.def && <span className="method-tag">Default</span>}</span>
-                    <span className="method-sub">Expires {c.exp}</span>
+                    <span className="method-name">{CARD_BRANDS[c.brand].label} •••• {c.last} {c.def && <span className="method-tag">Default</span>}</span>
+                    <span className="method-sub">Expires {c.exp} · {c.name}</span>
                   </div>
-                  <button className="method-x" onClick={() => setCards(cards.filter((x) => x.id !== c.id))}>Remove</button>
+                  <div className="method-acts">
+                    {!c.def && <button className="method-mk" onClick={() => makeDefault(c.id)}>Set default</button>}
+                    <button className="method-x" onClick={() => removeCard(c.id)}>Remove</button>
+                  </div>
                 </div>
               ))}
             </div>
-            <button className="add-method" onClick={() => setCards([...cards, { id: Date.now(), brand: "visa", name: "Visa", last: String(1000 + Math.floor(Math.random() * 8999)), exp: "11/28", def: false }])}>
+            <button className="add-method" onClick={() => setShowForm(true)}>
               <Icon name="plus" size={15} /> Add card
             </button>
           </div>
@@ -367,22 +467,28 @@ function Billing({ go, connectedWallet, setConnectedWallet }) {
                     <span className={`wc-logo ${connectedWallet.cls}`}>{connectedWallet.glyph}</span>
                     <div className="wc-info">
                       <span className="wc-name">{connectedWallet.name} <span className="method-tag">Connected</span></span>
-                      <span className="wc-addr">{connectedWallet.addr}</span>
+                      <span className="wc-addr">{connectedWallet.addr} · {connectedWallet.chain}</span>
                     </div>
                     <div className="wc-bal"><span className="wc-bal-v tnum">{LOTTO.formatFull(connectedWallet.bal, "$")}</span><span className="wc-bal-l">USDC</span></div>
                   </div>
-                  <button className="wc-disc" onClick={() => setConnectedWallet(null)} style={{ alignSelf: "flex-start" }}>Disconnect</button>
+                  <div className="wc-cact">
+                    <button className="wc-disc" onClick={() => setConnectedWallet(null)}>Disconnect</button>
+                    <button className="wc-copy" onClick={() => { try { navigator.clipboard.writeText(connectedWallet.addr); } catch (e) {} }}><Icon name="ticket" size={13} /> Copy address</button>
+                  </div>
                 </>
               ) : (
                 <>
                   <div className="wc-options">
                     {WALLET_APPS.map((a) => (
-                      <button key={a.id} className="wc-opt" onClick={() => connect(a)}>
+                      <button key={a.id} className={`wc-opt ${connecting === a.id ? "connecting" : ""}`} disabled={!!connecting} onClick={() => connect(a)}>
                         <span className={`wc-logo ${a.cls}`}>{a.glyph}</span>
-                        <span className="wc-opt-name">{a.name}</span>
+                        <span className="wc-opt-tx"><span className="wc-opt-name">{a.name}</span><span className="wc-opt-chain">{a.chain}</span></span>
+                        {connecting === a.id && <span className="wc-spin" />}
                       </button>
                     ))}
                   </div>
+                  {connecting && <span className="wc-connecting"><span className="wc-spin sm" /> Approve the connection in {WALLET_APPS.find(a => a.id === connecting).name}…</span>}
+                  {walletErr && <span className="wc-err">{walletErr}</span>}
                   <span className="wc-note"><Icon name="shield" size={12} /> Non-custodial · we never hold your keys</span>
                 </>
               )}
@@ -404,14 +510,66 @@ function Billing({ go, connectedWallet, setConnectedWallet }) {
           <div className="bill-card card">
             <h3 className="co-h">Billing details</h3>
             <div className="invoice-list" style={{ marginTop: 6 }}>
-              <div className="set-row"><span><Icon name="user" size={16} /> Name</span><span className="set-go">Amara Okafor</span></div>
+              <div className="set-row"><span><Icon name="user" size={16} /> Name</span><span className="set-go">{(user && user.name) || "—"}</span></div>
               <div className="set-row"><span><Icon name="globe" size={16} /> Country</span><span className="set-go">United Kingdom ›</span></div>
               <div className="set-row"><span><Icon name="ticket" size={16} /> Tax ID</span><span className="set-go">Add ›</span></div>
-              <div className="set-row"><span><Icon name="bell" size={16} /> Email receipts</span><span className="set-go">amara@gmail.com</span></div>
+              <div className="set-row"><span><Icon name="bell" size={16} /> Email receipts</span><span className="set-go">{(user && user.email) || "—"}</span></div>
             </div>
           </div>
         </div>
       </div>
+
+      {showForm && (
+        <div className="addc-overlay" onClick={() => setShowForm(false)}>
+          <div className="addc-modal" onClick={e => e.stopPropagation()}>
+            <button className="addc-x" onClick={() => setShowForm(false)}><Icon name="close" size={18} /></button>
+            <h3 className="addc-h">Add a card</h3>
+            <div className={`addc-preview ${brand}`}>
+              <div className="addc-pv-top"><span className="addc-chip" /><BrandMark brand={brand} big /></div>
+              <div className="addc-pv-num">{fmtCardNum(f.num, brand) || (brand === "amex" ? "•••• •••••• •••••" : "•••• •••• •••• ••••")}</div>
+              <div className="addc-pv-bot">
+                <div><span className="addc-pv-l">Card holder</span><span className="addc-pv-v">{f.name || "YOUR NAME"}</span></div>
+                <div><span className="addc-pv-l">Expires</span><span className="addc-pv-v">{f.exp || "MM/YY"}</span></div>
+              </div>
+            </div>
+            <div className="addc-form">
+              <label className="addc-field">
+                <span>Card number</span>
+                <div className="addc-input-wrap">
+                  <input inputMode="numeric" autoComplete="cc-number" placeholder="1234 5678 9012 3456" value={f.num}
+                    onChange={e => setNum(e.target.value)} onBlur={() => setTouched(t => ({ ...t, num: 1 }))}
+                    className={touched.num && !vNum ? "bad" : ""} />
+                  <span className="addc-brandtag"><BrandMark brand={brand} /></span>
+                </div>
+                {touched.num && !vNum && <em className="addc-err">Enter a valid {meta.label} number</em>}
+              </label>
+              <label className="addc-field">
+                <span>Name on card</span>
+                <input autoComplete="cc-name" placeholder="Name on card" value={f.name}
+                  onChange={e => setF(s => ({ ...s, name: e.target.value }))} onBlur={() => setTouched(t => ({ ...t, name: 1 }))}
+                  className={touched.name && !vName ? "bad" : ""} />
+              </label>
+              <div className="addc-row2">
+                <label className="addc-field">
+                  <span>Expiry</span>
+                  <input inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" value={f.exp}
+                    onChange={e => setExp(e.target.value)} onBlur={() => setTouched(t => ({ ...t, exp: 1 }))}
+                    className={touched.exp && !vExp ? "bad" : ""} />
+                </label>
+                <label className="addc-field">
+                  <span>CVC</span>
+                  <input inputMode="numeric" autoComplete="cc-csc" placeholder={brand === "amex" ? "4 digits" : "3 digits"} value={f.cvc}
+                    onChange={e => setF(s => ({ ...s, cvc: e.target.value.replace(/\D/g, "").slice(0, meta.cvc) }))} onBlur={() => setTouched(t => ({ ...t, cvc: 1 }))}
+                    className={touched.cvc && !vCvc ? "bad" : ""} />
+                </label>
+              </div>
+              <label className="addc-check"><input type="checkbox" checked={f.def} onChange={e => setF(s => ({ ...s, def: e.target.checked }))} /> <span>Set as default payment method</span></label>
+              <button className={`addc-submit ${valid ? "on" : ""}`} onClick={addCard}><Icon name="shield" size={16} /> Add card securely</button>
+              <span className="addc-secure"><Icon name="shield" size={12} /> Preview only — card payments activate when our payment provider goes live. Use wallet top-up to play today.</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
