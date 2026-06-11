@@ -38,12 +38,27 @@
 
   var side, shell, main, grip, reopen, tools;
 
+  var MOBILE = window.matchMedia("(max-width: 760px)");
+
   function apply() {
     if (!side || !shell) return;
     shell.style.position = "relative";
     side.classList.remove("sb-bottom");
     side.style.order = ""; main.style.order = ""; side.style.width = ""; side.style.height = "";
     shell.style.flexDirection = ""; shell.style.gridTemplateColumns = ""; shell.style.gridTemplateRows = "";
+
+    // On phones the page's own responsive layout (off-canvas sidebar) must win;
+    // inline grid/flex overrides here would beat the media query and shrink main.
+    if (MOBILE.matches) {
+      shell.style.display = "";
+      side.style.display = "";
+      reopen.style.display = "none";
+      if (grip) grip.style.display = "none";
+      if (tools) tools.style.display = "none";
+      return;
+    }
+    if (grip) grip.style.display = "";
+    if (tools) tools.style.display = "";
 
     if (state.dock === "bottom") {
       shell.style.display = "flex"; shell.style.flexDirection = "column";
@@ -108,6 +123,7 @@
     reopen.onclick = function () { state.collapsed = false; apply(); };
     document.body.appendChild(reopen);
     buildTools(); buildGrip(); apply();
+    MOBILE.addEventListener("change", apply);
     return true;
   }
 

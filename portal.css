@@ -73,7 +73,7 @@ button { font-family: inherit; cursor: pointer; }
 .icon-btn { width: 40px; height: 40px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.18s; }
 .icon-btn:hover { color: var(--royal); border-color: var(--royal); }
 .icon-btn .badge { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--red); color: #fff; font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.avatar { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--royal); object-fit: cover; background: linear-gradient(135deg, var(--royal), var(--navy)); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--fd); font-weight: 800; }
+.avatar { width: 42px; height: 42px; flex: none; border-radius: 50%; border: 2px solid var(--royal); object-fit: cover; background: linear-gradient(135deg, var(--royal), var(--navy)); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--fd); font-weight: 800; }
 .body { padding: 26px 28px 50px; flex: 1; }
 
 /* primitives */
@@ -220,10 +220,16 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 .dropzone .up-ic { width: 60px; height: 60px; border-radius: 18px; margin: 0 auto 14px; background: linear-gradient(135deg, var(--sky), var(--royal)); display: flex; align-items: center; justify-content: center; color: #fff; }
 .dropzone h4 { font-size: 1.05rem; margin-bottom: 6px; }
 
+/* dashboard flow layout */
+.dash-grid { display: flex; flex-direction: column; gap: 16px; }
+.dash-mid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: stretch; }
+.dash-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
 @media (max-width: 1040px) {
   .stat-row { grid-template-columns: 1fr 1fr; }
   .grid-2, .grid-2.wide, .upload-grid { grid-template-columns: 1fr; }
   .dash-rail { grid-template-columns: 1fr !important; }
+  .dash-mid, .dash-bottom { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .shell { grid-template-columns: 1fr; }
@@ -233,20 +239,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   .stat-row { grid-template-columns: 1fr; }
   .mail-layout { grid-template-columns: 1fr; }
   .mail-read { display: none; }
+  .body { padding: 18px 14px 40px; }
+  .topbar { padding: 12px 14px; }
+  .chart-x span:nth-child(odd) { display: none; }
 }
 .menu-toggle { display: none; }
-
-/* movable / resizable dashboard board */
-.mo-board { position: relative; width: 100%; }
-.mo-w { position: absolute; transition: left 0.12s var(--ease), top 0.12s var(--ease), width 0.12s var(--ease), height 0.12s var(--ease); }
-.mo-board.edit .mo-w { transition: none; }
-.mo-w-inner { width: 100%; height: 100%; }
-.mo-w-inner > .card, .mo-w-inner > .stat, .mo-w-inner > .panel, .mo-w-inner > .id-card, .mo-w-inner > .qr-block, .mo-w-inner > .dash-rail { height: 100%; margin: 0; }
-.mo-board.edit .mo-w { outline: 1.5px dashed transparent; border-radius: var(--radius-lg); }
-.mo-board.edit .mo-w:hover { outline-color: var(--royal); }
-.mo-board.edit .mo-w-inner > * { box-shadow: var(--shadow); }
-.mo-handle { position: absolute; top: -11px; left: 12px; z-index: 6; display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; background: var(--royal); color: #fff; font-size: 0.68rem; font-weight: 700; cursor: grab; box-shadow: var(--shadow-sm); user-select: none; }
-.mo-handle:active { cursor: grabbing; }
-.mo-resize { position: absolute; right: 2px; bottom: 2px; width: 20px; height: 20px; z-index: 6; cursor: nwse-resize; border-radius: 0 0 12px 0;
-  background: linear-gradient(135deg, transparent 48%, var(--royal) 48% 60%, transparent 60%, transparent 70%, var(--royal) 70% 82%, transparent 82%); }
-.mo-hint { display: flex; align-items: center; gap: 9px; padding: 11px 16px; margin-bottom: 14px; border-radius: 12px; background: rgba(59,91,219,0.08); border: 1px solid rgba(59,91,219,0.2); color: var(--royal); font-size: 0.86rem; font-weight: 600; }

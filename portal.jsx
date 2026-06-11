@@ -126,16 +126,7 @@ function Portal() {
   );
 }
 
-/* ============ DASHBOARD (live · movable · resizable) ============ */
-const DASH_LS = "plg_dash_layout_v2";
-const COLS = 12, ROWH = 60, GAP = 14;
-const DASH_DEFAULT = {
-  wallet:{x:0,y:0,w:3,h:2}, comm:{x:3,y:0,w:3,h:2}, credit:{x:6,y:0,w:3,h:2}, debit:{x:9,y:0,w:3,h:2},
-  join:{x:0,y:2,w:8,h:6}, news:{x:8,y:2,w:4,h:6},
-  rail:{x:0,y:8,w:12,h:5},
-  team:{x:0,y:13,w:6,h:4}, earn:{x:6,y:13,w:6,h:4},
-};
-
+/* ============ DASHBOARD (live) ============ */
 function useLiveStats() {
   const [s, setS] = useState({ wallet:0, comm:0, credit:0, debit:0, pv:0, gpv:0, members:0, hist:Array(24).fill(0) });
   useEffect(() => {
@@ -177,112 +168,61 @@ function LiveChart({ hist }) {
   );
 }
 
-function MoBoard({ widgets, edit }) {
-  const ref = useRef(null);
-  const [bw, setBw] = useState(1100);
-  const [layout, setLayout] = useState(() => { try { return {...DASH_DEFAULT, ...JSON.parse(localStorage.getItem(DASH_LS)||"{}")}; } catch(e){ return DASH_DEFAULT; } });
-  const drag = useRef(null);
-  useEffect(() => { const m=()=>{ if(ref.current) setBw(ref.current.clientWidth); }; m(); window.addEventListener("resize",m); return ()=>window.removeEventListener("resize",m); }, []);
-  const colW = bw / COLS;
-  function save(l){ setLayout(l); try{ localStorage.setItem(DASH_LS, JSON.stringify(l)); }catch(e){} }
-  useEffect(() => {
-    function mv(e){
-      const d = drag.current; if(!d) return;
-      const dx=e.clientX-d.sx, dy=e.clientY-d.sy;
-      setLayout(l=>{
-        const cur=l[d.id]; let n;
-        if(d.mode==="move"){ let nx=Math.max(0,Math.min(COLS-cur.w,Math.round((d.ox*colW+dx)/colW))); let ny=Math.max(0,Math.round((d.oy*ROWH+dy)/ROWH)); n={...cur,x:nx,y:ny}; }
-        else { let nw=Math.max(2,Math.min(COLS-cur.x,Math.round((d.ow*colW+dx)/colW))); let nh=Math.max(2,Math.round((d.oh*ROWH+dy)/ROWH)); n={...cur,w:nw,h:nh}; }
-        d.result={...l,[d.id]:n}; return d.result;
-      });
-    }
-    function up(){ if(drag.current){ if(drag.current.result) save(drag.current.result); drag.current=null; document.body.style.userSelect=""; } }
-    window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up);
-    return ()=>{ window.removeEventListener("pointermove",mv); window.removeEventListener("pointerup",up); };
-  }, [colW]);
-  function start(e,id,mode){ if(!edit) return; e.preventDefault(); e.stopPropagation(); const p=layout[id]; drag.current={id,mode,sx:e.clientX,sy:e.clientY,ox:p.x,oy:p.y,ow:p.w,oh:p.h}; document.body.style.userSelect="none"; }
-  const maxRow = Math.max(8, ...Object.values(layout).map(p=>p.y+p.h));
-  return (
-    <div ref={ref} className={`mo-board ${edit?"edit":""}`} style={{height:maxRow*ROWH}}>
-      {widgets.map(wd=>{
-        const p=layout[wd.id]||DASH_DEFAULT[wd.id];
-        return (
-          <div key={wd.id} className="mo-w" style={{left:p.x*colW+GAP/2, top:p.y*ROWH+GAP/2, width:p.w*colW-GAP, height:p.h*ROWH-GAP}}>
-            {edit && <span className="mo-handle" onPointerDown={e=>start(e,wd.id,"move")}><PIcon name="network" size={13}/> drag</span>}
-            <div className="mo-w-inner" onPointerDown={e=>edit&&start(e,wd.id,"move")} style={{cursor:edit?"move":"default"}}>{wd.render()}</div>
-            {edit && <span className="mo-resize" onPointerDown={e=>start(e,wd.id,"resize")} />}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function Dashboard({ go }) {
   const [span, setSpan] = useState("Month");
-  const [edit, setEdit] = useState(false);
   const live = useLiveStats();
   const months = ["Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun"];
   const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  function resetLayout(){ try{ localStorage.removeItem(DASH_LS); }catch(e){} window.location.reload(); }
 
   const statCard = (l,k,ic,val,delta) => (
-    <div className="stat card" style={{height:"100%"}}>
+    <div className="stat card">
       <div className="stat-top"><span className="stat-l">{l}</span><span className={`stat-ic ${k}`}><PIcon name={ic} size={22} /></span></div>
       <span className="stat-v tnum">{val}</span>
       <span className={`stat-delta ${delta>=0?"up":"down"}`}><PIcon name="chart" size={13} /> {delta>=0?"+":""}{delta}% this month</span>
     </div>
   );
-  const widgets = [
-    { id:"wallet", render:()=>statCard("E-Wallet","wallet","wallet",money(live.wallet),3) },
-    { id:"comm", render:()=>statCard("Commission","comm","comm",money(live.comm),5) },
-    { id:"credit", render:()=>statCard("Total Credit","credit","credit",money(live.credit),2) },
-    { id:"debit", render:()=>statCard("Total Debit","debit","debit",money(live.debit),1) },
-    { id:"join", render:()=>(
-      <div className="panel card" style={{height:"100%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-        <div className="panel-h"><h3>Joinings <span className="pill pill-green" style={{marginLeft:6}}><span style={{width:6,height:6,borderRadius:9,background:"var(--green)",display:"inline-block"}}/> Live</span></h3><div className="seg">{["Year","Month","Day"].map(x=><button key={x} className={span===x?"on":""} onClick={()=>setSpan(x)}>{x}</button>)}</div></div>
-        <div style={{flex:1,minHeight:0}}><LiveChart hist={live.hist} /></div>
-        <div className="chart-x">{months.map((m,i)=><span key={i}>{m}</span>)}</div>
-      </div>
-    )},
-    { id:"news", render:()=>(
-      <div className="panel card" style={{height:"100%",overflow:"auto"}}>
-        <div className="panel-h"><h3>New Members</h3><span className="pill pill-royal tnum">{live.members}</span></div>
-        {live.members>0
-          ? <div style={{display:"flex",flexDirection:"column",gap:8}}>{Array.from({length:Math.min(live.members,6)}).map((_,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 4px"}}><span className="avatar" style={{width:34,height:34,fontSize:"0.8rem"}}>{String.fromCharCode(65+((i*7)%26))}{String.fromCharCode(66+((i*3)%25))}</span><div style={{flex:1,minWidth:0}}><div style={{fontWeight:600,fontSize:"0.86rem"}}>New referral #{live.members-i}</div><div className="sub" style={{fontSize:"0.76rem"}}>joined · just now</div></div><span className="pill pill-green">+1</span></div>))}</div>
-          : <div className="empty"><PIcon name="sad" size={44} /><p>No new members yet.<br/>Share your link to grow.</p><button className="btn btn-royal btn-sm" onClick={()=>go("genealogy")}>View network</button></div>}
-      </div>
-    )},
-    { id:"rail", render:()=><DashRail go={go} live={live} /> },
-    { id:"team", render:()=>(
-      <div className="panel card" style={{height:"100%",overflow:"auto"}}>
-        <div className="panel-h"><h3>Team Performance</h3><div className="seg"><button className="on">Top Earners</button><button>Recruiters</button></div></div>
-        {live.gpv>0
-          ? <div style={{display:"flex",flexDirection:"column",gap:6}}>{[["You",live.gpv],["Direct line",Math.round(live.gpv*0.6)],["Tier 2",Math.round(live.gpv*0.35)]].map((r,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10}}><span className="geno-ava" style={{width:30,height:30,fontSize:"0.8rem",border:"none"}}>{i+1}</span><div style={{flex:1}}><div style={{height:8,borderRadius:9,background:"var(--surface-2)",overflow:"hidden"}}><span style={{display:"block",height:"100%",width:(100-i*28)+"%",background:"linear-gradient(90deg,var(--royal-soft),var(--royal))"}}/></div></div><strong className="tnum" style={{fontFamily:"var(--fd)"}}>{r[1]}</strong></div>))}</div>
-          : <div className="empty"><PIcon name="trophy" size={44} /><p>Top earners will appear here.</p></div>}
-      </div>
-    )},
-    { id:"earn", render:()=>(
-      <div className="panel card" style={{height:"100%",overflow:"auto"}}>
-        <div className="panel-h"><h3>Earnings &amp; Expenses</h3><div className="seg"><button className="on">Earnings</button><button>Expenses</button></div></div>
-        <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:10}}><span className="stat-v tnum" style={{color:"var(--green)"}}>{money(live.comm+live.credit)}</span><span className="pill pill-green">+ live</span></div>
-        <div style={{flex:1,minHeight:60}}><LiveChart hist={live.hist} /></div>
-      </div>
-    )},
-  ];
 
   return (
     <>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18,flexWrap:"wrap",gap:12}}>
         <h2 style={{fontSize:"1.5rem"}}>Welcome, <span style={{color:"var(--royal)"}}>Joshua</span> 👋</h2>
-        <div style={{display:"flex",gap:10,alignItems:"center"}}>
-          {edit && <button className="btn btn-ghost btn-sm" onClick={resetLayout}><PIcon name="refresh" size={15} /> Reset</button>}
-          <button className={`btn btn-sm ${edit?"btn-royal":"btn-ghost"}`} onClick={()=>setEdit(e=>!e)}><PIcon name={edit?"check":"expand"} size={15} /> {edit?"Done":"Customize"}</button>
-          <button className="btn btn-gold btn-sm" onClick={()=>go("payout")}><PIcon name="payout" size={16} /> Request Payout</button>
+        <button className="btn btn-gold btn-sm" onClick={()=>go("payout")}><PIcon name="payout" size={16} /> Request Payout</button>
+      </div>
+      <div className="dash-grid">
+        <div className="stat-row">
+          {statCard("E-Wallet","wallet","wallet",money(live.wallet),3)}
+          {statCard("Commission","comm","comm",money(live.comm),5)}
+          {statCard("Total Credit","credit","credit",money(live.credit),2)}
+          {statCard("Total Debit","debit","debit",money(live.debit),1)}
+        </div>
+        <div className="dash-mid">
+          <div className="panel card" style={{display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            <div className="panel-h"><h3>Joinings <span className="pill pill-green" style={{marginLeft:6}}><span style={{width:6,height:6,borderRadius:9,background:"var(--green)",display:"inline-block"}}/> Live</span></h3><div className="seg">{["Year","Month","Day"].map(x=><button key={x} className={span===x?"on":""} onClick={()=>setSpan(x)}>{x}</button>)}</div></div>
+            <div style={{height:240}}><LiveChart hist={live.hist} /></div>
+            <div className="chart-x">{months.map((m,i)=><span key={i}>{m}</span>)}</div>
+          </div>
+          <div className="panel card" style={{display:"flex",flexDirection:"column"}}>
+            <div className="panel-h"><h3>New Members</h3><span className="pill pill-royal tnum">{live.members}</span></div>
+            {live.members>0
+              ? <div style={{flex:1,minHeight:0,overflowY:"auto",display:"flex",flexDirection:"column",gap:8}}>{Array.from({length:Math.min(live.members,6)}).map((_,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 4px"}}><span className="avatar" style={{width:34,height:34,fontSize:"0.8rem"}}>{String.fromCharCode(65+((i*7)%26))}{String.fromCharCode(66+((i*3)%25))}</span><div style={{flex:1,minWidth:0}}><div style={{fontWeight:600,fontSize:"0.86rem"}}>New referral #{live.members-i}</div><div className="sub" style={{fontSize:"0.76rem"}}>joined · just now</div></div><span className="pill pill-green">+1</span></div>))}</div>
+              : <div className="empty" style={{flex:1}}><PIcon name="sad" size={44} /><p>No new members yet.<br/>Share your link to grow.</p><button className="btn btn-royal btn-sm" onClick={()=>go("genealogy")}>View network</button></div>}
+          </div>
+        </div>
+        <DashRail go={go} live={live} />
+        <div className="dash-bottom">
+          <div className="panel card">
+            <div className="panel-h"><h3>Team Performance</h3><div className="seg"><button className="on">Top Earners</button><button>Recruiters</button></div></div>
+            {live.gpv>0
+              ? <div style={{display:"flex",flexDirection:"column",gap:6}}>{[["You",live.gpv],["Direct line",Math.round(live.gpv*0.6)],["Tier 2",Math.round(live.gpv*0.35)]].map((r,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10}}><span className="geno-ava" style={{width:30,height:30,fontSize:"0.8rem",border:"none"}}>{i+1}</span><div style={{flex:1}}><div style={{height:8,borderRadius:9,background:"var(--surface-2)",overflow:"hidden"}}><span style={{display:"block",height:"100%",width:(100-i*28)+"%",background:"linear-gradient(90deg,var(--royal-soft),var(--royal))"}}/></div></div><strong className="tnum" style={{fontFamily:"var(--fd)"}}>{r[1]}</strong></div>))}</div>
+              : <div className="empty"><PIcon name="trophy" size={44} /><p>Top earners will appear here.</p></div>}
+          </div>
+          <div className="panel card">
+            <div className="panel-h"><h3>Earnings &amp; Expenses</h3><div className="seg"><button className="on">Earnings</button><button>Expenses</button></div></div>
+            <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:10}}><span className="stat-v tnum" style={{color:"var(--green)"}}>{money(live.comm+live.credit)}</span><span className="pill pill-green">+ live</span></div>
+            <div style={{height:140}}><LiveChart hist={live.hist} /></div>
+          </div>
         </div>
       </div>
-      {edit && <div className="mo-hint"><PIcon name="expand" size={14} /> Drag widgets to move · pull the bottom-right corner to resize · your layout is saved automatically.</div>}
-      <MoBoard widgets={widgets} edit={edit} />
     </>
   );
 }
@@ -290,7 +230,7 @@ function Dashboard({ go }) {
 function DashRail({ go, live }) {
   const pv = live ? live.pv : 0, gpv = live ? live.gpv : 0;
   return (
-    <div className="dash-rail" style={{display:"grid",gridTemplateColumns:"1.3fr 1fr",gap:16,height:"100%"}}>
+    <div className="dash-rail" style={{display:"grid",gridTemplateColumns:"1.3fr 1fr",gap:16}}>
       <div className="id-card">
         <div className="id-top">
           <div className="avatar">{USER.initials}</div>

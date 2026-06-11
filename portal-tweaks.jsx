@@ -1,7 +1,7 @@
 // portal-tweaks.jsx — Tweaks panel for the PLG Affiliate Portal.
 // Mounts in its own React root and applies a view scale to the shell.
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "viewScale": 80
+  "viewScale": 100
 }/*EDITMODE-END*/;
 
 function applyViewScale(pct) {
