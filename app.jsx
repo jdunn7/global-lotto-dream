@@ -59,7 +59,10 @@ function App() {
   const demoSlip = () => {const g = LOTTO.gameById(STARTGAME);const lines = [LOTTO.quickPick(g), LOTTO.quickPick(g)];return { gameId: g.id, lines, cost: lines.length * g.price, plan: 1, total: lines.length * g.price, paidWith: "wallet" };};
   const [view, setView] = useState({ name: START, gameId: STARTGAME, opts: START === "picker" ? {} : {} });
   const [slip, setSlip] = useState(["checkout", "confirmation", "draw"].includes(START) ? demoSlip() : null);
-  const [user, setUser] = useState({ name: "Amara Okafor", email: "amara@gmail.com", wallet: 248.5, winnings: 1284, commission: 412.6 });
+  const [user, setUser] = useState(() => {
+    try {const s = JSON.parse(localStorage.getItem("lg_user") || "null");if (s && s.email) return s;} catch (e) {}
+    return { name: "", email: "", wallet: 0, winnings: 0, commission: 0 };
+  });
   const loggedIn = !!user.email;
   const [connectedWallet, setConnectedWallet] = useState(null);
   const [selTicket, setSelTicket] = useState(START === "ticket" ? SEED_HISTORY[1] : null);
@@ -101,6 +104,20 @@ function App() {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
+  // Pull the real wallet balance (cents → dollars) from plg and apply it to the
+  // signed-in user. Called after auth and on session hydrate.
+  const syncWallet = useCallback(() => {
+    if (!window.PLG_API) return;
+    PLG_API.wallet.getBalance().then((w) => {
+      setUser((cur) => {
+        if (!cur.email) return cur;
+        const next = { ...cur, wallet: (w.balance_cents || 0) / 100 };
+        try { localStorage.setItem("lg_user", JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
+    }).catch(() => {});
+  }, []);
+
   function onResult(r) {
     setHistory((h) => {
       const idx = h.findIndex((x) => x.status === "active" && x.gameId === r.gameId);
@@ -113,10 +130,38 @@ function App() {
   function onPurchase(s) {
     const t = { gameId: s.gameId, lines: s.lines, plan: s.plan || 1, autoplay: !!s.autoplay, total: s.total || s.cost, when: "Just now", status: "active", totalWin: null, winning: null };
     setHistory((h) => {const next = [t, ...h].slice(0, 14);persist(next);return next;});
-    if ((s.paidWith || "wallet") === "wallet") setUser((u) => ({ ...u, wallet: Math.max(0, u.wallet - (s.total || s.cost)) }));
+    syncWallet(); // plg already debited the wallet server-side; pull the real balance.
   }
-  function onAuth(u) {setUser({ ...u, wallet: 248.5, winnings: 1284, commission: 412.6 });go("home");}
-  function onSignOut() {setUser({ name: "", email: "", wallet: 248.5, winnings: 0, commission: 0 });go("auth");}
+  function onAuth(u) {
+    const full = { name: u.name, email: u.email, wallet: 0, winnings: 0, commission: 0 };
+    setUser(full);
+    try {localStorage.setItem("lg_user", JSON.stringify(full));} catch (e) {}
+    syncWallet();
+    go("home");
+  }
+  function onSignOut() {
+    if (window.PLG_API) PLG_API.auth.logout().catch(() => {});
+    setUser({ name: "", email: "", wallet: 0, winnings: 0, commission: 0 });
+    try {localStorage.removeItem("lg_user");} catch (e) {}
+    go("auth");
+  }
+
+  // Hydrate from the real plg.proposals.digital session — covers the Google
+  // OAuth redirect landing back here and any returning visitor with a live SSO
+  // cookie. Sets the user without navigating. (Wallet figures stay demo until
+  // those endpoints are bridged too.)
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.PLG_API) return;
+    PLG_API.auth.session().then((s) => {
+      if (s && s.authed && s.profile && s.profile.email) {
+        const full = { name: s.profile.name || s.profile.email.split("@")[0], email: s.profile.email, wallet: 0, winnings: 0, commission: 0 };
+        setUser(full);
+        try { localStorage.setItem("lg_user", JSON.stringify(full)); } catch (e) {}
+        syncWallet();
+      }
+    }).catch(() => {});
+    // eslint-disable-next-line
+  }, []);
 
   const nav = [
   { id: "home", label: "Home", icon: "home" },
@@ -128,13 +173,15 @@ function App() {
 
   const active = view.name === "games" ? "home" : view.name === "tickets" || view.name === "ticket" ? "tickets" : ["account", "wallet", "referral", "billing"].includes(view.name) ? "account" : ["results", "rewards", "news"].includes(view.name) ? view.name : "home";
 
-  if (view.name === "auth") {
+  // Public pages anyone can browse; everything else requires a signed-in account.
+  const PUBLIC_VIEWS = ["home", "games", "results", "news"];
+  if (view.name === "auth" || (!loggedIn && !PUBLIC_VIEWS.includes(view.name))) {
     return <Auth onAuth={onAuth} go={go} />;
   }
 
   return (
     <div className="app">
-      <Header nav={nav} active={active} go={go} user={user} loggedIn={loggedIn} mode={mode} setMode={setMode} onAffiliate={() => setAffOpen(true)} />
+      <Header nav={nav} active={active} go={go} user={user} loggedIn={loggedIn} mode={mode} setMode={setMode} onAffiliate={() => setAffOpen(true)} onSignOut={onSignOut} />
 
       <main className="main">
         {view.name === "home" && <Home key="home" go={go} />}
@@ -149,7 +196,7 @@ function App() {
         {view.name === "ticket" && selTicket && <DigitalTicket key="dt" go={go} ticket={selTicket} />}
         {view.name === "wallet" && <Wallet key="wallet" go={go} user={user} setUser={setUser} connectedWallet={connectedWallet} />}
         {view.name === "referral" && <Referral key="referral" go={go} user={user} />}
-        {view.name === "billing" && <Billing key="billing" go={go} connectedWallet={connectedWallet} setConnectedWallet={setConnectedWallet} />}
+        {view.name === "billing" && <Billing key="billing" go={go} user={user} connectedWallet={connectedWallet} setConnectedWallet={setConnectedWallet} />}
         {view.name === "account" && <Account key="account" go={go} user={user} onSignOut={onSignOut} history={history} />}
         {view.name === "results" && <Results key="results" go={go} />}
         {view.name === "rewards" && <Rewards key="rewards" go={go} user={user} onAffiliate={() => setAffOpen(true)} />}
@@ -193,7 +240,7 @@ function App() {
 
 }
 
-function Header({ nav, active, go, user, loggedIn, mode, setMode, onAffiliate }) {
+function Header({ nav, active, go, user, loggedIn, mode, setMode, onAffiliate, onSignOut }) {
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
@@ -312,7 +359,7 @@ function Header({ nav, active, go, user, loggedIn, mode, setMode, onAffiliate })
                     <div className="pm-sep" />
                     <button className="pm-item pm-out" onClick={() => pick("account")}><Icon name="user" size={16} /> Account settings</button>
                     <button className="pm-item pm-out" onClick={() => pick("account")}><Icon name="bell" size={16} /> Help &amp; support</button>
-                    <button className="pm-item pm-out" onClick={() => {setMenu(false);go("auth");}}><Icon name="arrowR" size={16} /> Sign out</button>
+                    <button className="pm-item pm-out" onClick={() => {setMenu(false);onSignOut ? onSignOut() : go("auth");}}><Icon name="arrowR" size={16} /> Sign out</button>
                   </div>
               }
               </div>
