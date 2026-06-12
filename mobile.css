@@ -46,6 +46,11 @@ html.light .nm-ic { background: hsl(216 28% 92%); }
   .hero-cd { gap: 10px; }
   .cd-unit { min-width: 52px; }
 
+  /* results list: flex:none let the ball row keep its full one-line width
+     (≈400px) on phones — allow it to shrink and wrap instead */
+  .result-row { flex-wrap: wrap; }
+  .result-balls { flex: 0 1 auto; min-width: 0; }
+
   /* sections tighten */
   .section { padding: 30px 0; }
   .sec-head h2 { font-size: var(--text-3xl); }
