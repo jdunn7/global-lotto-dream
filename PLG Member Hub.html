@@ -119,7 +119,13 @@
   .foot a{color:var(--royal);font-weight:600}
 
   @media(max-width:1020px){.grid{grid-template-columns:repeat(2,1fr)}.aff-grid{grid-template-columns:1fr}.nav-links{display:none}.winbig{display:none}}
-  @media(max-width:560px){.grid{grid-template-columns:1fr}.statrow{grid-template-columns:repeat(2,1fr)}.nav-logo{height:34px}.nav-global,.nav-tickets{display:none}.balance{flex-wrap:wrap}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.statrow{grid-template-columns:repeat(2,1fr)}.nav-logo{height:34px}.nav-global,.nav-tickets{display:none}.balance{flex-wrap:wrap}
+    /* kill min-content floors: the destination <select>'s longest option was
+       forcing the QR panel (and the page) wider than small phones */
+    .panel,.panel *{min-width:0}
+    .panel select{width:100%;max-width:100%;text-overflow:ellipsis}
+    .btn-dash{padding:10px 14px;font-size:.8rem}
+  }
   @keyframes rise{from{transform:translateY(16px)}to{transform:none}}
   .rise{animation:rise .55s var(--ease) both}
   @media(prefers-reduced-motion:reduce){.rise{animation:none}}

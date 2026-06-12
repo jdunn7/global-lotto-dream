@@ -36,9 +36,12 @@ html.light .nm-ic { background: hsl(216 28% 92%); }
   /* winner toast stays top-right under header */
   .winner-toast { left: auto; right: 10px; top: 72px; bottom: auto; max-width: 70vw; }
 
-  /* hero */
-  .hero { padding-top: 22px; gap: 18px; }
-  .hero-right { max-width: 260px; }
+  /* hero — single column on phones; the desktop 2-col grid's min-content
+     floor (title + countdown row) otherwise forces the page wider than 360px */
+  .hero { padding-top: 22px; gap: 18px; grid-template-columns: 1fr; }
+  .hero-left, .hero-right { min-width: 0; max-width: 100%; }
+  .hero-title { overflow-wrap: anywhere; }
+  .hero-right { max-width: 260px; margin: 0 auto; }
   .hero-machine { max-width: 240px; }
   .hero-cd { gap: 10px; }
   .cd-unit { min-width: 52px; }

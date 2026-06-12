@@ -225,6 +225,11 @@
   .dash-nav { flex-direction: row; }
   .dash-nav-i { flex-direction: column; gap: 3px; font-size: 0.65rem; padding: 8px 12px; }
   .dash-body { padding-bottom: 90px; }
+}
+/* The top bar's right cluster (range pills + buttons + avatar) needs ~950px;
+   let it wrap before it can widen the page — independent of the 860px
+   sidebar-relayout breakpoint. */
+@media (max-width: 960px) {
   .dash-top { flex-wrap: wrap; }
   .dash-top-r { flex-wrap: wrap; width: 100%; row-gap: 8px; }
 }
